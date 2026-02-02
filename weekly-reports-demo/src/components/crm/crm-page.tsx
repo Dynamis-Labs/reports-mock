@@ -1,13 +1,11 @@
 import { useMemo } from "react";
-import { motion } from "motion/react";
 import { Users } from "lucide-react";
 import { CrmHeader } from "./crm-header";
 import { AccordionLayout } from "./layouts/accordion";
 import { MasterDetailLayout } from "./layouts/master-detail";
+import { CardGridLayout } from "./layouts/card-grid";
 import { useCrmStore } from "../../stores/crm-store";
 import { mockContacts } from "../../data/mock-contacts";
-import { staggerContainer, staggerItem } from "../../lib/motion";
-import type { Contact } from "../../types/contact";
 
 /**
  * CRM Page
@@ -17,47 +15,6 @@ import type { Contact } from "../../types/contact";
  * - Master-Detail: Sidebar + detail pane
  * - Card Grid: Visual cards with drawer
  */
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Placeholder: Card Grid Layout (to be built in Task 5)
-// ─────────────────────────────────────────────────────────────────────────────
-
-function CardGridLayout({ contacts }: { contacts: Contact[] }) {
-  return (
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      animate="visible"
-      className="p-6 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4"
-    >
-      {contacts.map((contact) => (
-        <motion.button
-          key={contact.id}
-          variants={staggerItem}
-          className="text-left p-5 rounded-xl border border-border-subtle bg-surface hover:bg-surface-elevated hover:border-border transition-all"
-        >
-          <div className="flex items-start gap-4 mb-3">
-            <div className="size-12 rounded-full bg-accent-muted flex items-center justify-center text-accent font-medium text-lg">
-              {contact.firstName[0]}
-              {contact.lastName[0]}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-heading text-foreground truncate">
-                {contact.firstName} {contact.lastName}
-              </p>
-              <p className="text-ui text-muted-foreground truncate">
-                {contact.company}
-              </p>
-            </div>
-          </div>
-          <p className="text-caption text-muted-foreground line-clamp-2">
-            {contact.insights.aiSummary}
-          </p>
-        </motion.button>
-      ))}
-    </motion.div>
-  );
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Main CRM Page Component
@@ -129,9 +86,7 @@ export function CrmPage() {
               <MasterDetailLayout contacts={filteredContacts} />
             )}
             {viewMode === "card-grid" && (
-              <div className="h-full overflow-y-auto">
-                <CardGridLayout contacts={filteredContacts} />
-              </div>
+              <CardGridLayout contacts={filteredContacts} />
             )}
           </>
         )}

@@ -181,7 +181,7 @@ export const useCrmStore = create<CrmState>()(
       toggleRelationship: (relationship) =>
         set((state) => ({
           selectedRelationships: state.selectedRelationships.includes(
-            relationship
+            relationship,
           )
             ? state.selectedRelationships.filter((r) => r !== relationship)
             : [...state.selectedRelationships, relationship],
@@ -243,8 +243,8 @@ export const useCrmStore = create<CrmState>()(
         },
         removeItem: (name) => localStorage.removeItem(name),
       },
-    }
-  )
+    },
+  ),
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -273,6 +273,6 @@ export function useHasActiveFilters(): boolean {
       state.searchQuery !== "" ||
       state.selectedTags.length > 0 ||
       state.selectedRelationships.length > 0 ||
-      state.selectedWarmth.length > 0
+      state.selectedWarmth.length > 0,
   );
 }

@@ -1,4 +1,4 @@
-import type { Contact, Interaction, ActivityEvent } from "../types/contact";
+import type { Contact } from "../types/contact";
 
 /**
  * Mock CRM Contacts
@@ -145,8 +145,7 @@ export const mockContacts: Contact[] = [
         type: "slack",
         date: daysAgo(18),
         subject: "Quick question on SSO",
-        summary:
-          "Asked about SAML vs OIDC support. Sent documentation links.",
+        summary: "Asked about SAML vs OIDC support. Sent documentation links.",
         sentiment: "neutral",
         keyTopics: ["SSO", "Authentication"],
       },
@@ -218,7 +217,8 @@ export const mockContacts: Contact[] = [
         "20+ years at JPM",
         "Board member of fintech accelerator",
       ],
-      personalDetails: "Avid golfer, member at Winged Foot. Two kids in private school.",
+      personalDetails:
+        "Avid golfer, member at Winged Foot. Two kids in private school.",
       notesUpdatedAt: weeksAgo(2),
     },
 
@@ -292,7 +292,12 @@ export const mockContacts: Contact[] = [
     communicationStyle: "casual",
 
     roleBadges: ["Technical Influencer", "Early Adopter"],
-    tags: ["Developer Tools", "API-First", "Tech Twitter", "Conference Speaker"],
+    tags: [
+      "Developer Tools",
+      "API-First",
+      "Tech Twitter",
+      "Conference Speaker",
+    ],
 
     insights: {
       aiSummary:
@@ -438,7 +443,8 @@ export const mockContacts: Contact[] = [
         "Team of 50+ engineers",
         "Contract renews in Q2",
       ],
-      personalDetails: "New father (twins!), probably sleep-deprived. Be understanding of schedule constraints.",
+      personalDetails:
+        "New father (twins!), probably sleep-deprived. Be understanding of schedule constraints.",
       notesUpdatedAt: daysAgo(1),
     },
 
@@ -475,8 +481,7 @@ export const mockContacts: Contact[] = [
         type: "meeting",
         date: monthsAgo(1),
         subject: "Quarterly Business Review",
-        summary:
-          "QBR revealed declining usage metrics. He's questioning ROI.",
+        summary: "QBR revealed declining usage metrics. He's questioning ROI.",
         sentiment: "mixed",
         keyTopics: ["Usage Metrics", "ROI", "Value Demonstration"],
         participants: ["David Park", "Account Team", "You", "CSM"],
@@ -549,7 +554,8 @@ export const mockContacts: Contact[] = [
         "Built 3 internal tools teams",
         "Active on engineering Twitter",
       ],
-      personalDetails: "Loves salsa dancing. Mentioned she's training for an Ironman.",
+      personalDetails:
+        "Loves salsa dancing. Mentioned she's training for an Ironman.",
       notesUpdatedAt: daysAgo(1),
     },
 
@@ -618,7 +624,10 @@ export const mockContacts: Contact[] = [
     insights: {
       aiSummary:
         "Has existing relationship with a competitor and may be steering the deal their way. Need to find his angle - likely wants to wrap services around whichever vendor wins.",
-      strengths: ["Senior partner with influence", "Could become champion if aligned"],
+      strengths: [
+        "Senior partner with influence",
+        "Could become champion if aligned",
+      ],
       risks: [
         "Competitor relationship",
         "May be receiving kickbacks",
@@ -646,7 +655,8 @@ export const mockContacts: Contact[] = [
         "Manages $50M book of business",
         "On competitor's advisory board (!!)",
       ],
-      personalDetails: "Big Notre Dame football fan. Has a lake house in Michigan.",
+      personalDetails:
+        "Big Notre Dame football fan. Has a lake house in Michigan.",
       notesUpdatedAt: weeksAgo(1),
     },
 
@@ -710,7 +720,12 @@ export const mockContacts: Contact[] = [
     communicationStyle: "casual",
 
     roleBadges: ["Champion", "Product Partner", "Reference Customer"],
-    tags: ["Strategic Account", "Case Study", "Product Advisory Board", "Expansion"],
+    tags: [
+      "Strategic Account",
+      "Case Study",
+      "Product Advisory Board",
+      "Expansion",
+    ],
 
     insights: {
       aiSummary:
@@ -821,7 +836,12 @@ export const mockContacts: Contact[] = [
     communicationStyle: "async",
 
     roleBadges: ["Dormant Lead", "Re-engage"],
-    tags: ["Media & Entertainment", "Enterprise", "Lost Opportunity", "Reactivate"],
+    tags: [
+      "Media & Entertainment",
+      "Enterprise",
+      "Lost Opportunity",
+      "Reactivate",
+    ],
 
     insights: {
       aiSummary:
@@ -858,7 +878,8 @@ export const mockContacts: Contact[] = [
         "Manages 30+ engineers now",
         "Focused on studio production tech",
       ],
-      personalDetails: "Surfer, often works from home near the beach. Big film buff.",
+      personalDetails:
+        "Surfer, often works from home near the beach. Big film buff.",
       notesUpdatedAt: daysAgo(0),
     },
 
@@ -913,9 +934,7 @@ export function getAllTags(): string[] {
 // Utility: Get contacts by warmth level
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function getContactsByWarmth(
-  warmth: Contact["warmth"]
-): Contact[] {
+export function getContactsByWarmth(warmth: Contact["warmth"]): Contact[] {
   return mockContacts.filter((c) => c.warmth === warmth);
 }
 
@@ -925,7 +944,5 @@ export function getContactsByWarmth(
 
 export function getContactsNeedingFollowUp(): Contact[] {
   const now = new Date();
-  return mockContacts.filter(
-    (c) => c.nextFollowUp && c.nextFollowUp <= now
-  );
+  return mockContacts.filter((c) => c.nextFollowUp && c.nextFollowUp <= now);
 }

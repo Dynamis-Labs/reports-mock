@@ -31,7 +31,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: "memory", icon: Brain, label: "Memory" },
   { id: "app-store", icon: Grid3X3, label: "App Store" },
-  { id: "users", icon: Users, label: "Users" },
+  { id: "crm", icon: Users, label: "CRM" },
   { id: "research", icon: Search, label: "Deep Research" },
   { id: "meetings", icon: Video, label: "Meetings" },
   { id: "todos", icon: CheckSquare, label: "TODOs" },

@@ -218,9 +218,7 @@ export function getInitials(contact: Contact): string {
 }
 
 /** Get relationship badge color class */
-export function getRelationshipColor(
-  relationship: RelationshipType
-): string {
+export function getRelationshipColor(relationship: RelationshipType): string {
   const colors: Record<RelationshipType, string> = {
     key_stakeholder: "text-error", // Red - high importance
     champion: "text-success", // Green - positive

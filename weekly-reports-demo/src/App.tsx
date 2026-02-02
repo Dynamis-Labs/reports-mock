@@ -9,6 +9,7 @@ import { ReadingPane } from "./components/report/reading-pane";
 import { SettingsPane } from "./components/settings";
 import { ReviewActionsModal } from "./components/review-actions";
 import { AskSentraChatbox } from "./components/chat";
+import { CrmPage } from "./components/crm";
 import { useSettingsStore } from "./stores/settings-store";
 import { mockReports } from "./data/mock-reports";
 
@@ -36,28 +37,34 @@ function App() {
           activeSection={activeSection}
           onSectionChange={setActiveSection}
           leftSidebar={
-            <ArchiveSidebar
-              reports={mockReports}
-              selectedReportId={selectedReportId}
-              onSelectReport={setSelectedReportId}
-            />
+            activeSection === "crm" ? null : (
+              <ArchiveSidebar
+                reports={mockReports}
+                selectedReportId={selectedReportId}
+                onSelectReport={setSelectedReportId}
+              />
+            )
           }
           mainContent={
-            isSettingsOpen ? (
+            activeSection === "crm" ? (
+              <CrmPage />
+            ) : isSettingsOpen ? (
               <SettingsPane />
             ) : (
               <ReadingPane report={selectedReport} />
             )
           }
           commentPanel={
-            selectedReport &&
-            !isSettingsOpen && (
-              <CommentPanel
-                reportId={selectedReport.id}
-                userName={CURRENT_USER.name}
-                userId={CURRENT_USER.id}
-              />
-            )
+            activeSection === "crm"
+              ? null
+              : selectedReport &&
+                !isSettingsOpen && (
+                  <CommentPanel
+                    reportId={selectedReport.id}
+                    userName={CURRENT_USER.name}
+                    userId={CURRENT_USER.id}
+                  />
+                )
           }
         />
         <ReviewActionsModal />

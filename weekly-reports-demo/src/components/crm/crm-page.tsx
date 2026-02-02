@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import { Users } from "lucide-react";
 import { CrmHeader } from "./crm-header";
-import { AccordionLayout } from "./layouts/accordion";
-import { MasterDetailLayout } from "./layouts/master-detail";
-import { CardGridLayout } from "./layouts/card-grid";
+import { AccordionLayout, MasterDetailLayout, CardGridLayout } from "./layouts";
 import { useCrmStore } from "../../stores/crm-store";
 import { mockContacts } from "../../data/mock-contacts";
 

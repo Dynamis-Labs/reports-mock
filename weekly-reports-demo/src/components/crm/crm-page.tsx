@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { motion } from "motion/react";
 import { Users } from "lucide-react";
 import { CrmHeader } from "./crm-header";
+import { AccordionLayout } from "./layouts/accordion";
 import { useCrmStore } from "../../stores/crm-store";
 import { mockContacts } from "../../data/mock-contacts";
 import { staggerContainer, staggerItem } from "../../lib/motion";
@@ -17,42 +18,8 @@ import type { Contact } from "../../types/contact";
  */
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Placeholder Layout Components (will be replaced with full implementations)
+// Placeholder Layout Components (Master-Detail and Card Grid - to be built)
 // ─────────────────────────────────────────────────────────────────────────────
-
-function AccordionLayout({ contacts }: { contacts: Contact[] }) {
-  return (
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      animate="visible"
-      className="p-6 space-y-2 max-w-4xl mx-auto"
-    >
-      {contacts.map((contact) => (
-        <motion.div
-          key={contact.id}
-          variants={staggerItem}
-          className="p-4 rounded-lg border border-border-subtle bg-surface hover:bg-surface-elevated transition-colors"
-        >
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-full bg-accent-muted flex items-center justify-center text-accent font-medium">
-              {contact.firstName[0]}
-              {contact.lastName[0]}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-medium text-ui text-foreground">
-                {contact.firstName} {contact.lastName}
-              </p>
-              <p className="text-caption text-muted-foreground truncate">
-                {contact.title} at {contact.company}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      ))}
-    </motion.div>
-  );
-}
 
 function MasterDetailLayout({ contacts }: { contacts: Contact[] }) {
   return (
@@ -183,7 +150,7 @@ export function CrmPage() {
             </div>
           </div>
         ) : (
-          <div className="h-full overflow-y-auto">
+          <>
             {viewMode === "accordion" && (
               <AccordionLayout contacts={filteredContacts} />
             )}
@@ -191,9 +158,11 @@ export function CrmPage() {
               <MasterDetailLayout contacts={filteredContacts} />
             )}
             {viewMode === "card-grid" && (
-              <CardGridLayout contacts={filteredContacts} />
+              <div className="h-full overflow-y-auto">
+                <CardGridLayout contacts={filteredContacts} />
+              </div>
             )}
-          </div>
+          </>
         )}
       </div>
     </div>

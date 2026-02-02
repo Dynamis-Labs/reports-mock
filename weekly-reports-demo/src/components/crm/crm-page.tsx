@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { Users } from "lucide-react";
 import { CrmHeader } from "./crm-header";
 import { AccordionLayout } from "./layouts/accordion";
+import { MasterDetailLayout } from "./layouts/master-detail";
 import { useCrmStore } from "../../stores/crm-store";
 import { mockContacts } from "../../data/mock-contacts";
 import { staggerContainer, staggerItem } from "../../lib/motion";
@@ -18,38 +19,8 @@ import type { Contact } from "../../types/contact";
  */
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Placeholder Layout Components (Master-Detail and Card Grid - to be built)
+// Placeholder: Card Grid Layout (to be built in Task 5)
 // ─────────────────────────────────────────────────────────────────────────────
-
-function MasterDetailLayout({ contacts }: { contacts: Contact[] }) {
-  return (
-    <div className="flex h-full">
-      <div className="w-[220px] shrink-0 border-r border-border bg-sidebar overflow-y-auto p-3">
-        <div className="space-y-1">
-          {contacts.map((contact) => (
-            <button
-              key={contact.id}
-              className="w-full text-left px-3 py-2 rounded-md hover:bg-muted transition-colors"
-            >
-              <p className="font-medium text-[13px] text-muted-foreground truncate">
-                {contact.firstName} {contact.lastName}
-              </p>
-              <p className="text-[11px] text-muted-foreground/60 truncate">
-                {contact.company}
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
-      <div className="flex-1 flex items-center justify-center">
-        <div className="text-center">
-          <Users className="size-12 mx-auto mb-4 text-muted-foreground/30" />
-          <p className="text-muted-foreground">Select a contact</p>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function CardGridLayout({ contacts }: { contacts: Contact[] }) {
   return (

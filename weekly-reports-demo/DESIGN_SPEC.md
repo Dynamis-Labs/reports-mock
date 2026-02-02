@@ -1,863 +1,425 @@
 # Weekly Reports — Design Specification
 
-This is a complete design specification for recreating the Weekly Reports UI exactly. Copy this entire document as a prompt when building in another repo.
+Complete design specification for the Weekly Reports UI. This document reflects the actual implementation.
 
 ---
 
-## Overview
+## Layout Structure
 
-A three-panel productivity feature for reviewing AI-generated weekly business summaries with inline commenting and text highlighting. The design is minimal, clean, and uses subtle animations for polish.
+4-panel layout with icon navigation, sidebar, content area, and overlay comments:
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                           DESKTOP LAYOUT                             │
-├───────────────┬──────────────────────────────┬───────────────────────┤
-│ Left Sidebar  │       Main Content           │    Right Sidebar      │
-│ (280-400px)   │       (flexible)             │    (320-520px)        │
-│               │                              │                       │
-│ Report List   │       Report Detail          │    Comments           │
-│ + Search      │       + Highlights           │    + Feedback         │
-│               │                              │                       │
-│ [Resizable →] │                              │    [← Resizable]      │
-└───────────────┴──────────────────────────────┴───────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│ Nav │ Sidebar │              [ Content (max-w-2xl) ]               │
+│ 52px│ 220px   │        ←── centered on full viewport ──→           │
+│     │         │                                                     │
+│ Icon│ Reports │                    Report content                   │
+│ nav │ list    │                    with comments                    │
+│     │         │                    overlay on right                 │
+└─────────────────────────────────────────────────────────────────────┘
 ```
+
+### Panel Dimensions
+
+| Panel         | Width     | Notes                              |
+| ------------- | --------- | ---------------------------------- |
+| Icon Nav      | 52px      | Fixed, contains app icons          |
+| Left Sidebar  | 200-280px | Resizable, default 220px           |
+| Main Content  | flex-1    | Fills remaining space              |
+| Content Col   | max-w-2xl | 672px, centered on viewport        |
+| Comment Layer | 256px     | Absolute positioned overlay (w-64) |
 
 ---
 
-## 1. Typography
+## Typography
 
 ### Font Family
 
 ```css
-font-family:
-  "Manrope",
-  system-ui,
-  -apple-system,
-  BlinkMacSystemFont,
-  "Segoe UI",
-  Roboto,
-  "Helvetica Neue",
-  Arial,
-  sans-serif;
+font-family: "Manrope", system-ui, sans-serif;
 ```
 
 Import from Google Fonts with weights: 400, 500, 600
 
-### Text Styles Used
+### Type Scale
 
-| Element                | Size               | Weight         | Tracking         | Color                       |
-| ---------------------- | ------------------ | -------------- | ---------------- | --------------------------- |
-| Report title (desktop) | 30px (text-3xl)    | 500 (medium)   | tight (-0.025em) | foreground                  |
-| Report title (mobile)  | 20px (text-xl)     | 500 (medium)   | tight            | foreground                  |
-| Sidebar headers        | 18px (text-lg)     | 600 (semibold) | tight            | foreground                  |
-| Report body            | 15px (text-[15px]) | 400 (normal)   | normal           | foreground                  |
-| List item title        | 14px (text-sm)     | 500 (medium)   | normal           | foreground                  |
-| Descriptions           | 14px (text-sm)     | 400 (normal)   | normal           | muted-foreground            |
-| Section labels         | 12px (text-xs)     | 500 (medium)   | wider (0.05em)   | muted-foreground, UPPERCASE |
-| Dates/timestamps       | 12px (text-xs)     | 400 (normal)   | normal           | muted-foreground            |
-| Badge text             | 12px (text-xs)     | 500 (medium)   | normal           | varies by variant           |
-| Avatar initials        | 10px (text-[10px]) | 500 (medium)   | normal           | muted-foreground            |
+| Token          | Size      | Pixel | Usage              |
+| -------------- | --------- | ----- | ------------------ |
+| `text-display` | 2rem      | 32px  | Report title       |
+| `text-title`   | 1.5rem    | 24px  | Section headings   |
+| `text-heading` | 1.125rem  | 18px  | Panel titles       |
+| `text-body`    | 0.9375rem | 15px  | Report content     |
+| `text-ui`      | 0.875rem  | 14px  | UI labels, buttons |
+| `text-caption` | 0.75rem   | 12px  | Metadata, dates    |
+| `text-micro`   | 0.6875rem | 11px  | Badges, counters   |
+
+### Modal Type Scale
+
+Refined typography for modal dialogs (smaller than main UI for better density):
+
+| Token              | Size      | Pixel | Usage                  |
+| ------------------ | --------- | ----- | ---------------------- |
+| `text-modal-title` | 1rem      | 16px  | Modal action titles    |
+| `text-modal-ui`    | 0.875rem  | 14px  | Input text, names      |
+| `text-modal-label` | 0.75rem   | 12px  | Labels, secondary text |
+| `text-modal-micro` | 0.6875rem | 11px  | Badges, counts         |
 
 ---
 
-## 2. Color System (OKLCH)
+## Color System (OKLCH)
 
 ### Light Mode
 
 ```css
-:root {
-  --background: oklch(1 0 0); /* pure white */
-  --foreground: oklch(0.145 0 0); /* near black */
-  --muted: oklch(0.97 0 0); /* very light gray */
-  --muted-foreground: oklch(0.556 0 0); /* medium gray */
-  --border: oklch(0.922 0 0); /* subtle gray border */
-  --brand: oklch(68.5% 0.169 237.325); /* vibrant blue */
-  --highlight: oklch(85% 0.15 85); /* warm yellow */
-  --sidebar: oklch(0.98 0 0); /* off-white */
-}
+--color-background: oklch(99% 0.005 260); /* Off-white */
+--color-foreground: oklch(15% 0.01 260); /* Near-black */
+--color-surface: oklch(97% 0.005 260); /* Light gray cards */
+--color-surface-elevated: oklch(100% 0 0); /* Pure white */
+--color-muted: oklch(95% 0.005 260); /* Subtle backgrounds */
+--color-muted-foreground: oklch(45% 0.01 260); /* Secondary text */
+--color-border: oklch(90% 0.01 260); /* Visible borders */
+--color-border-subtle: oklch(94% 0.005 260); /* Dividers */
+
+/* Accent - Blue */
+--color-accent: oklch(68.5% 0.169 237.325);
+--color-accent-foreground: oklch(100% 0 0);
+--color-accent-muted: oklch(68.5% 0.169 237.325 / 10%);
+
+/* Highlight - Yellow */
+--color-highlight: oklch(85% 0.15 90 / 40%);
+--color-highlight-active: oklch(80% 0.18 90 / 60%);
+
+/* Semantic */
+--color-success: oklch(55% 0.18 155);
+--color-warning: oklch(70% 0.18 70);
+--color-error: oklch(55% 0.22 25);
+
+/* Sources - Purple accent for sources sidebar */
+--color-sources: oklch(65% 0.15 290);
+--color-sources-foreground: oklch(100% 0 0);
+--color-sources-muted: oklch(65% 0.15 290 / 10%);
+
+--color-sidebar: oklch(0.98 0 0);
 ```
 
 ### Dark Mode
 
 ```css
-.dark {
-  --background: oklch(0.205 0 0); /* dark gray */
-  --foreground: oklch(0.985 0 0); /* near white */
-  --muted: oklch(0.269 0 0); /* darker gray */
-  --muted-foreground: oklch(0.708 0 0); /* lighter gray text */
-  --border: oklch(1 0 0 / 10%); /* white 10% opacity */
-  --brand: oklch(68.5% 0.169 237.325); /* same blue */
-  --highlight: oklch(45% 0.12 85); /* muted yellow */
-  --sidebar: oklch(0.18 0 0); /* dark sidebar */
+--color-background: oklch(0.205 0 0);
+--color-foreground: oklch(0.985 0 0);
+--color-surface: oklch(0.24 0 0);
+--color-surface-elevated: oklch(0.26 0 0);
+--color-muted: oklch(0.269 0 0);
+--color-muted-foreground: oklch(0.708 0 0);
+--color-border: oklch(1 0 0 / 10%);
+--color-border-subtle: oklch(1 0 0 / 5%);
+--color-highlight: oklch(45% 0.12 85);
+--color-highlight-active: oklch(50% 0.15 85);
+--color-sidebar: oklch(0.18 0 0);
+```
+
+---
+
+## Spacing System
+
+Airy, spacious layout optimized for reading:
+
+| Element                         | Value            |
+| ------------------------------- | ---------------- |
+| Header margin-bottom            | `mb-16`          |
+| Section heading (h2) margin-top | `4rem`           |
+| Section heading margin-bottom   | `1.5rem`         |
+| Paragraph margin-bottom         | `1.5rem`         |
+| Paragraph line-height           | `1.8`            |
+| List item margin-bottom         | `0.75rem`        |
+| Content padding                 | `py-12 lg:py-16` |
+| Footer margin-top               | `mt-20`          |
+| Comment card gap                | `120px`          |
+
+### Common Gaps
+
+| Token     | Value | Usage                           |
+| --------- | ----- | ------------------------------- |
+| `gap-1.5` | 6px   | Between icon and text           |
+| `gap-2`   | 8px   | Between tags, badges            |
+| `gap-3`   | 12px  | Between avatar and name         |
+| `gap-4`   | 16px  | Between major elements in a row |
+
+---
+
+## Component API
+
+### Button
+
+```tsx
+interface ButtonProps {
+  variant?: "default" | "secondary" | "outline" | "ghost" | "link";
+  size?: "sm" | "md" | "lg" | "icon";
 }
 ```
 
-### Key Color Usage
+**Sizes:**
 
-- Brand blue: Active states, badges, primary buttons, highlight rings
-- brand/10: Badge backgrounds, selected preset backgrounds
-- brand/8: Active indicator ring glow, ambient glow effect
-- brand/55: Active border color
-- muted/30: Hover backgrounds
-- muted/50: Selected item backgrounds, panel header backgrounds
-- muted/5: Subtle hover on comments
+- `sm`: h-8, px-3, text-caption
+- `md`: h-9, px-4, text-ui
+- `lg`: h-10, px-5, text-ui
+- `icon`: size-8 (32px × 32px)
+
+**Icon buttons:** Always use `size="icon"` with explicit `className="size-8"` for consistency.
+
+### Badge
+
+```tsx
+interface BadgeProps {
+  variant?:
+    | "default"
+    | "active"
+    | "accent"
+    | "outline"
+    | "week"
+    | "source"
+    | "count";
+}
+```
+
+**Variants:**
+
+- `default`: bg-muted text-muted-foreground
+- `active`: bg-accent text-accent-foreground
+- `accent`: bg-accent-muted text-accent
+- `outline`: border border-border text-muted-foreground
+- `week`: bg-accent-muted text-accent font-semibold
+- `source`: bg-surface text-muted-foreground border
+- `count`: bg-accent text-accent-foreground (circular, size-5)
+
+**Base styles:** px-2, py-0.5, rounded-md, text-micro, font-medium
+
+### Input
+
+```tsx
+interface InputProps {
+  // Standard HTML input props
+}
+```
+
+Base height: h-9 for standard, h-7 for compact (sidebar search)
+
+### Avatar
+
+```tsx
+interface AvatarProps {
+  name: string;
+  src?: string;
+  size?: "sm" | "md" | "lg";
+}
+```
+
+**Sizes:**
+
+- `sm`: size-6 (24px)
+- `md`: size-8 (32px)
+- `lg`: size-10 (40px)
 
 ---
 
-## 3. Spacing & Layout
+## Animation
 
-### Page Container
+### Spring Configurations
 
-```tsx
-<div className="min-h-screen bg-background text-foreground">
-  <div className="flex h-screen overflow-hidden">
-    {/* Left Sidebar */}
-    {/* Main Content */}
-    {/* Right Sidebar */}
-  </div>
-</div>
+```ts
+const springs = {
+  quick: { type: "spring", stiffness: 400, damping: 30 }, // Buttons, toggles
+  default: { type: "spring", stiffness: 300, damping: 30 }, // Panels, modals
+  gentle: { type: "spring", stiffness: 200, damping: 25 }, // Page content
+  page: { type: "spring", stiffness: 150, damping: 20 }, // Page transitions
+};
 ```
 
-### Panel Dimensions
+### Staggered Content
 
-| Panel         | Default | Min   | Max   |
-| ------------- | ------- | ----- | ----- |
-| Left Sidebar  | 280px   | 280px | 400px |
-| Main Content  | flex-1  | -     | -     |
-| Right Sidebar | 360px   | 320px | 520px |
+```ts
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+  },
+};
 
-### Key Spacing Values
+const staggerItem = {
+  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+};
+```
 
-| Token        | Value | Usage                                      |
-| ------------ | ----- | ------------------------------------------ |
-| `gap-1.5`    | 6px   | Between icon and text                      |
-| `gap-2`      | 8px   | Between tags, badges, small elements       |
-| `gap-3`      | 12px  | Between avatar and name, list item spacing |
-| `gap-6`      | 24px  | Between major sections                     |
-| `p-2`        | 8px   | Report list item padding                   |
-| `p-3`        | 12px  | Comment card padding                       |
-| `p-4`        | 16px  | Standard sidebar/panel padding             |
-| `p-5`        | 20px  | Expanded panel padding                     |
-| `px-6 py-6`  | 24px  | Main content padding (desktop)             |
-| `px-4 pb-4`  | 16px  | Main content padding (mobile)              |
-| `space-y-1`  | 4px   | Report list item gaps                      |
-| `space-y-4`  | 16px  | Content section gaps                       |
-| `space-y-10` | 40px  | Settings section gaps                      |
+### Interactive Feedback
+
+- Button press: `whileTap={{ scale: 0.98 }}`
+- Button hover: `whileHover={{ y: -1 }}`
+- Nav button: `whileHover={{ scale: 1.05 }}`, `whileTap={{ scale: 0.95 }}`
 
 ---
 
-## 4. Component Specifications
-
-### Left Sidebar Header
-
-```tsx
-<div className="flex flex-col gap-2 p-4">
-  <div className="flex items-center justify-between">
-    <span className="text-lg font-semibold tracking-tight">Weekly Reports</span>
-    <button className="size-8 rounded-lg hover:bg-muted/30 flex items-center justify-center">
-      <Settings className="size-4" />
-    </button>
-  </div>
-  <Input placeholder="Search reports..." className="h-9" />
-</div>
-```
-
-### Report List Item
-
-```tsx
-<div
-  className={cn(
-    "cursor-pointer rounded-md p-2 transition-colors",
-    "hover:bg-muted/30",
-    isSelected && "bg-muted/50 border border-border",
-  )}
->
-  <div className="flex items-center justify-between gap-2">
-    <span className="text-sm font-medium line-clamp-2">
-      Weekly Business Report
-    </span>
-    <Badge variant="brand" className="shrink-0 h-6 rounded-full px-3">
-      Week 5
-    </Badge>
-  </div>
-  <span className="text-xs text-muted-foreground">Jan 26 - 1, 2026</span>
-</div>
-```
-
-### Report List Loading Skeleton
-
-```tsx
-<div className="space-y-1 p-4">
-  {[1, 2, 3, 4].map((i) => (
-    <div key={i} className="rounded-md p-2 space-y-2">
-      <div className="flex items-center justify-between">
-        <div className="h-5 w-36 rounded-md bg-muted animate-pulse" />
-        <div className="h-5 w-14 rounded-full bg-muted animate-pulse" />
-      </div>
-      <div className="h-4 w-28 rounded-md bg-muted animate-pulse" />
-    </div>
-  ))}
-</div>
-```
-
-### Main Content Header (Desktop)
-
-```tsx
-<div className="space-y-4 px-6 py-6">
-  {/* Title Row */}
-  <div className="flex items-center justify-between mb-2">
-    <div className="flex items-center gap-3">
-      <h1 className="text-3xl font-medium tracking-tight">
-        Weekly Business Report
-      </h1>
-      <Badge
-        variant="brand"
-        className="h-6 rounded-full px-3 text-xs font-medium"
-      >
-        Week 5
-      </Badge>
-    </div>
-    <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm">
-        <Sparkles className="size-4 mr-1.5" />
-        Review Actions
-        <span className="ml-1.5 rounded-full bg-muted px-1.5 text-[10px] font-semibold">
-          3
-        </span>
-      </Button>
-      <Button variant="ghost" size="icon" className="size-8">
-        <Link className="size-4" />
-      </Button>
-    </div>
-  </div>
-
-  {/* Meta Row */}
-  <div className="flex h-5 items-center gap-3 text-sm text-muted-foreground">
-    <span>January 26 - 1, 2026</span>
-    <Separator orientation="vertical" className="h-3" />
-    <span>4:04 PM</span>
-  </div>
-
-  {/* Data Sources */}
-  <div className="flex flex-wrap gap-2">
-    <Badge
-      variant="secondary"
-      className="h-5 rounded-full border border-border bg-muted/30 px-2"
-    >
-      Slack
-    </Badge>
-    <Badge
-      variant="secondary"
-      className="h-5 rounded-full border border-border bg-muted/30 px-2"
-    >
-      Linear
-    </Badge>
-    <Badge
-      variant="secondary"
-      className="h-5 rounded-full border border-border bg-muted/30 px-2"
-    >
-      Google Calendar
-    </Badge>
-  </div>
-</div>
-```
-
-### Main Content Header (Mobile)
-
-```tsx
-<div className="flex items-center gap-3 p-4 border-b border-border">
-  <Button variant="ghost" size="icon" onClick={() => setMobileView("list")}>
-    <ArrowLeft className="size-4" />
-  </Button>
-  <span className="text-sm font-medium truncate">{report.title}</span>
-</div>
-```
-
-### Right Sidebar Header
-
-```tsx
-<div className="p-4 border-b border-border">
-  <span className="text-lg font-semibold tracking-tight">Comments</span>
-</div>
-```
-
-### Comments Empty State
-
-```tsx
-<div className="px-4 pt-8 text-center text-sm text-muted-foreground">
-  Highlight text in the report to add feedback.
-</div>
-```
-
-### Comment Thread Card
-
-```tsx
-<div
-  className={cn(
-    "rounded-lg border p-3 transition-all",
-    "hover:bg-muted/5",
-    isActive && "border-brand/55 ring-4 ring-brand/8",
-  )}
->
-  <div className="flex items-start gap-3">
-    <Avatar className="size-8 border border-border shrink-0">
-      <AvatarImage src={user.avatar} />
-      <AvatarFallback className="text-[10px] font-medium">JC</AvatarFallback>
-    </Avatar>
-    <div className="min-w-0 flex-1">
-      <div className="flex items-center gap-2">
-        <span className="text-sm font-medium truncate">Justin Cheng</span>
-        <span className="text-xs text-muted-foreground">(me)</span>
-      </div>
-      <span className="text-xs text-muted-foreground block mb-1">
-        2 hours ago
-      </span>
-      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-        {comment.text}
-      </p>
-    </div>
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button className="size-6 rounded hover:bg-muted/30 flex items-center justify-center shrink-0">
-          <MoreHorizontal className="size-4" />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </div>
-</div>
-```
-
-### Comment Input Form
-
-```tsx
-<div
-  className={cn(
-    "rounded-lg border border-border bg-background p-4",
-    isFloating ? "max-w-sm shadow-2xl" : "w-full",
-  )}
->
-  {/* Header */}
-  <div className="flex items-center gap-3 mb-3">
-    <Avatar className="size-8 border border-border">
-      <AvatarFallback className="text-[10px]">JC</AvatarFallback>
-    </Avatar>
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-medium truncate">Justin Cheng</span>
-      <span className="text-xs text-muted-foreground">(me)</span>
-    </div>
-  </div>
-
-  {/* Textarea */}
-  <Textarea
-    className="min-h-[120px] resize-none border-border"
-    rows={3}
-    placeholder="Add your feedback..."
-  />
-
-  {/* Actions */}
-  <div className="flex justify-end gap-2 mt-3">
-    <Button variant="outline" size="sm">
-      Cancel
-    </Button>
-    <Button size="sm">
-      <Check className="size-4 mr-1" />
-      Submit
-    </Button>
-  </div>
-</div>
-```
-
-### Text Highlight Wrapper
-
-```tsx
-<span
-  className={cn(
-    "transition-colors duration-200",
-    hasComment && "cursor-pointer",
-    isActive && "ring-2 ring-brand/30",
-  )}
-  style={{ backgroundColor: "var(--highlight)" }}
-  data-highlight-id={highlightId}
->
-  {text}
-</span>
-```
-
-### Settings Page Layout
-
-```tsx
-<div className="max-w-3xl mx-auto px-4 md:p-8">
-  {/* Header */}
-  <div className="flex items-center justify-between mb-6">
-    <h2 className="text-2xl font-bold tracking-tight">
-      Weekly Report Settings
-    </h2>
-    <Button variant="ghost" size="icon" className="size-8">
-      <X className="size-4" />
-    </Button>
-  </div>
-
-  {/* Sections */}
-  <div className="space-y-10">
-    {/* Schedule Section */}
-    <div className="space-y-4">
-      <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-        SCHEDULE
-      </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* Preset buttons */}
-      </div>
-    </div>
-  </div>
-</div>
-```
-
-### Settings Preset Button
-
-```tsx
-<button
-  className={cn(
-    "w-full rounded-lg border py-3 px-4 text-left transition-colors",
-    isSelected
-      ? "border-brand bg-brand/10 text-brand"
-      : "border-border hover:bg-muted/30",
-  )}
->
-  <span className="block text-sm font-medium">{preset.label}</span>
-  <span className="block text-xs text-muted-foreground mt-1">
-    {preset.description}
-  </span>
-</button>
-```
-
----
-
-## 5. Animations
-
-### Spring Configuration (Primary)
-
-```tsx
-transition={{ type: "spring", duration: 0.4, bounce: 0 }}
-```
-
-- `type: "spring"`: Physics-based motion
-- `duration: 0.4`: 400ms
-- `bounce: 0`: No overshoot (critically damped, professional feel)
-
-### Sidebar Resize Animation
-
-```tsx
-<motion.div
-  style={{ width }}
-  transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-/>
-```
-
-### Content Entrance (Blur + Slide)
-
-```tsx
-initial={{ opacity: 0, y: -8, filter: "blur(4px)" }}
-animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-exit={{ opacity: 0, y: 8, filter: "blur(4px)" }}
-transition={{ type: "spring", duration: 0.4, bounce: 0 }}
-```
-
-### Layout Animations
-
-```tsx
-<motion.div
-  layoutId={`report-${report.id}`}
-  transition={{ type: "spring", duration: 0.4, bounce: 0 }}
-/>
-```
-
-### Pulsing Active Indicator
-
-```tsx
-<span className="relative flex size-2">
-  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
-  <span className="relative inline-flex size-2 rounded-full bg-brand" />
-</span>
-```
-
-### Button Press
-
-```tsx
-<motion.button
-  whileTap={{ scale: 0.97 }}
-  transition={{ type: "spring", duration: 0.15, bounce: 0 }}
-/>
-```
-
-### Tooltip/Popover Enter
-
-```tsx
-initial={{ opacity: 0 }}
-animate={{ opacity: 1 }}
-exit={{ opacity: 0 }}
-transition={{ duration: 0.15 }}
-```
-
-### Hover Effects
-
-```css
-/* Card hover */
-hover:bg-muted/30 hover:border-border
-
-/* Text hover */
-group-hover:text-foreground
-
-/* All with transition-colors */
-transition-colors
-```
-
----
-
-## 6. Border Radius Scale
-
-```css
---radius: 0.625rem; /* 10px base */
---radius-sm: calc(var(--radius) - 4px); /* 6px */
---radius-md: calc(var(--radius) - 2px); /* 8px */
---radius-lg: var(--radius); /* 10px */
---radius-xl: calc(var(--radius) + 4px); /* 14px */
-```
-
-### Usage
-
-| Element      | Radius            |
-| ------------ | ----------------- |
-| List items   | rounded-md (8px)  |
-| Cards        | rounded-lg (10px) |
-| Panels       | rounded-xl (14px) |
-| Avatars      | rounded-full      |
-| Badges/pills | rounded-full      |
-| Buttons      | rounded-md (8px)  |
-
----
-
-## 7. Shadows
-
-| Element                | Shadow               |
-| ---------------------- | -------------------- |
-| Floating comment input | shadow-2xl           |
-| Dropdown menus         | shadow-md            |
-| Default cards          | none (flat design)   |
-| Card hover             | shadow-sm (optional) |
-
----
-
-## 8. Interactive States
-
-### Report List Item States
-
-| State    | Border        | Background  | Text       |
-| -------- | ------------- | ----------- | ---------- |
-| Default  | transparent   | transparent | foreground |
-| Hover    | transparent   | bg-muted/30 | foreground |
-| Selected | border-border | bg-muted/50 | foreground |
-
-### Comment Thread States
-
-| State   | Border          | Background  | Ring                |
-| ------- | --------------- | ----------- | ------------------- |
-| Default | border-border   | transparent | none                |
-| Hover   | border-border   | bg-muted/5  | none                |
-| Active  | border-brand/55 | transparent | ring-4 ring-brand/8 |
+## Interactive States
+
+### List Item States
+
+| State    | Background      | Text             |
+| -------- | --------------- | ---------------- |
+| Default  | transparent     | muted-foreground |
+| Hover    | bg-muted        | foreground       |
+| Selected | bg-accent-muted | foreground       |
+
+### Comment Card States
+
+| State   | Style                                 |
+| ------- | ------------------------------------- |
+| Default | bg-sidebar border-border shadow-sm    |
+| Hover   | Shows edit/delete action icons        |
+| Edit    | Inline textarea replaces comment text |
+| Delete  | Overlay confirmation dialog           |
 
 ### Highlight States
 
-| State       | Background       | Cursor  | Ring                 |
-| ----------- | ---------------- | ------- | -------------------- |
-| Default     | var(--highlight) | default | none                 |
-| Has comment | var(--highlight) | pointer | none                 |
-| Active      | var(--highlight) | pointer | ring-2 ring-brand/30 |
-
-### Button States
-
-| State    | Style                              |
-| -------- | ---------------------------------- |
-| Default  | bg-primary text-primary-foreground |
-| Hover    | bg-primary/90                      |
-| Active   | scale(0.97)                        |
-| Disabled | opacity-50 cursor-not-allowed      |
+| State   | Background                    | Cursor  |
+| ------- | ----------------------------- | ------- |
+| Default | var(--color-highlight)        | pointer |
+| Hover   | var(--color-highlight-active) | pointer |
+| Active  | var(--color-highlight-active) | pointer |
 
 ---
 
-## 9. Required Dependencies
+## Border Radius
+
+| Element    | Radius        |
+| ---------- | ------------- |
+| List items | rounded-md    |
+| Cards      | rounded-lg    |
+| Buttons    | rounded-md/lg |
+| Avatars    | rounded-full  |
+| Badges     | rounded-md    |
+
+---
+
+## Shadows
+
+```css
+--shadow-sm: 0 1px 2px oklch(0% 0 0 / 3%);
+--shadow-md: 0 2px 8px oklch(0% 0 0 / 5%);
+--shadow-lg: 0 4px 16px oklch(0% 0 0 / 8%);
+--shadow-xl: 0 8px 24px oklch(0% 0 0 / 10%);
+--shadow-float: 0 12px 32px oklch(0% 0 0 / 12%);
+```
+
+Usage:
+
+- Floating inputs: shadow-float
+- Dropdown menus: shadow-lg
+- Default cards: none (flat design)
+
+---
+
+## Comments System
+
+The comments system enables Google Docs-style inline commenting on report content.
+
+### Architecture
+
+| Component            | Purpose                                        |
+| -------------------- | ---------------------------------------------- |
+| `HighlightedContent` | Container enabling text selection and comments |
+| `HighlightRenderer`  | Recursively wraps text in highlight spans      |
+| `CommentLayer`       | Positions comment cards next to highlights     |
+| `CommentCard`        | Displays comment with edit/delete actions      |
+| `CommentComposer`    | Slide-in panel for writing new comments        |
+| `useTextSelection`   | Hook for capturing text selection events       |
+
+### Key Features
+
+- **DOM-based highlighting:** Text wrapped in `<span data-highlight>` elements
+- **Position calculation:** Cards positioned relative to highlight Y coordinate
+- **Auto-scroll:** Clicking a comment scrolls to its highlighted text
+- **Overlap prevention:** Cards stack with 120px minimum gap
+- **Inside scroll container:** Comment layer scrolls with content (Google Docs behavior)
+
+### Data Flow
+
+1. User selects text in `HighlightedContent`
+2. `useTextSelection` captures selection with offsets
+3. `CommentComposer` opens for user input
+4. Comment saved to `comment-store` with highlight data
+5. `HighlightRenderer` wraps text at stored offsets
+6. `CommentLayer` positions `CommentCard` at highlight location
+
+---
+
+## Key Implementation Notes
+
+1. **Icon buttons:** All use size-8 (32px) for consistency
+2. **Badges:** Use the Badge component, not inline spans
+3. **Dividers:** Use `border-b border-border-subtle` between sections
+4. **Dates:** Use `tabular-nums` for consistent digit spacing
+5. **Flex children:** Use `min-w-0` to prevent text overflow
+6. **Shrink prevention:** Use `shrink-0` on badges/avatars
+7. **Transitions:** All colors use `transition-colors duration-200`
+8. **Highlighting:** DOM-based (wraps text with `<span>` elements)
+
+---
+
+## Review Actions Modal
+
+### Layout Variants
+
+The Review Actions Modal supports three switchable layouts:
+
+| Layout         | Description                                           | Best For                         |
+| -------------- | ----------------------------------------------------- | -------------------------------- |
+| `split-panel`  | Two-column: participants left, content right          | Seeing everything at once        |
+| `minimal-card` | Clean card with inline recipient chips                | Simple reviews, modern aesthetic |
+| `accordion`    | Collapsible sections, recipients collapsed by default | Maximum content visibility       |
+
+**Layout Switcher:** Located in the modal header before pagination. Three icons allow switching between layouts. Selection persists to localStorage.
+
+### Layout-Specific Details
+
+**Split Panel:**
+
+- Grid: `grid-cols-[200px_1fr] gap-8`
+- Modal width: `max-w-3xl` (wider to accommodate two columns)
+- Left column: action header + participants list
+- Right column: subject/name input + message/description textarea
+
+**Minimal Card:**
+
+- Centered card with max-width constraint
+- Recipients displayed as inline chips: `[Name ×]`
+- CC/BCC shown as inline badge: `[Name CC ×]`
+- Borderless inputs for document-like editing
+- Auto-growing textarea
+
+**Accordion:**
+
+- Stacked card sections with collapsible recipients
+- Recipients section collapsed by default (shows count + preview)
+- Content section always expanded
+- Click header to expand/collapse recipients
+
+### Common Patterns
+
+- **"+Add" placement:** Always in section header (icon button), never at bottom of list
+- **Typography:** Uses `text-modal-*` scale throughout
+- **Footer:** Confirm button only (no Skip button)
+- **Participant removal:** X button appears on hover
+
+---
+
+## Dependencies
 
 ```json
 {
   "motion": "^12.x",
   "lucide-react": "^0.561.x",
   "tailwindcss": "^4.x",
-  "@radix-ui/react-avatar": "^1.x",
-  "@radix-ui/react-dropdown-menu": "^2.x",
-  "@radix-ui/react-separator": "^1.x",
-  "react-markdown": "^9.x"
+  "@tailwindcss/typography": "^0.5.x"
 }
 ```
-
----
-
-## 10. CSS Setup
-
-```css
-@import "tailwindcss";
-
-@layer base {
-  html,
-  body,
-  #root {
-    height: 100%;
-  }
-
-  body {
-    margin: 0;
-    font-family: "Manrope", system-ui, sans-serif;
-    font-weight: 400;
-  }
-
-  * {
-    @apply border-border outline-ring/50;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
-@layer utilities {
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: var(--border);
-    border-radius: 3px;
-  }
-}
-```
-
----
-
-## 11. Data Structures
-
-```typescript
-interface WeeklyReport {
-  id: string;
-  title: string;
-  weekNumber: number;
-  dateRange: { start: Date; end: Date };
-  generatedAt: Date;
-  content: string; // Markdown
-  dataSources: DataSource[];
-  highlights: Highlight[];
-}
-
-interface DataSource {
-  id: string;
-  type: "slack" | "linear" | "calendar" | "email" | "document";
-  label: string;
-}
-
-interface Highlight {
-  id: string;
-  reportId: string;
-  startOffset: number;
-  endOffset: number;
-  contextSelector: string;
-  comments: Comment[];
-}
-
-interface Comment {
-  id: string;
-  highlightId: string;
-  userId: string;
-  userName: string;
-  userAvatar?: string;
-  text: string;
-  createdAt: Date;
-  updatedAt?: Date;
-}
-
-interface User {
-  id: string;
-  name: string;
-  avatar?: string;
-  email: string;
-}
-
-interface SchedulePreset {
-  id: string;
-  label: string;
-  description: string;
-  cronExpression: string;
-}
-```
-
----
-
-## 12. Mobile Behavior
-
-### View States
-
-```typescript
-type MobileView = "list" | "detail";
-const [mobileView, setMobileView] = useState<MobileView>("list");
-```
-
-### Responsive Adjustments
-
-| Element         | Desktop            | Mobile           |
-| --------------- | ------------------ | ---------------- |
-| Report title    | text-3xl           | text-xl          |
-| Content padding | px-6 py-6          | px-4 pt-0 pb-4   |
-| Sidebars        | Visible, resizable | Hidden / Sheet   |
-| Comments        | Right sidebar      | Sheet from right |
-
-### Comments Sheet (Mobile)
-
-```tsx
-<Sheet>
-  <SheetContent side="right" className="w-full max-w-md p-4">
-    <SheetHeader>
-      <SheetTitle className="text-lg font-semibold">Comments</SheetTitle>
-    </SheetHeader>
-    {/* Comment threads */}
-  </SheetContent>
-</Sheet>
-```
-
----
-
-## 13. Background Effects
-
-### Ambient Glow
-
-```tsx
-<div className="pointer-events-none fixed inset-x-0 -bottom-32 z-0 flex justify-center">
-  <div className="h-72 w-full max-w-2xl rounded-full bg-brand/8 blur-3xl" />
-</div>
-```
-
-- Position: Fixed to bottom, extends below viewport
-- Size: 288px tall, max 672px wide
-- Color: Brand at 8% opacity
-- Blur: 64px radius (blur-3xl)
-
----
-
-## 14. Key Implementation Notes
-
-1. **Dates use `tabular-nums`** for consistent digit spacing
-2. **Overlapping avatars use `-space-x-2`** for stacked effect
-3. **All text colors transition with `transition-colors`** for smooth hover states
-4. **Use `min-w-0` on flex children** to prevent text overflow issues
-5. **Use `shrink-0` on badges/avatars** to prevent squishing
-6. **Comments sidebar uses `bg-sidebar`** for subtle differentiation
-7. **Floating inputs use `shadow-2xl`** for elevation
-8. **DOM-based highlighting** (not overlay positioning) — wraps text nodes with `<span>` elements
-9. **Click outside to close**: Use mousedown/touchstart listeners on document
-10. **Escape to close**: Add keydown listener when panels are open
-11. **Minimum text selection**: 3 characters before creating highlight
-12. **Line clamp**: Use `line-clamp-2` on list item titles to prevent overflow
-
----
-
-## 15. Badge Variants
-
-### Week Badge (Primary)
-
-```tsx
-// variant="brand"
-className = "h-6 rounded-full bg-brand/10 px-3 text-xs font-medium text-brand";
-```
-
-### Data Source Badge (Secondary)
-
-```tsx
-// variant="secondary"
-className =
-  "h-5 rounded-full border border-border bg-muted/30 px-2 text-xs font-medium text-muted-foreground";
-```
-
-### Status Badge
-
-```tsx
-const statusConfig = {
-  pending: {
-    dotClass: "bg-muted-foreground",
-    bgClass: "bg-muted/30",
-    textClass: "text-muted-foreground",
-  },
-  reviewed: {
-    dotClass: "bg-brand",
-    bgClass: "bg-brand/10",
-    textClass: "text-brand",
-  },
-};
-```
-
----
-
-## 16. Accessibility
-
-1. **Keyboard Navigation:**
-   - Report list items: `tabIndex={0}`, Enter/Space to select
-   - Comments: Tab through threads, Enter to expand
-   - Escape closes panels/sheets
-
-2. **Focus States:**
-   - Visible focus ring on all interactive elements
-   - `focus-visible:ring-2 focus-visible:ring-brand/50`
-
-3. **Screen Readers:**
-   - `aria-label` on icon buttons
-   - `aria-expanded` on collapsible sections
-   - Semantic heading hierarchy (h1 → h2 → h3)
-
----
-
-## 17. Design Principles
-
-### Visual Hierarchy
-
-- **Primary:** Report title (30px, foreground)
-- **Secondary:** Section headers, body (15px, foreground/muted)
-- **Tertiary:** Labels, dates (12px, muted-foreground, uppercase)
-
-### Color Restraint
-
-- Grayscale dominates the interface
-- Brand color reserved for:
-  - Active/selected states
-  - Highlights
-  - Primary actions
-  - Badges that need emphasis
-
-### Interaction Feedback
-
-- Hover states are subtle — background tint appears
-- Active states use brand color ring (8% opacity)
-- Transitions are fast but smooth (400ms spring, no bounce)
-
-### Border Treatment
-
-- Borders are extremely light (`oklch(0.922 0 0)`)
-- Used to separate, not emphasize
-- Rounded corners on everything (8-12px typical)
-
-### Information Density
-
-- Dense but not crowded
-- Clear visual separation between sections
-- Liberal whitespace between major elements

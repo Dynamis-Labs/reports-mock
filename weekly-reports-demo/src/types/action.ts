@@ -1,6 +1,10 @@
-export type ActionType = "meeting" | "email";
+import type { PRDSourceContext } from "./sources";
+
+export type ActionType = "meeting" | "email" | "prd-generation";
 
 export type MatchStatus = "matched" | "suggested" | "manual" | "none";
+
+export type RecipientType = "to" | "cc" | "bcc";
 
 export interface Participant {
   id: string;
@@ -8,6 +12,7 @@ export interface Participant {
   email: string;
   matchStatus: MatchStatus;
   matchedContactId?: string;
+  recipientType?: RecipientType;
 }
 
 interface BaseAction {
@@ -32,7 +37,13 @@ export interface EmailAction extends BaseAction {
   recipients: Participant[];
 }
 
-export type Action = MeetingAction | EmailAction;
+export interface PRDGenerationAction extends BaseAction {
+  type: "prd-generation";
+  prompt: string;
+  sourceContext: PRDSourceContext;
+}
+
+export type Action = MeetingAction | EmailAction | PRDGenerationAction;
 
 // Type guards for narrowing
 export function isMeetingAction(action: Action): action is MeetingAction {
@@ -41,4 +52,10 @@ export function isMeetingAction(action: Action): action is MeetingAction {
 
 export function isEmailAction(action: Action): action is EmailAction {
   return action.type === "email";
+}
+
+export function isPRDGenerationAction(
+  action: Action,
+): action is PRDGenerationAction {
+  return action.type === "prd-generation";
 }

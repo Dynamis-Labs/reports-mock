@@ -1,7 +1,7 @@
 import { useRef, useCallback, useMemo, type ReactNode } from "react";
 import { useCommentStore } from "../../stores/comment-store";
 import { useTextSelection } from "../../hooks/useTextSelection";
-import { cn } from "../../lib/utils";
+import { HighlightRenderer } from "./highlight-renderer";
 
 interface HighlightedContentProps {
   children: ReactNode;
@@ -21,6 +21,7 @@ export function HighlightedContent({
 
   const {
     highlights,
+    activeHighlightId,
     isComposerOpen,
     setPendingSelection,
     openComposer,
@@ -61,26 +62,15 @@ export function HighlightedContent({
     <div
       ref={containerRef as React.RefObject<HTMLDivElement>}
       onClick={handleClick}
-      className={cn("relative", className)}
+      className={className}
     >
-      {children}
-
-      {/* Visual highlight styles */}
-      <style>
-        {reportHighlights
-          .map(
-            (h) => `
-          [data-highlight-id="${h.id}"] {
-            background: var(--color-accent-muted, rgba(255, 200, 0, 0.2));
-            cursor: pointer;
-          }
-          [data-highlight-id="${h.id}"][data-active="true"] {
-            background: var(--color-accent, rgba(255, 200, 0, 0.4));
-          }
-        `,
-          )
-          .join("\n")}
-      </style>
+      <HighlightRenderer
+        highlights={reportHighlights}
+        activeHighlightId={activeHighlightId}
+        onHighlightClick={setActiveHighlight}
+      >
+        {children}
+      </HighlightRenderer>
     </div>
   );
 }

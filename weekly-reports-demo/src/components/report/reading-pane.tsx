@@ -1,10 +1,12 @@
 import { motion, useScroll, useSpring } from "motion/react";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { staggerContainer } from "../../lib/motion";
 import { ReportHeader } from "./report-header";
 import { ReportContent } from "./report-content";
+import { LeadershipDigest } from "./leadership-digest";
 import { HighlightedContent, CommentLayer } from "../comments";
 import { useCommentStore } from "../../stores/comment-store";
+import { cn } from "../../lib/utils";
 import type { WeeklyReport } from "../../data/mock-reports";
 
 interface ReadingPaneProps {
@@ -14,6 +16,7 @@ interface ReadingPaneProps {
 export function ReadingPane({ report }: ReadingPaneProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const positioningRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ container: scrollContainerRef });
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -22,6 +25,13 @@ export function ReadingPane({ report }: ReadingPaneProps) {
   });
 
   const { activeHighlightId, highlights } = useCommentStore();
+
+  // Check if there are comments for this report
+  const reportHighlights = useMemo(
+    () => (report ? highlights.filter((h) => h.reportId === report.id) : []),
+    [highlights, report],
+  );
+  const hasComments = reportHighlights.length > 0;
 
   // Auto-scroll to active highlight
   useEffect(() => {
@@ -35,7 +45,6 @@ export function ReadingPane({ report }: ReadingPaneProps) {
     const highlight = highlights.find((h) => h.id === activeHighlightId);
     if (!highlight) return;
 
-    // Find the text position and scroll to it
     const walker = document.createTreeWalker(
       contentRef.current,
       NodeFilter.SHOW_TEXT,
@@ -57,7 +66,6 @@ export function ReadingPane({ report }: ReadingPaneProps) {
         const containerRect =
           scrollContainerRef.current.getBoundingClientRect();
 
-        // Scroll to center the highlight in the viewport
         const scrollTop =
           scrollContainerRef.current.scrollTop +
           rect.top -
@@ -89,31 +97,53 @@ export function ReadingPane({ report }: ReadingPaneProps) {
   }
 
   return (
-    <div className="relative h-full flex">
-      {/* Main content area */}
-      <div className="flex-1 relative">
-        {/* Reading progress indicator */}
-        <motion.div
-          className="absolute top-0 left-0 right-0 h-0.5 bg-accent origin-left z-10"
-          style={{ scaleX }}
-        />
+    <div className="relative h-full">
+      {/* Reading progress indicator */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-[1px] bg-accent origin-left z-10"
+        style={{ scaleX }}
+      />
 
-        {/* Content */}
-        <div ref={scrollContainerRef} className="h-full overflow-y-auto">
+      {/* Scrollable content area */}
+      <div ref={scrollContainerRef} className="h-full overflow-y-auto">
+        {/* Relative container for absolute positioning of comment layer */}
+        <div ref={positioningRef} className="relative min-h-full">
+          {/*
+            To center on the VIEWPORT (screen center at 960px on 1920 screen):
+            Content left edge = (viewport - content width) / 2
+            Within main panel = that position - (nav + sidebar width)
+
+            Formula: margin-left = (100vw - 672px) / 2 - 272px
+            At 1920px: (1920 - 672) / 2 - 272 = 624 - 272 = 352px
+          */}
           <motion.div
-            className="px-8 py-8 lg:px-12 lg:py-10 max-w-4xl"
+            className={cn(
+              "max-w-2xl px-8 py-12 lg:px-12 lg:py-16",
+              // Add right padding when comments exist to make room
+              hasComments && "pr-8",
+            )}
+            style={{
+              // Center content on viewport, accounting for sidebar
+              marginLeft: "calc((100vw - 672px) / 2 - 272px)",
+            }}
             variants={staggerContainer}
             initial="hidden"
             animate="visible"
             key={report.id}
           >
             <ReportHeader report={report} />
+
+            {/* All content wrapped in HighlightedContent for universal commenting */}
             <HighlightedContent reportId={report.id} contentRef={contentRef}>
-              <ReportContent content={report.content} />
+              {report.reportType === "leadership-digest" ? (
+                <LeadershipDigest report={report} />
+              ) : (
+                <ReportContent content={report.content} />
+              )}
             </HighlightedContent>
 
             {/* Footer flourish */}
-            <div className="mt-16 pt-8 border-t border-border-subtle flex items-center justify-center gap-4">
+            <div className="mt-20 pt-10 border-t border-border-subtle flex items-center justify-center gap-4">
               <div className="w-8 h-px bg-accent/30" />
               <span className="text-micro text-muted-foreground/50 uppercase tracking-widest">
                 End of Report
@@ -121,11 +151,18 @@ export function ReadingPane({ report }: ReadingPaneProps) {
               <div className="w-8 h-px bg-accent/30" />
             </div>
           </motion.div>
+
+          {/* Comment layer - INSIDE scroll container, positioned absolutely */}
+          {/* Cards scroll with document content like Google Docs */}
+          {hasComments && (
+            <CommentLayer
+              contentRef={contentRef}
+              positioningRef={positioningRef}
+              reportId={report.id}
+            />
+          )}
         </div>
       </div>
-
-      {/* Comment layer - positioned in the right margin */}
-      <CommentLayer contentRef={contentRef} reportId={report.id} />
     </div>
   );
 }

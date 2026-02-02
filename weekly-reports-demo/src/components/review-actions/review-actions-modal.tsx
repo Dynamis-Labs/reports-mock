@@ -2,18 +2,28 @@ import { useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { useReviewActionsStore } from "../../stores/review-actions-store";
-import {
-  modalOverlayVariants,
-  modalContentVariants,
-  springs,
-} from "../../lib/motion";
+import { modalContentVariants, springs } from "../../lib/motion";
 import { ReviewActionsHeader } from "./review-actions-header";
-import { ActionFormContainer } from "./action-form-container";
 import { Button } from "../ui/button";
+import {
+  SplitPanelLayout,
+  MinimalCardLayout,
+  AccordionLayout,
+} from "./layouts";
+import { isEmailAction, isMeetingAction } from "../../types/action";
 
 export function ReviewActionsModal() {
-  const { isOpen, closeModal, skipAction, markCompleted, draftAction } =
-    useReviewActionsStore();
+  const {
+    isOpen,
+    closeModal,
+    markCompleted,
+    draftAction,
+    layout,
+    updateDraft,
+    addParticipant,
+    removeParticipant,
+    cycleRecipientType,
+  } = useReviewActionsStore();
 
   // Handle escape key
   const handleKeyDown = useCallback(
@@ -28,7 +38,6 @@ export function ReviewActionsModal() {
   useEffect(() => {
     if (isOpen) {
       document.addEventListener("keydown", handleKeyDown);
-      // Prevent body scroll when modal is open
       document.body.style.overflow = "hidden";
     }
 
@@ -55,58 +64,97 @@ export function ReviewActionsModal() {
   const content = (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          id="review-actions-modal"
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          variants={modalOverlayVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          transition={springs.default}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="review-actions-title"
-        >
-          {/* Dark overlay */}
+        <>
+          {/* Backdrop */}
           <motion.div
-            className="absolute inset-0 bg-background/95 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
             onClick={closeModal}
           />
 
-          {/* Modal content */}
-          <motion.div
-            className="relative w-full max-w-2xl mx-4 bg-surface-elevated rounded-2xl shadow-float border border-border"
-            variants={modalContentVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            transition={springs.default}
-            onClick={(e) => e.stopPropagation()}
+          {/* Modal container */}
+          <div
+            id="review-actions-modal"
+            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="review-actions-title"
           >
-            {/* Header */}
-            <ReviewActionsHeader />
+            {/* Modal content */}
+            <motion.div
+              className={`relative w-full mx-4 bg-surface-elevated rounded-xl shadow-float border border-border pointer-events-auto ${
+                layout === "split-panel" ? "max-w-3xl" : "max-w-2xl"
+              }`}
+              variants={modalContentVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={springs.default}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <ReviewActionsHeader />
 
-            {/* Content */}
-            <div className="px-6 py-4 min-h-[400px]">
-              <ActionFormContainer />
-            </div>
+              {/* Content */}
+              <div className="px-8 py-6 min-h-[420px]">
+                {draftAction &&
+                  (isEmailAction(draftAction) ||
+                    isMeetingAction(draftAction)) && (
+                    <>
+                      {layout === "split-panel" && (
+                        <SplitPanelLayout
+                          action={draftAction}
+                          onUpdateDraft={updateDraft}
+                          onAddParticipant={addParticipant}
+                          onRemoveParticipant={removeParticipant}
+                          onCycleRecipientType={cycleRecipientType}
+                        />
+                      )}
+                      {layout === "minimal-card" && (
+                        <MinimalCardLayout
+                          action={draftAction}
+                          onUpdateDraft={updateDraft}
+                          onAddParticipant={addParticipant}
+                          onRemoveParticipant={removeParticipant}
+                          onCycleRecipientType={cycleRecipientType}
+                        />
+                      )}
+                      {layout === "accordion" && (
+                        <AccordionLayout
+                          action={draftAction}
+                          onUpdateDraft={updateDraft}
+                          onAddParticipant={addParticipant}
+                          onRemoveParticipant={removeParticipant}
+                          onCycleRecipientType={cycleRecipientType}
+                        />
+                      )}
+                    </>
+                  )}
+                {!draftAction && (
+                  <div className="flex items-center justify-center h-full text-modal-ui text-muted-foreground">
+                    No actions to review
+                  </div>
+                )}
+              </div>
 
-            {/* Footer */}
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border-subtle">
-              <Button variant="outline" size="md" onClick={skipAction}>
-                Skip
-              </Button>
-              <Button
-                variant="default"
-                size="md"
-                onClick={markCompleted}
-                disabled={!draftAction}
-              >
-                Done
-              </Button>
-            </div>
-          </motion.div>
-        </motion.div>
+              {/* Footer - Confirm only, no Skip */}
+              <div className="flex items-center justify-end px-8 py-4 border-t border-border-subtle">
+                <Button
+                  variant="default"
+                  size="md"
+                  className="h-9 px-5 text-modal-ui"
+                  onClick={markCompleted}
+                  disabled={!draftAction}
+                >
+                  Confirm
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        </>
       )}
     </AnimatePresence>
   );

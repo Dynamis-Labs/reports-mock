@@ -94,3 +94,39 @@ export const actionSlideVariants = {
     x: direction > 0 ? -40 : 40,
   }),
 };
+
+// Chatbox quick actions container
+export const chatboxQuickActionsVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 0.1,
+    },
+  },
+  exit: { opacity: 0 },
+};
+
+// Individual quick action chip
+export const chatboxChipVariants = {
+  hidden: { opacity: 0, y: 8, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: springs.quick,
+  },
+  exit: { opacity: 0, y: -4, scale: 0.98 },
+};
+
+// Chat message entrance
+export const chatMessageVariants = {
+  hidden: { opacity: 0, y: 10, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: springs.default,
+  },
+};

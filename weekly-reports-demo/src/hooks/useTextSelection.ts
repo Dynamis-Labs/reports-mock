@@ -1,4 +1,4 @@
-import { useCallback, useEffect, type RefObject } from "react";
+import { useCallback, useEffect, useRef, type RefObject } from "react";
 
 interface SelectionData {
   text: string;
@@ -17,9 +17,16 @@ export function useTextSelection({
   containerRef,
   onSelect,
   enabled = true,
-}: UseTextSelectionOptions) {
+}: UseTextSelectionOptions): void {
+  const enabledRef = useRef(enabled);
+
+  // Update ref in effect to avoid updating during render
+  useEffect(() => {
+    enabledRef.current = enabled;
+  }, [enabled]);
+
   const handleMouseUp = useCallback(() => {
-    if (!enabled || !containerRef.current) return;
+    if (!enabledRef.current || !containerRef.current) return;
 
     const selection = window.getSelection();
     if (!selection || selection.isCollapsed) return;
@@ -49,12 +56,10 @@ export function useTextSelection({
 
     // Clear native selection after capturing
     selection.removeAllRanges();
-  }, [containerRef, onSelect, enabled]);
+  }, [containerRef, onSelect]);
 
   useEffect(() => {
-    if (!enabled) return;
-
     document.addEventListener("mouseup", handleMouseUp);
     return () => document.removeEventListener("mouseup", handleMouseUp);
-  }, [handleMouseUp, enabled]);
+  }, [handleMouseUp]);
 }

@@ -1,9 +1,11 @@
 import type { SVGProps } from "react";
 
 export function SlackIcon(props: SVGProps<SVGSVGElement>) {
+  // Adjusted viewBox to crop tighter around the logo content (originally 0 0 270 270)
+  // This makes the icon appear ~2x larger at the same dimensions
   return (
     <svg
-      viewBox="0 0 270 270"
+      viewBox="70 70 130 130"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       {...props}

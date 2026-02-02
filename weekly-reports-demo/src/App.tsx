@@ -4,8 +4,12 @@ import { TooltipProvider } from "./components/ui/tooltip";
 import { AppLayout } from "./components/layout/app-layout";
 import { ArchiveSidebar } from "./components/layout/archive-sidebar";
 import { CommentPanel } from "./components/comments";
+import { SourcesSidebar } from "./components/sources";
 import { ReadingPane } from "./components/report/reading-pane";
+import { SettingsPane } from "./components/settings";
 import { ReviewActionsModal } from "./components/review-actions";
+import { AskSentraChatbox } from "./components/chat";
+import { useSettingsStore } from "./stores/settings-store";
 import { mockReports } from "./data/mock-reports";
 
 // Mock current user - in a real app this would come from auth
@@ -19,6 +23,8 @@ function App() {
     mockReports[0]?.id ?? null,
   );
   const [activeSection, setActiveSection] = useState("reports");
+
+  const isSettingsOpen = useSettingsStore((state) => state.isOpen);
 
   const selectedReport =
     mockReports.find((r) => r.id === selectedReportId) ?? null;
@@ -36,9 +42,16 @@ function App() {
               onSelectReport={setSelectedReportId}
             />
           }
-          mainContent={<ReadingPane report={selectedReport} />}
+          mainContent={
+            isSettingsOpen ? (
+              <SettingsPane />
+            ) : (
+              <ReadingPane report={selectedReport} />
+            )
+          }
           commentPanel={
-            selectedReport && (
+            selectedReport &&
+            !isSettingsOpen && (
               <CommentPanel
                 reportId={selectedReport.id}
                 userName={CURRENT_USER.name}
@@ -48,6 +61,8 @@ function App() {
           }
         />
         <ReviewActionsModal />
+        {!isSettingsOpen && <AskSentraChatbox />}
+        <SourcesSidebar />
       </TooltipProvider>
     </ThemeProvider>
   );

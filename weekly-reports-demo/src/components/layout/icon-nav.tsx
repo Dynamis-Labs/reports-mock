@@ -46,16 +46,9 @@ interface IconNavProps {
 
 export function IconNav({ activeSection, onSectionChange }: IconNavProps) {
   return (
-    <nav className="w-[60px] shrink-0 flex flex-col items-center py-4 bg-sidebar border-r border-border">
-      {/* Logo */}
-      <div className="mb-4">
-        <div className="size-8 rounded-lg bg-accent flex items-center justify-center">
-          <span className="text-accent-foreground font-bold text-sm">W</span>
-        </div>
-      </div>
-
+    <nav className="w-[52px] shrink-0 flex flex-col items-center py-3 bg-sidebar border-r border-border">
       {/* Nav Items */}
-      <div className="flex-1 flex flex-col items-center gap-1">
+      <div className="flex-1 flex flex-col items-center gap-0.5">
         {navItems.map((item) => {
           const isActive = item.id === activeSection;
           const Icon = item.icon;
@@ -66,7 +59,7 @@ export function IconNav({ activeSection, onSectionChange }: IconNavProps) {
                 <motion.button
                   onClick={() => onSectionChange?.(item.id)}
                   className={cn(
-                    "relative size-10 rounded-lg flex items-center justify-center",
+                    "relative size-8 rounded-md flex items-center justify-center",
                     "transition-colors duration-200",
                     isActive
                       ? "bg-accent-muted text-accent"
@@ -76,11 +69,11 @@ export function IconNav({ activeSection, onSectionChange }: IconNavProps) {
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", duration: 0.15, bounce: 0 }}
                 >
-                  <Icon className="size-5" />
+                  <Icon className="size-4" />
                   {isActive && (
                     <motion.div
                       layoutId="activeNavIndicator"
-                      className="absolute left-0 w-0.5 h-5 bg-accent rounded-r"
+                      className="absolute left-0 w-0.5 h-4 bg-accent rounded-r"
                       transition={{ type: "spring", duration: 0.4, bounce: 0 }}
                     />
                   )}

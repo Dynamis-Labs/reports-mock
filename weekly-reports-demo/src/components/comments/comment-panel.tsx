@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CommentComposer } from "./comment-composer";
 import { useCommentStore } from "../../stores/comment-store";
@@ -16,6 +17,28 @@ export function CommentPanel({
 }: CommentPanelProps) {
   const { pendingSelection, isComposerOpen, closeComposer, addComment } =
     useCommentStore();
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  // Click outside to close
+  useEffect(() => {
+    if (!isComposerOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+        closeComposer();
+      }
+    };
+
+    // Delay to prevent immediate close from the selection mouseup event
+    const timeoutId = setTimeout(() => {
+      document.addEventListener("mousedown", handleClickOutside);
+    }, 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isComposerOpen, closeComposer]);
 
   const handleSubmit = (text: string) => {
     addComment(text, userName, userId, reportId);
@@ -25,6 +48,7 @@ export function CommentPanel({
     <AnimatePresence>
       {isComposerOpen && pendingSelection && (
         <motion.div
+          ref={panelRef}
           initial={{ width: 0, opacity: 0 }}
           animate={{ width: 320, opacity: 1 }}
           exit={{ width: 0, opacity: 0 }}
@@ -34,9 +58,6 @@ export function CommentPanel({
           )}
         >
           <div className="w-80">
-            <div className="p-4 border-b border-border">
-              <h3 className="text-caption font-semibold">Add Comment</h3>
-            </div>
             <CommentComposer
               userName={userName}
               selectedText={pendingSelection.text}

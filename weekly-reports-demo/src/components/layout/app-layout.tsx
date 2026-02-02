@@ -1,21 +1,8 @@
-import { type ReactNode, useState, useCallback, useEffect } from "react";
+import { type ReactNode } from "react";
 import { IconNav } from "./icon-nav";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "./resizable-panel";
 import { cn } from "../../lib/utils";
 
-const LEFT_MIN = 280;
-const LEFT_DEFAULT = 280;
-const LEFT_MAX = 400;
-
-const STORAGE_KEY = "weekly-reports-layout";
-
-interface StoredLayout {
-  leftWidth?: number;
-}
+const SIDEBAR_WIDTH = 220;
 
 interface AppLayoutProps {
   activeSection?: string;
@@ -26,22 +13,6 @@ interface AppLayoutProps {
   className?: string;
 }
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
-
-function getStoredLayout(): StoredLayout {
-  if (typeof window === "undefined") {
-    return {};
-  }
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    return stored ? JSON.parse(stored) : {};
-  } catch {
-    return {};
-  }
-}
-
 export function AppLayout({
   activeSection = "reports",
   onSectionChange,
@@ -50,19 +21,6 @@ export function AppLayout({
   commentPanel,
   className,
 }: AppLayoutProps) {
-  const [leftWidth, setLeftWidth] = useState(
-    () => getStoredLayout().leftWidth ?? LEFT_DEFAULT,
-  );
-
-  // Persist to localStorage
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ leftWidth }));
-  }, [leftWidth]);
-
-  const handleLeftResize = useCallback((delta: number) => {
-    setLeftWidth((w: number) => clamp(w + delta, LEFT_MIN, LEFT_MAX));
-  }, []);
-
   return (
     <div
       className={cn("flex h-screen overflow-hidden bg-background", className)}
@@ -73,23 +31,20 @@ export function AppLayout({
         onSectionChange={onSectionChange}
       />
 
-      {/* Resizable Panels */}
-      <ResizablePanelGroup>
-        <ResizablePanel
-          width={leftWidth}
-          className="border-r border-border bg-sidebar overflow-y-auto"
-        >
-          {leftSidebar}
-        </ResizablePanel>
+      {/* Fixed-width Left Sidebar */}
+      <aside
+        style={{ width: SIDEBAR_WIDTH }}
+        className="shrink-0 border-r border-border bg-sidebar overflow-y-auto"
+      >
+        {leftSidebar}
+      </aside>
 
-        <ResizableHandle onResize={handleLeftResize} side="left" />
+      {/* Main Content */}
+      <div className="flex-1 min-w-0 bg-background overflow-hidden">
+        {mainContent}
+      </div>
 
-        <ResizablePanel className="bg-background overflow-hidden">
-          {mainContent}
-        </ResizablePanel>
-      </ResizablePanelGroup>
-
-      {/* Comment Panel - slides in dynamically */}
+      {/* Comment Panel - slides in from right */}
       {commentPanel}
     </div>
   );

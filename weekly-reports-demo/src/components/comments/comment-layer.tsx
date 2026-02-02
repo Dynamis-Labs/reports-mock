@@ -5,7 +5,7 @@ import {
   useMemo,
   type RefObject,
 } from "react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { CommentCard } from "./comment-card";
 import { useCommentStore } from "../../stores/comment-store";
 import type { CommentHighlight } from "../../stores/comment-store";
@@ -17,14 +17,21 @@ interface CommentPosition {
 
 interface CommentLayerProps {
   contentRef: RefObject<HTMLElement | null>;
+  positioningRef: RefObject<HTMLElement | null>;
   reportId: string;
 }
 
+/**
+ * Calculate comment card positions relative to the positioning ancestor.
+ * Cards are positioned at the Y coordinate of their highlighted text.
+ * Since this layer is INSIDE the scroll container, no scroll offset is needed.
+ */
 function calculatePositionsFromDOM(
   element: HTMLElement,
-  highlights: CommentHighlight[],
+  positioningAncestor: HTMLElement,
+  highlights: readonly CommentHighlight[],
 ): CommentPosition[] {
-  const containerRect = element.getBoundingClientRect();
+  const ancestorRect = positioningAncestor.getBoundingClientRect();
   const newPositions: CommentPosition[] = [];
 
   for (const highlight of highlights) {
@@ -59,27 +66,32 @@ function calculatePositionsFromDOM(
 
     if (range) {
       const rect = range.getBoundingClientRect();
+      // Position relative to positioning ancestor (not contentRef)
+      // This accounts for ReportHeader and padding above the content
       newPositions.push({
         id: highlight.id,
-        top: rect.top - containerRect.top + element.scrollTop,
+        top: rect.top - ancestorRect.top,
       });
     }
   }
 
-  // Avoid overlapping - stack cards with minimum gap
-  newPositions.sort((a, b) => a.top - b.top);
-  const minGap = 100;
-  for (let i = 1; i < newPositions.length; i++) {
-    const prevBottom = newPositions[i - 1].top + minGap;
-    if (newPositions[i].top < prevBottom) {
-      newPositions[i].top = prevBottom;
-    }
-  }
+  // Sort and avoid overlapping - stack cards with minimum gap
+  const sortedPositions = [...newPositions].sort((a, b) => a.top - b.top);
+  const minGap = 120;
 
-  return newPositions;
+  return sortedPositions.reduce<CommentPosition[]>((acc, pos, index) => {
+    if (index === 0) return [pos];
+    const prevBottom = acc[index - 1].top + minGap;
+    const adjustedTop = pos.top < prevBottom ? prevBottom : pos.top;
+    return [...acc, { ...pos, top: adjustedTop }];
+  }, []);
 }
 
-export function CommentLayer({ contentRef, reportId }: CommentLayerProps) {
+export function CommentLayer({
+  contentRef,
+  positioningRef,
+  reportId,
+}: CommentLayerProps) {
   const { highlights, activeHighlightId, setActiveHighlight } =
     useCommentStore();
   const [positions, setPositions] = useState<CommentPosition[]>([]);
@@ -91,39 +103,52 @@ export function CommentLayer({ contentRef, reportId }: CommentLayerProps) {
 
   const updatePositions = useCallback(() => {
     const element = contentRef.current;
-    if (!element) return;
+    const ancestor = positioningRef.current;
+    if (!element || !ancestor) return;
     // Use requestAnimationFrame to batch with browser paint
     requestAnimationFrame(() => {
-      setPositions(calculatePositionsFromDOM(element, reportHighlights));
+      setPositions(
+        calculatePositionsFromDOM(element, ancestor, reportHighlights),
+      );
     });
-  }, [contentRef, reportHighlights]);
+  }, [contentRef, positioningRef, reportHighlights]);
 
   // Calculate positions after mount and when highlights change
   useEffect(() => {
     updatePositions();
   }, [updatePositions]);
 
-  // Set up scroll and resize listeners
+  // Only resize listener needed - scroll listener removed since layer is inside scroll container
   useEffect(() => {
-    const element = contentRef.current;
-    if (!element) return;
-
-    const container = element.closest(".overflow-y-auto");
-    if (container) {
-      container.addEventListener("scroll", updatePositions);
-    }
     window.addEventListener("resize", updatePositions);
-
     return () => {
-      container?.removeEventListener("scroll", updatePositions);
       window.removeEventListener("resize", updatePositions);
     };
-  }, [contentRef, updatePositions]);
+  }, [updatePositions]);
+
+  // Don't render anything if no comments
+  if (reportHighlights.length === 0) {
+    return null;
+  }
+
+  // Position comment layer centered in the gap between content and right edge.
+  // Content: max-w-2xl (672px) with marginLeft = calc((100vw - 672px) / 2 - 272px).
+  // Gap on right = calc(50vw - 336px), center card (256px) in that gap.
+  const layerStyle: React.CSSProperties = {
+    right: "calc(25vw - 296px)",
+  };
 
   return (
-    <div className="absolute inset-y-0 right-0 w-72 pointer-events-none">
-      <div className="relative h-full pointer-events-auto">
-        <AnimatePresence>
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ type: "spring", duration: 0.4, bounce: 0 }}
+      className="absolute top-0 w-64 pointer-events-none"
+      style={layerStyle}
+    >
+      <div className="relative pointer-events-auto">
+        <AnimatePresence mode="popLayout">
           {reportHighlights.map((highlight) => {
             const position = positions.find((p) => p.id === highlight.id);
             if (!position) return null;
@@ -140,6 +165,6 @@ export function CommentLayer({ contentRef, reportId }: CommentLayerProps) {
           })}
         </AnimatePresence>
       </div>
-    </div>
+    </motion.div>
   );
 }

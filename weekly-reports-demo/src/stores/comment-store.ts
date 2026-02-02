@@ -45,6 +45,8 @@ interface CommentState {
     userId: string,
     reportId: string,
   ) => void;
+  updateComment: (highlightId: string, newText: string) => void;
+  deleteHighlight: (highlightId: string) => void;
   clearHighlightsForReport: (reportId: string) => void;
 }
 
@@ -92,6 +94,24 @@ export const useCommentStore = create<CommentState>((set, get) => ({
       activeHighlightId: newHighlight.id,
     });
   },
+
+  updateComment: (highlightId, newText) =>
+    set((state) => ({
+      highlights: state.highlights.map((h) =>
+        h.id === highlightId && h.comment
+          ? { ...h, comment: { ...h.comment, text: newText } }
+          : h,
+      ),
+    })),
+
+  deleteHighlight: (highlightId) =>
+    set((state) => ({
+      highlights: state.highlights.filter((h) => h.id !== highlightId),
+      activeHighlightId:
+        state.activeHighlightId === highlightId
+          ? null
+          : state.activeHighlightId,
+    })),
 
   clearHighlightsForReport: (reportId) =>
     set((state) => ({

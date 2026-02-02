@@ -1,11 +1,14 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type {
   Action,
   MeetingAction,
   EmailAction,
   Participant,
-  MatchStatus,
+  RecipientType,
 } from "../types/action";
+
+export type ModalLayout = "split-panel" | "minimal-card" | "accordion";
 
 interface ReviewActionsState {
   // Modal state
@@ -19,18 +22,21 @@ interface ReviewActionsState {
   // Navigation direction for animations
   direction: number;
 
+  // Layout preference
+  layout: ModalLayout;
+
   // Actions
   openModal: (actions: Action[]) => void;
   closeModal: () => void;
   goToNext: () => void;
   goToPrevious: () => void;
+  setLayout: (layout: ModalLayout) => void;
 
   // Draft mutations
   updateDraft: (updates: Partial<Action>) => void;
   addParticipant: (participant: Participant) => void;
   removeParticipant: (participantId: string) => void;
-  updateParticipantMatch: (participantId: string, status: MatchStatus) => void;
-  confirmParticipant: (participantId: string) => void;
+  cycleRecipientType: (participantId: string) => void;
 
   // Action completion
   markCompleted: () => void;
@@ -41,241 +47,207 @@ interface ReviewActionsState {
   remainingCount: () => number;
 }
 
-export const useReviewActionsStore = create<ReviewActionsState>((set, get) => ({
-  isOpen: false,
-  actions: [],
-  currentIndex: 0,
-  draftAction: null,
-  direction: 0,
+type SetState = (
+  partial:
+    | Partial<ReviewActionsState>
+    | ((state: ReviewActionsState) => Partial<ReviewActionsState>),
+) => void;
+type GetState = () => ReviewActionsState;
 
-  openModal: (actions) => {
-    const pendingActions = actions.filter((a) => a.status === "pending");
-    const firstAction = pendingActions[0] ?? null;
-    set({
-      isOpen: true,
-      actions: pendingActions,
-      currentIndex: 0,
-      draftAction: firstAction ? { ...firstAction } : null,
-      direction: 0,
-    });
-  },
+function finalizeAction(set: SetState, get: GetState, action: Action): void {
+  const { actions, currentIndex } = get();
+  const updatedActions = actions.map((a, i) =>
+    i === currentIndex ? action : a,
+  );
 
-  closeModal: () =>
+  const nextPendingIndex = updatedActions.findIndex(
+    (a, i) => i > currentIndex && a.status === "pending",
+  );
+
+  if (nextPendingIndex === -1) {
     set({
+      actions: updatedActions,
       isOpen: false,
       draftAction: null,
-      direction: 0,
-    }),
-
-  goToNext: () => {
-    const { actions, currentIndex, draftAction } = get();
-    if (currentIndex >= actions.length - 1) return;
-
-    // Save current draft back to actions before moving
-    const updatedActions = draftAction
-      ? actions.map((a, i) => (i === currentIndex ? { ...draftAction } : a))
-      : actions;
-
-    const nextIndex = currentIndex + 1;
+    });
+  } else {
     set({
       actions: updatedActions,
-      currentIndex: nextIndex,
-      draftAction: { ...updatedActions[nextIndex] },
+      currentIndex: nextPendingIndex,
+      draftAction: { ...updatedActions[nextPendingIndex] },
       direction: 1,
     });
-  },
+  }
+}
 
-  goToPrevious: () => {
-    const { actions, currentIndex, draftAction } = get();
-    if (currentIndex <= 0) return;
+export const useReviewActionsStore = create<ReviewActionsState>()(
+  persist(
+    (set, get) => ({
+      isOpen: false,
+      actions: [],
+      currentIndex: 0,
+      draftAction: null,
+      direction: 0,
+      layout: "minimal-card" as ModalLayout,
 
-    // Save current draft back to actions before moving
-    const updatedActions = draftAction
-      ? actions.map((a, i) => (i === currentIndex ? { ...draftAction } : a))
-      : actions;
+      openModal: (actions) => {
+        const pendingActions = actions.filter((a) => a.status === "pending");
+        const firstAction = pendingActions[0] ?? null;
+        set({
+          isOpen: true,
+          actions: pendingActions,
+          currentIndex: 0,
+          draftAction: firstAction ? { ...firstAction } : null,
+          direction: 0,
+        });
+      },
 
-    const prevIndex = currentIndex - 1;
-    set({
-      actions: updatedActions,
-      currentIndex: prevIndex,
-      draftAction: { ...updatedActions[prevIndex] },
-      direction: -1,
-    });
-  },
+      closeModal: () =>
+        set({
+          isOpen: false,
+          draftAction: null,
+          direction: 0,
+        }),
 
-  updateDraft: (updates) => {
-    const { draftAction } = get();
-    if (!draftAction) return;
-    set({ draftAction: { ...draftAction, ...updates } as Action });
-  },
+      setLayout: (layout) => set({ layout }),
 
-  addParticipant: (participant) => {
-    const { draftAction } = get();
-    if (!draftAction) return;
+      goToNext: () => {
+        const { actions, currentIndex, draftAction } = get();
+        if (currentIndex >= actions.length - 1) return;
 
-    if (draftAction.type === "meeting") {
-      set({
-        draftAction: {
-          ...draftAction,
-          participants: [...draftAction.participants, participant],
-        } as MeetingAction,
-      });
-    } else {
-      set({
-        draftAction: {
-          ...draftAction,
-          recipients: [...draftAction.recipients, participant],
-        } as EmailAction,
-      });
-    }
-  },
+        // Save current draft back to actions before moving
+        const updatedActions = draftAction
+          ? actions.map((a, i) => (i === currentIndex ? { ...draftAction } : a))
+          : actions;
 
-  removeParticipant: (participantId) => {
-    const { draftAction } = get();
-    if (!draftAction) return;
+        const nextIndex = currentIndex + 1;
+        set({
+          actions: updatedActions,
+          currentIndex: nextIndex,
+          draftAction: { ...updatedActions[nextIndex] },
+          direction: 1,
+        });
+      },
 
-    if (draftAction.type === "meeting") {
-      set({
-        draftAction: {
-          ...draftAction,
-          participants: draftAction.participants.filter(
-            (p) => p.id !== participantId,
-          ),
-        } as MeetingAction,
-      });
-    } else {
-      set({
-        draftAction: {
-          ...draftAction,
-          recipients: draftAction.recipients.filter(
-            (p) => p.id !== participantId,
-          ),
-        } as EmailAction,
-      });
-    }
-  },
+      goToPrevious: () => {
+        const { actions, currentIndex, draftAction } = get();
+        if (currentIndex <= 0) return;
 
-  updateParticipantMatch: (participantId, status) => {
-    const { draftAction } = get();
-    if (!draftAction) return;
+        // Save current draft back to actions before moving
+        const updatedActions = draftAction
+          ? actions.map((a, i) => (i === currentIndex ? { ...draftAction } : a))
+          : actions;
 
-    const updateParticipants = (participants: Participant[]) =>
-      participants.map((p) =>
-        p.id === participantId ? { ...p, matchStatus: status } : p,
-      );
+        const prevIndex = currentIndex - 1;
+        set({
+          actions: updatedActions,
+          currentIndex: prevIndex,
+          draftAction: { ...updatedActions[prevIndex] },
+          direction: -1,
+        });
+      },
 
-    if (draftAction.type === "meeting") {
-      set({
-        draftAction: {
-          ...draftAction,
-          participants: updateParticipants(draftAction.participants),
-        } as MeetingAction,
-      });
-    } else {
-      set({
-        draftAction: {
-          ...draftAction,
-          recipients: updateParticipants(draftAction.recipients),
-        } as EmailAction,
-      });
-    }
-  },
+      updateDraft: (updates) => {
+        const { draftAction } = get();
+        if (!draftAction) return;
+        set({ draftAction: { ...draftAction, ...updates } as Action });
+      },
 
-  confirmParticipant: (participantId) => {
-    const { draftAction } = get();
-    if (!draftAction) return;
+      addParticipant: (participant) => {
+        const { draftAction } = get();
+        if (!draftAction) return;
 
-    const confirmInList = (participants: Participant[]) =>
-      participants.map((p) =>
-        p.id === participantId ? { ...p, matchStatus: "matched" as const } : p,
-      );
+        if (draftAction.type === "meeting") {
+          set({
+            draftAction: {
+              ...draftAction,
+              participants: [...draftAction.participants, participant],
+            } as MeetingAction,
+          });
+        } else if (draftAction.type === "email") {
+          set({
+            draftAction: {
+              ...draftAction,
+              recipients: [...draftAction.recipients, participant],
+            } as EmailAction,
+          });
+        }
+      },
 
-    if (draftAction.type === "meeting") {
-      set({
-        draftAction: {
-          ...draftAction,
-          participants: confirmInList(draftAction.participants),
-        } as MeetingAction,
-      });
-    } else {
-      set({
-        draftAction: {
-          ...draftAction,
-          recipients: confirmInList(draftAction.recipients),
-        } as EmailAction,
-      });
-    }
-  },
+      removeParticipant: (participantId) => {
+        const { draftAction } = get();
+        if (!draftAction) return;
 
-  markCompleted: () => {
-    const { actions, currentIndex, draftAction } = get();
-    if (!draftAction) return;
+        if (draftAction.type === "meeting") {
+          set({
+            draftAction: {
+              ...draftAction,
+              participants: draftAction.participants.filter(
+                (p) => p.id !== participantId,
+              ),
+            } as MeetingAction,
+          });
+        } else if (draftAction.type === "email") {
+          set({
+            draftAction: {
+              ...draftAction,
+              recipients: draftAction.recipients.filter(
+                (p) => p.id !== participantId,
+              ),
+            } as EmailAction,
+          });
+        }
+      },
 
-    const completedAction: Action = { ...draftAction, status: "completed" };
-    const updatedActions = actions.map((a, i) =>
-      i === currentIndex ? completedAction : a,
-    );
+      cycleRecipientType: (participantId) => {
+        const { draftAction } = get();
+        if (!draftAction || draftAction.type !== "email") return;
 
-    // Move to next pending action or close
-    const nextPendingIndex = updatedActions.findIndex(
-      (a, i) => i > currentIndex && a.status === "pending",
-    );
+        const cycleOrder: RecipientType[] = ["to", "cc", "bcc"];
 
-    if (nextPendingIndex === -1) {
-      // No more pending actions
-      set({
-        actions: updatedActions,
-        isOpen: false,
-        draftAction: null,
-      });
-    } else {
-      set({
-        actions: updatedActions,
-        currentIndex: nextPendingIndex,
-        draftAction: { ...updatedActions[nextPendingIndex] },
-        direction: 1,
-      });
-    }
-  },
+        const updatedRecipients = draftAction.recipients.map((p) => {
+          if (p.id !== participantId) return p;
 
-  skipAction: () => {
-    const { actions, currentIndex, draftAction } = get();
-    if (!draftAction) return;
+          const currentType = p.recipientType ?? "to";
+          const currentIndex = cycleOrder.indexOf(currentType);
+          const nextType = cycleOrder[(currentIndex + 1) % cycleOrder.length];
 
-    const skippedAction: Action = { ...draftAction, status: "skipped" };
-    const updatedActions = actions.map((a, i) =>
-      i === currentIndex ? skippedAction : a,
-    );
+          return { ...p, recipientType: nextType };
+        });
 
-    // Move to next pending action or close
-    const nextPendingIndex = updatedActions.findIndex(
-      (a, i) => i > currentIndex && a.status === "pending",
-    );
+        set({
+          draftAction: {
+            ...draftAction,
+            recipients: updatedRecipients,
+          } as EmailAction,
+        });
+      },
 
-    if (nextPendingIndex === -1) {
-      // No more pending actions
-      set({
-        actions: updatedActions,
-        isOpen: false,
-        draftAction: null,
-      });
-    } else {
-      set({
-        actions: updatedActions,
-        currentIndex: nextPendingIndex,
-        draftAction: { ...updatedActions[nextPendingIndex] },
-        direction: 1,
-      });
-    }
-  },
+      markCompleted: () => {
+        const { draftAction } = get();
+        if (!draftAction) return;
+        finalizeAction(set, get, { ...draftAction, status: "completed" });
+      },
 
-  currentAction: () => {
-    const { draftAction } = get();
-    return draftAction;
-  },
+      skipAction: () => {
+        const { draftAction } = get();
+        if (!draftAction) return;
+        finalizeAction(set, get, { ...draftAction, status: "skipped" });
+      },
 
-  remainingCount: () => {
-    const { actions } = get();
-    return actions.filter((a) => a.status === "pending").length;
-  },
-}));
+      currentAction: () => {
+        const { draftAction } = get();
+        return draftAction;
+      },
+
+      remainingCount: () => {
+        const { actions } = get();
+        return actions.filter((a) => a.status === "pending").length;
+      },
+    }),
+    {
+      name: "review-actions-layout",
+      partialize: (state) => ({ layout: state.layout }),
+    },
+  ),
+);

@@ -45,44 +45,41 @@ export function CommentComposer({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 20 }}
       transition={{ type: "spring", duration: 0.3, bounce: 0 }}
-      className="p-4 space-y-4"
+      className="p-4 space-y-3"
     >
       {/* Selected text preview */}
-      <div className="bg-accent/10 rounded-md p-3 border-l-2 border-accent">
-        <p className="text-caption text-muted-foreground line-clamp-3">
+      <div className="bg-accent/10 rounded-md p-2.5 border-l-2 border-accent">
+        <p className="text-xs text-muted-foreground line-clamp-2">
           "{selectedText}"
         </p>
       </div>
 
-      {/* User info + textarea */}
-      <div className="flex gap-3">
-        <Avatar name={userName} size="sm" />
-        <div className="flex-1 space-y-2">
-          <p className="text-caption font-medium">{userName}</p>
-          <textarea
-            ref={textareaRef}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Add a comment..."
-            rows={3}
-            className={cn(
-              "w-full resize-none rounded-md border border-border bg-background",
-              "px-3 py-2 text-ui placeholder:text-muted-foreground",
-              "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
-            )}
-          />
-        </div>
+      {/* Avatar + name row (Google Docs style) */}
+      <div className="flex items-center gap-2.5">
+        <Avatar name={userName} size="md" />
+        <span className="text-sm font-medium">{userName}</span>
       </div>
 
-      {/* Actions */}
-      <div className="flex justify-end gap-2">
+      {/* Pill-shaped input */}
+      <textarea
+        ref={textareaRef}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="Comment or add others with @"
+        rows={1}
+        className={cn(
+          "w-full resize-none rounded-full border border-accent bg-background",
+          "px-4 py-2 text-sm placeholder:text-muted-foreground caret-accent",
+          "focus:outline-none focus:border-accent",
+        )}
+      />
+
+      {/* Actions - clickable buttons with hover states */}
+      <div className="flex justify-end items-center gap-2">
         <button
           onClick={onCancel}
-          className={cn(
-            "px-4 py-2 text-caption font-medium rounded-md",
-            "text-muted-foreground hover:bg-muted transition-colors",
-          )}
+          className="px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-full hover:bg-muted hover:text-foreground transition-colors"
         >
           Cancel
         </button>
@@ -90,10 +87,10 @@ export function CommentComposer({
           onClick={handleSubmit}
           disabled={!text.trim()}
           className={cn(
-            "px-4 py-2 text-caption font-medium rounded-md",
+            "px-4 py-1.5 text-sm font-medium rounded-full",
             "bg-accent text-accent-foreground",
             "hover:bg-accent/90 transition-colors",
-            "disabled:opacity-50 disabled:cursor-not-allowed",
+            "disabled:bg-muted disabled:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed",
           )}
         >
           Comment

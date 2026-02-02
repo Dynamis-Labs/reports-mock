@@ -1,29 +1,11 @@
 import { motion } from "motion/react";
 import { Search, X } from "lucide-react";
 import { cn } from "../../../../lib/utils";
+import { formatRelativeTimeShort } from "../../../../lib/date-utils";
 import { ContactAvatar } from "../../shared/contact-avatar";
 import { useCrmStore } from "../../../../stores/crm-store";
 import { springs, staggerContainer, staggerItem } from "../../../../lib/motion";
 import type { Contact } from "../../../../types/contact";
-
-/**
- * Contact Sidebar
- *
- * Condensed contact list for master-detail view.
- * Features search, selection state, and subtle hover animations.
- */
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  if (days === 0) return "Today";
-  if (days === 1) return "1d";
-  if (days < 7) return `${days}d`;
-  if (days < 30) return `${Math.floor(days / 7)}w`;
-  return `${Math.floor(days / 30)}mo`;
-}
 
 interface ContactSidebarProps {
   contacts: Contact[];
@@ -117,7 +99,7 @@ export function ContactSidebar({ contacts }: ContactSidebarProps) {
                     </span>
                     <span className="text-muted-foreground/30">·</span>
                     <span className="text-[11px] text-muted-foreground/60 tabular-nums shrink-0">
-                      {formatRelativeTime(contact.lastContacted)}
+                      {formatRelativeTimeShort(contact.lastContacted)}
                     </span>
                   </div>
                 </div>

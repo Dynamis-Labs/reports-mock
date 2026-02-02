@@ -8,6 +8,7 @@ import {
   FileText,
 } from "lucide-react";
 import { cn } from "../../../lib/utils";
+import { formatRelativeTime } from "../../../lib/date-utils";
 import { springs } from "../../../lib/motion";
 import type { Interaction, InteractionType } from "../../../types/contact";
 
@@ -29,19 +30,6 @@ const interactionConfig: Record<
   linkedin: { icon: Linkedin, color: "text-sky-600" },
   note: { icon: FileText, color: "text-amber-500" },
 };
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  if (days === 0) return "Today";
-  if (days === 1) return "Yesterday";
-  if (days < 7) return `${days}d ago`;
-  if (days < 30) return `${Math.floor(days / 7)}w ago`;
-  if (days < 365) return `${Math.floor(days / 30)}mo ago`;
-  return `${Math.floor(days / 365)}y ago`;
-}
 
 interface ActivityTimelineProps {
   interactions: Interaction[];

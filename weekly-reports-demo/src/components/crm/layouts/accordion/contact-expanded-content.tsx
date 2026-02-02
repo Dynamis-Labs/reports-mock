@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Sparkles, User, MessageCircle, Activity, Clock } from "lucide-react";
 import { cn } from "../../../../lib/utils";
 import { Badge } from "../../../ui/badge";
+import { SectionHeader } from "../../shared/section-header";
 import { ActivityTimeline } from "../../shared/activity-timeline";
 import { springs } from "../../../../lib/motion";
 import type { Contact } from "../../../../types/contact";
@@ -10,7 +11,7 @@ import type { Contact } from "../../../../types/contact";
  * Contact Expanded Content
  *
  * The "pokedex" reveal - detailed contact information that appears
- * when a contact card is expanded. Features beautiful staggered animations
+ * when a contact card is expanded. Features staggered animations
  * and a clear information hierarchy.
  */
 
@@ -30,24 +31,6 @@ const sectionVariants = {
     },
   }),
 };
-
-// Section header component
-function SectionHeader({
-  icon: Icon,
-  title,
-}: {
-  icon: typeof Sparkles;
-  title: string;
-}) {
-  return (
-    <div className="flex items-center gap-2 mb-3">
-      <Icon className="size-3.5 text-accent" />
-      <h4 className="text-micro font-semibold text-muted-foreground uppercase tracking-wider">
-        {title}
-      </h4>
-    </div>
-  );
-}
 
 export function ContactExpandedContent({
   contact,

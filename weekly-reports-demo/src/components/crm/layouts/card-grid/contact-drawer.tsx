@@ -7,7 +7,6 @@ import {
   Phone,
   MapPin,
   Calendar,
-  ExternalLink,
   Linkedin,
   Sparkles,
   MessageSquare,
@@ -21,73 +20,11 @@ import { Badge } from "../../../ui/badge";
 import { Button } from "../../../ui/button";
 import { ContactAvatar } from "../../shared/contact-avatar";
 import { RelationshipIndicator } from "../../shared/relationship-indicator";
+import { SectionHeader } from "../../shared/section-header";
+import { InfoRow } from "../../shared/info-row";
 import { ActivityTimeline } from "../../shared/activity-timeline";
 import { springs, staggerContainer, staggerItem } from "../../../../lib/motion";
 import type { Contact } from "../../../../types/contact";
-
-/**
- * Contact Drawer
- *
- * Slide-in detail drawer for card grid layout.
- * Features: Backdrop blur, spring animation, magazine-style content.
- */
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Section Components
-// ─────────────────────────────────────────────────────────────────────────────
-
-function SectionTitle({
-  icon: Icon,
-  title,
-}: {
-  icon: typeof Sparkles;
-  title: string;
-}) {
-  return (
-    <div className="flex items-center gap-2 mb-3">
-      <Icon className="size-4 text-accent" />
-      <h4 className="font-semibold text-ui text-foreground">{title}</h4>
-    </div>
-  );
-}
-
-function InfoItem({
-  icon: Icon,
-  label,
-  value,
-  href,
-}: {
-  icon: typeof Mail;
-  label: string;
-  value: string;
-  href?: string;
-}) {
-  const content = (
-    <div className="flex items-center gap-3 py-2">
-      <Icon className="size-4 text-muted-foreground/60 shrink-0" />
-      <div className="flex-1 min-w-0">
-        <p className="text-micro text-muted-foreground/60 mb-0.5">{label}</p>
-        <p className="text-caption text-foreground truncate">{value}</p>
-      </div>
-      {href && <ExternalLink className="size-3 text-muted-foreground/40" />}
-    </div>
-  );
-
-  if (href) {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block hover:bg-muted/50 -mx-2 px-2 rounded-lg transition-colors"
-      >
-        {content}
-      </a>
-    );
-  }
-
-  return content;
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Drawer Content
@@ -147,7 +84,7 @@ function DrawerContent({ contact }: { contact: Contact }) {
 
       {/* AI Summary */}
       <motion.section variants={staggerItem}>
-        <SectionTitle icon={Sparkles} title="AI Insight" />
+        <SectionHeader icon={Sparkles} title="AI Insight" />
         <div className="relative pl-4">
           <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent via-accent/50 to-transparent rounded-full" />
           <p className="text-ui text-foreground leading-relaxed">
@@ -207,15 +144,15 @@ function DrawerContent({ contact }: { contact: Contact }) {
           Contact Info
         </h4>
         <div className="space-y-0.5">
-          <InfoItem icon={Mail} label="Email" value={contact.email} />
+          <InfoRow icon={Mail} label="Email" value={contact.email} />
           {contact.phone && (
-            <InfoItem icon={Phone} label="Phone" value={contact.phone} />
+            <InfoRow icon={Phone} label="Phone" value={contact.phone} />
           )}
           {contact.location && (
-            <InfoItem icon={MapPin} label="Location" value={contact.location} />
+            <InfoRow icon={MapPin} label="Location" value={contact.location} />
           )}
           {contact.linkedIn && (
-            <InfoItem
+            <InfoRow
               icon={Linkedin}
               label="LinkedIn"
               value="View Profile"
@@ -228,7 +165,7 @@ function DrawerContent({ contact }: { contact: Contact }) {
       {/* Notes */}
       {contact.notes.customSummary && (
         <motion.section variants={staggerItem}>
-          <SectionTitle icon={MessageSquare} title="Notes" />
+          <SectionHeader icon={MessageSquare} title="Notes" />
           <p className="text-caption text-muted-foreground leading-relaxed">
             {contact.notes.customSummary}
           </p>
@@ -278,7 +215,7 @@ function DrawerContent({ contact }: { contact: Contact }) {
       {/* Recent Topics */}
       {contact.recentTopics.length > 0 && (
         <motion.section variants={staggerItem}>
-          <SectionTitle icon={MessageSquare} title="Recent Topics" />
+          <SectionHeader icon={MessageSquare} title="Recent Topics" />
           <div className="flex flex-wrap gap-1.5">
             {contact.recentTopics.map((topic) => (
               <span
@@ -298,7 +235,7 @@ function DrawerContent({ contact }: { contact: Contact }) {
 
       {/* Activity Timeline */}
       <motion.section variants={staggerItem}>
-        <SectionTitle icon={Activity} title="Recent Activity" />
+        <SectionHeader icon={Activity} title="Recent Activity" />
         <ActivityTimeline interactions={contact.interactions} limit={5} />
       </motion.section>
 

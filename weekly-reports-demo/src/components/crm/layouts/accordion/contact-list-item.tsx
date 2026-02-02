@@ -1,35 +1,13 @@
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronRight, Mail, Phone, MapPin } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { cn } from "../../../../lib/utils";
+import { formatRelativeTime } from "../../../../lib/date-utils";
 import { ContactAvatar } from "../../shared/contact-avatar";
 import { RelationshipIndicator } from "../../shared/relationship-indicator";
 import { ContactExpandedContent } from "./contact-expanded-content";
 import { Badge } from "../../../ui/badge";
 import { springs, staggerItem } from "../../../../lib/motion";
 import type { Contact } from "../../../../types/contact";
-
-/**
- * Contact List Item
- *
- * A premium accordion-style contact card that expands to reveal
- * detailed "pokedex" information. Features buttery smooth animations
- * and elegant information hierarchy.
- */
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  if (days === 0) return "Today";
-  if (days === 1) return "Yesterday";
-  if (days < 7) return `${days}d ago`;
-  if (days < 30) return `${Math.floor(days / 7)}w ago`;
-  return new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
 
 interface ContactListItemProps {
   contact: Contact;
@@ -142,35 +120,6 @@ export function ContactListItem({
           />
         </motion.div>
       </button>
-
-      {/* Quick Contact Info Bar (when collapsed, on hover) */}
-      {!isExpanded && (
-        <div
-          className={cn(
-            "px-5 pb-3 pt-0",
-            "flex items-center gap-4",
-            "opacity-0 group-hover:opacity-100",
-            "transition-opacity duration-150",
-          )}
-        >
-          <div className="flex items-center gap-1.5 text-micro text-muted-foreground/60">
-            <Mail className="size-3" />
-            <span className="truncate max-w-32">{contact.email}</span>
-          </div>
-          {contact.phone && (
-            <div className="flex items-center gap-1.5 text-micro text-muted-foreground/60">
-              <Phone className="size-3" />
-              <span>{contact.phone}</span>
-            </div>
-          )}
-          {contact.location && (
-            <div className="flex items-center gap-1.5 text-micro text-muted-foreground/60">
-              <MapPin className="size-3" />
-              <span>{contact.location}</span>
-            </div>
-          )}
-        </div>
-      )}
 
       {/* Expanded Content */}
       <AnimatePresence initial={false}>

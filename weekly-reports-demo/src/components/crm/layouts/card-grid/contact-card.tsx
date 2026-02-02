@@ -1,30 +1,12 @@
 import { motion } from "motion/react";
 import { Calendar, Sparkles } from "lucide-react";
 import { cn } from "../../../../lib/utils";
+import { formatRelativeTime } from "../../../../lib/date-utils";
 import { ContactAvatar } from "../../shared/contact-avatar";
 import { RelationshipIndicator } from "../../shared/relationship-indicator";
 import { Badge } from "../../../ui/badge";
 import { springs, staggerItem } from "../../../../lib/motion";
 import type { Contact } from "../../../../types/contact";
-
-/**
- * Contact Card
- *
- * Visual card for the card grid layout.
- * Features: Hover elevation, warmth glow, pokedex-style AI summary preview.
- */
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-  if (days === 0) return "Today";
-  if (days === 1) return "Yesterday";
-  if (days < 7) return `${days}d ago`;
-  if (days < 30) return `${Math.floor(days / 7)}w ago`;
-  return `${Math.floor(days / 30)}mo ago`;
-}
 
 interface ContactCardProps {
   contact: Contact;

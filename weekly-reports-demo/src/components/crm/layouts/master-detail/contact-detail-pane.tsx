@@ -4,7 +4,6 @@ import {
   Phone,
   MapPin,
   Calendar,
-  ExternalLink,
   Linkedin,
   MessageSquare,
   Sparkles,
@@ -19,6 +18,8 @@ import { Badge } from "../../../ui/badge";
 import { Button } from "../../../ui/button";
 import { ContactAvatar } from "../../shared/contact-avatar";
 import { RelationshipIndicator } from "../../shared/relationship-indicator";
+import { SectionHeader } from "../../shared/section-header";
+import { InfoRow } from "../../shared/info-row";
 import { ActivityTimeline } from "../../shared/activity-timeline";
 import { springs, staggerContainer, staggerItem } from "../../../../lib/motion";
 import type { Contact } from "../../../../types/contact";
@@ -30,15 +31,10 @@ import type { Contact } from "../../../../types/contact";
  * Features elegant header, comprehensive sections, and smooth transitions.
  */
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Empty State
-// ─────────────────────────────────────────────────────────────────────────────
-
 function EmptyState() {
   return (
     <div className="flex items-center justify-center h-full">
       <div className="text-center max-w-sm px-6">
-        {/* Decorative line */}
         <div className="w-16 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto mb-8" />
 
         <div className="size-16 rounded-2xl bg-muted/50 flex items-center justify-center mx-auto mb-5">
@@ -53,68 +49,10 @@ function EmptyState() {
           history, and relationship insights.
         </p>
 
-        {/* Decorative line */}
         <div className="w-16 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto mt-8" />
       </div>
     </div>
   );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Section Components
-// ─────────────────────────────────────────────────────────────────────────────
-
-function SectionTitle({
-  icon: Icon,
-  title,
-}: {
-  icon: typeof Sparkles;
-  title: string;
-}) {
-  return (
-    <div className="flex items-center gap-2 mb-4">
-      <Icon className="size-4 text-accent" />
-      <h3 className="font-semibold text-ui text-foreground">{title}</h3>
-    </div>
-  );
-}
-
-function InfoRow({
-  icon: Icon,
-  label,
-  value,
-  href,
-}: {
-  icon: typeof Mail;
-  label: string;
-  value: string;
-  href?: string;
-}) {
-  const content = (
-    <div className="flex items-center gap-3 py-2">
-      <Icon className="size-4 text-muted-foreground/60 shrink-0" />
-      <div className="flex-1 min-w-0">
-        <p className="text-micro text-muted-foreground/60 mb-0.5">{label}</p>
-        <p className="text-ui text-foreground truncate">{value}</p>
-      </div>
-      {href && <ExternalLink className="size-3.5 text-muted-foreground/40" />}
-    </div>
-  );
-
-  if (href) {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block hover:bg-muted/50 -mx-3 px-3 rounded-lg transition-colors"
-      >
-        {content}
-      </a>
-    );
-  }
-
-  return content;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -234,7 +172,7 @@ function DetailContent({ contact }: { contact: Contact }) {
         <div className="space-y-8">
           {/* AI Insight - The Pokedex Tagline */}
           <motion.section variants={staggerItem}>
-            <SectionTitle icon={Sparkles} title="AI Insight" />
+            <SectionHeader icon={Sparkles} title="AI Insight" />
             <div className="relative pl-4">
               <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent via-accent/50 to-transparent rounded-full" />
               <p className="text-body text-foreground leading-relaxed">
@@ -295,7 +233,7 @@ function DetailContent({ contact }: { contact: Contact }) {
           {/* Notes */}
           {contact.notes.customSummary && (
             <motion.section variants={staggerItem}>
-              <SectionTitle icon={MessageSquare} title="Notes" />
+              <SectionHeader icon={MessageSquare} title="Notes" />
               <p className="text-ui text-muted-foreground leading-relaxed">
                 {contact.notes.customSummary}
               </p>
@@ -326,7 +264,7 @@ function DetailContent({ contact }: { contact: Contact }) {
           {/* Recent Topics */}
           {contact.recentTopics.length > 0 && (
             <motion.section variants={staggerItem}>
-              <SectionTitle icon={MessageSquare} title="Recent Topics" />
+              <SectionHeader icon={MessageSquare} title="Recent Topics" />
               <div className="flex flex-wrap gap-2">
                 {contact.recentTopics.map((topic) => (
                   <span
@@ -346,7 +284,7 @@ function DetailContent({ contact }: { contact: Contact }) {
 
           {/* Activity Timeline */}
           <motion.section variants={staggerItem}>
-            <SectionTitle icon={Activity} title="Activity History" />
+            <SectionHeader icon={Activity} title="Activity History" />
             <ActivityTimeline
               interactions={contact.interactions}
               limit={8}

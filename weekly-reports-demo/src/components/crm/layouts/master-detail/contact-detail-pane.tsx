@@ -164,7 +164,9 @@ function ProfileHeader({ contact }: { contact: Contact }) {
 
           <p className="text-title text-muted-foreground mb-4">
             {contact.title} at{" "}
-            <span className="text-foreground font-medium">{contact.company}</span>
+            <span className="text-foreground font-medium">
+              {contact.company}
+            </span>
           </p>
 
           {/* Role badges */}
@@ -265,26 +267,27 @@ function DetailContent({ contact }: { contact: Contact }) {
                     </div>
                   )}
 
-                {contact.insights.risks && contact.insights.risks.length > 0 && (
-                  <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
-                    <div className="flex items-center gap-2 mb-2">
-                      <AlertCircle className="size-3.5 text-amber-500" />
-                      <span className="text-micro font-medium text-amber-600 dark:text-amber-400">
-                        Risks
-                      </span>
+                {contact.insights.risks &&
+                  contact.insights.risks.length > 0 && (
+                    <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
+                      <div className="flex items-center gap-2 mb-2">
+                        <AlertCircle className="size-3.5 text-amber-500" />
+                        <span className="text-micro font-medium text-amber-600 dark:text-amber-400">
+                          Risks
+                        </span>
+                      </div>
+                      <ul className="space-y-1">
+                        {contact.insights.risks.map((r, i) => (
+                          <li
+                            key={i}
+                            className="text-caption text-muted-foreground"
+                          >
+                            {r}
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                    <ul className="space-y-1">
-                      {contact.insights.risks.map((r, i) => (
-                        <li
-                          key={i}
-                          className="text-caption text-muted-foreground"
-                        >
-                          {r}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                  )}
               </div>
             )}
           </motion.section>
@@ -331,7 +334,7 @@ function DetailContent({ contact }: { contact: Contact }) {
                     className={cn(
                       "px-3 py-1.5 rounded-lg text-caption",
                       "bg-muted/60 text-muted-foreground",
-                      "border border-border-subtle"
+                      "border border-border-subtle",
                     )}
                   >
                     {topic}
@@ -368,7 +371,11 @@ function DetailContent({ contact }: { contact: Contact }) {
                 <InfoRow icon={Phone} label="Phone" value={contact.phone} />
               )}
               {contact.location && (
-                <InfoRow icon={MapPin} label="Location" value={contact.location} />
+                <InfoRow
+                  icon={MapPin}
+                  label="Location"
+                  value={contact.location}
+                />
               )}
               {contact.linkedIn && (
                 <InfoRow
@@ -410,7 +417,7 @@ function DetailContent({ contact }: { contact: Contact }) {
                       "text-caption font-medium",
                       contact.nextFollowUp <= new Date()
                         ? "text-amber-600 dark:text-amber-400"
-                        : "text-foreground"
+                        : "text-foreground",
                     )}
                   >
                     {contact.nextFollowUp <= new Date()

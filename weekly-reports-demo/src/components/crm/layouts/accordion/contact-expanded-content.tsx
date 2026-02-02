@@ -156,7 +156,7 @@ export function ContactExpandedContent({
                       className={cn(
                         "px-2.5 py-1 rounded-md text-micro",
                         "bg-muted/60 text-muted-foreground",
-                        "border border-border-subtle"
+                        "border border-border-subtle",
                       )}
                     >
                       {topic}
@@ -213,7 +213,7 @@ export function ContactExpandedContent({
                         "text-micro font-medium",
                         contact.nextFollowUp <= new Date()
                           ? "text-amber-600 dark:text-amber-400"
-                          : "text-muted-foreground"
+                          : "text-muted-foreground",
                       )}
                     >
                       {contact.nextFollowUp <= new Date()

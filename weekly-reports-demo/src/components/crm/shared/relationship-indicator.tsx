@@ -57,20 +57,20 @@ export function RelationshipIndicator({
     <div
       className={cn(
         "flex items-center gap-2",
-        size === "sm" ? "text-micro" : "text-caption"
+        size === "sm" ? "text-micro" : "text-caption",
       )}
     >
       <div
         className={cn(
           "flex-1 rounded-full overflow-hidden",
           config.bg,
-          size === "sm" ? "h-1" : "h-1.5"
+          size === "sm" ? "h-1" : "h-1.5",
         )}
       >
         <div
           className={cn(
             "h-full rounded-full transition-all duration-700 ease-out",
-            config.color
+            config.color,
           )}
           style={{ width: `${score}%` }}
         />
@@ -81,7 +81,7 @@ export function RelationshipIndicator({
             "font-medium shrink-0 tabular-nums",
             warmth === "cold" || warmth === "cool"
               ? "text-amber-600 dark:text-amber-400"
-              : "text-muted-foreground"
+              : "text-muted-foreground",
           )}
         >
           {config.label}

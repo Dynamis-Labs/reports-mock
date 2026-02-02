@@ -68,7 +68,7 @@ export function ContactAvatar({
           config.ring,
           warmthColors[contact.warmth],
         ],
-        className
+        className,
       )}
     >
       {contact.avatarUrl ? (

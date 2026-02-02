@@ -54,7 +54,7 @@ export function ContactListItem({
         "transition-all duration-200",
         isExpanded
           ? "bg-surface-elevated border-border shadow-md"
-          : "bg-surface border-border-subtle hover:border-border hover:shadow-sm"
+          : "bg-surface border-border-subtle hover:border-border hover:shadow-sm",
       )}
     >
       {/* Collapsed Header - Always Visible */}
@@ -66,7 +66,7 @@ export function ContactListItem({
           "px-5 py-4",
           "flex items-center gap-4",
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset",
-          "transition-colors duration-150"
+          "transition-colors duration-150",
         )}
       >
         {/* Avatar with warmth ring */}
@@ -137,7 +137,7 @@ export function ContactListItem({
           <ChevronRight
             className={cn(
               "size-4",
-              isExpanded ? "text-accent" : "text-muted-foreground/50"
+              isExpanded ? "text-accent" : "text-muted-foreground/50",
             )}
           />
         </motion.div>
@@ -150,7 +150,7 @@ export function ContactListItem({
             "px-5 pb-3 pt-0",
             "flex items-center gap-4",
             "opacity-0 group-hover:opacity-100",
-            "transition-opacity duration-150"
+            "transition-opacity duration-150",
           )}
         >
           <div className="flex items-center gap-1.5 text-micro text-muted-foreground/60">

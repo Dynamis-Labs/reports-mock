@@ -68,13 +68,13 @@ export function ActivityTimeline({
               key={interaction.id}
               className={cn(
                 "group flex items-center gap-3 py-2 px-2.5 -mx-2.5 rounded-lg",
-                "hover:bg-muted/60 transition-colors cursor-default"
+                "hover:bg-muted/60 transition-colors cursor-default",
               )}
             >
               <div
                 className={cn(
                   "size-7 rounded-md flex items-center justify-center shrink-0",
-                  "bg-muted/50 group-hover:bg-muted transition-colors"
+                  "bg-muted/50 group-hover:bg-muted transition-colors",
                 )}
               >
                 <Icon className={cn("size-3.5", config.color)} />
@@ -125,13 +125,13 @@ export function ActivityTimeline({
             transition={{ delay: i * 0.05, ...springs.quick }}
             className={cn(
               "group flex items-center gap-3 py-2 px-2.5 -mx-2.5 rounded-lg",
-              "hover:bg-muted/60 transition-colors cursor-default"
+              "hover:bg-muted/60 transition-colors cursor-default",
             )}
           >
             <div
               className={cn(
                 "size-7 rounded-md flex items-center justify-center shrink-0",
-                "bg-muted/50 group-hover:bg-muted transition-colors"
+                "bg-muted/50 group-hover:bg-muted transition-colors",
               )}
             >
               <Icon className={cn("size-3.5", config.color)} />

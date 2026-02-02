@@ -51,7 +51,7 @@ export function ContactSidebar({ contacts }: ContactSidebarProps) {
               "w-full h-8 pl-8 pr-8 rounded-md",
               "bg-muted/50 border-0",
               "text-caption placeholder:text-muted-foreground/60",
-              "focus:outline-none focus:ring-1 focus:ring-accent"
+              "focus:outline-none focus:ring-1 focus:ring-accent",
             )}
           />
           {searchQuery && (
@@ -87,9 +87,7 @@ export function ContactSidebar({ contacts }: ContactSidebarProps) {
                 "w-full text-left px-3 py-2.5 rounded-lg",
                 "transition-all duration-150",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset",
-                isSelected
-                  ? "bg-accent-muted shadow-sm"
-                  : "hover:bg-muted/70"
+                isSelected ? "bg-accent-muted shadow-sm" : "hover:bg-muted/70",
               )}
               whileHover={{ x: isSelected ? 0 : 2 }}
               transition={springs.quick}
@@ -102,7 +100,9 @@ export function ContactSidebar({ contacts }: ContactSidebarProps) {
                     <span
                       className={cn(
                         "font-medium text-[13px] truncate",
-                        isSelected ? "text-foreground" : "text-muted-foreground"
+                        isSelected
+                          ? "text-foreground"
+                          : "text-muted-foreground",
                       )}
                     >
                       {fullName}

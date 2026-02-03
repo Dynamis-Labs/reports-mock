@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ContactSortField, SortDirection } from "../types/contact";
+import type {
+  ContactSortField,
+  SortDirection,
+  CrmCardStyle,
+} from "../types/contact";
 
 /**
  * CRM Store
@@ -41,6 +45,9 @@ interface CrmState {
   /** Whether filters panel is expanded */
   isFiltersPanelOpen: boolean;
 
+  /** Card display style */
+  cardStyle: CrmCardStyle;
+
   // ─── Actions ─────────────────────────────────────────────────────────────
   // View actions
   setSortField: (field: ContactSortField) => void;
@@ -65,6 +72,9 @@ interface CrmState {
   toggleFiltersPanel: () => void;
   setFiltersPanelOpen: (open: boolean) => void;
 
+  // Card style actions
+  setCardStyle: (style: CrmCardStyle) => void;
+
   // Utility
   reset: () => void;
 }
@@ -78,6 +88,7 @@ const initialState = {
   selectedTags: [] as string[],
   selectedRelationships: [] as string[],
   isFiltersPanelOpen: false,
+  cardStyle: "polaroid" as CrmCardStyle,
 };
 
 export const useCrmStore = create<CrmState>()(
@@ -141,15 +152,19 @@ export const useCrmStore = create<CrmState>()(
 
       setFiltersPanelOpen: (open) => set({ isFiltersPanelOpen: open }),
 
+      // ─── Card Style Actions ────────────────────────────────────────────────
+      setCardStyle: (style) => set({ cardStyle: style }),
+
       // ─── Utility ───────────────────────────────────────────────────────────
       reset: () => set({ ...initialState }),
     }),
     {
       name: "crm-preferences",
-      // Only persist sort preferences
+      // Persist sort preferences and card style
       partialize: (state) => ({
         sortField: state.sortField,
         sortDirection: state.sortDirection,
+        cardStyle: state.cardStyle,
       }),
     },
   ),

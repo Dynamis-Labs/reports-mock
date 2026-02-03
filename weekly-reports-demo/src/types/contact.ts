@@ -200,6 +200,9 @@ export type ContactSortField =
 
 export type SortDirection = "asc" | "desc";
 
+/** Card display style for CRM */
+export type CrmCardStyle = "polaroid" | "magazine" | "bubble";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper Functions
 // ─────────────────────────────────────────────────────────────────────────────

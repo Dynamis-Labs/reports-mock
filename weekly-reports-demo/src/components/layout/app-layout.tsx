@@ -31,13 +31,15 @@ export function AppLayout({
         onSectionChange={onSectionChange}
       />
 
-      {/* Fixed-width Left Sidebar */}
-      <aside
-        style={{ width: SIDEBAR_WIDTH }}
-        className="shrink-0 border-r border-border bg-sidebar overflow-y-auto"
-      >
-        {leftSidebar}
-      </aside>
+      {/* Conditional Left Sidebar - only render if content provided */}
+      {leftSidebar && (
+        <aside
+          style={{ width: SIDEBAR_WIDTH }}
+          className="shrink-0 border-r border-border bg-sidebar overflow-y-auto"
+        >
+          {leftSidebar}
+        </aside>
+      )}
 
       {/* Main Content */}
       <div className="flex-1 min-w-0 bg-background overflow-hidden">

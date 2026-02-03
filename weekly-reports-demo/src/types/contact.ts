@@ -190,9 +190,6 @@ export interface Contact {
 // View State Types
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** CRM view layout modes */
-export type CrmViewMode = "accordion" | "master-detail" | "card-grid";
-
 /** Sort options for contact lists */
 export type ContactSortField =
   | "name"

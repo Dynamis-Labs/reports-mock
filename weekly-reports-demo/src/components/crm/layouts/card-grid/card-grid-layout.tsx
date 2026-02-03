@@ -9,8 +9,8 @@ import type { Contact } from "../../../../types/contact";
 /**
  * Card Grid Layout
  *
- * Visual card grid with slide-in drawer for contact details.
- * Features: Responsive auto-fill grid, staggered reveal, drawer integration.
+ * Fixed 4-column grid with square-ish dossier cards.
+ * Responsive: 4 cols → 3 → 2 → 1 based on viewport.
  */
 
 interface CardGridLayoutProps {
@@ -21,11 +21,9 @@ export function CardGridLayout({ contacts }: CardGridLayoutProps) {
   const { selectedContactId, isDrawerOpen, openDrawer, closeDrawer } =
     useCrmStore();
 
-  // Find selected contact
   const selectedContact =
     contacts.find((c) => c.id === selectedContactId) ?? null;
 
-  // Empty state
   if (contacts.length === 0) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -51,7 +49,7 @@ export function CardGridLayout({ contacts }: CardGridLayoutProps) {
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
-          className="p-6 grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5"
+          className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
         >
           {contacts.map((contact) => (
             <ContactCard

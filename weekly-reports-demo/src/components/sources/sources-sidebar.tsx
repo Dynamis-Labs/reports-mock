@@ -94,7 +94,7 @@ export function SourcesSidebar() {
                 )}
                 aria-label="Close sources sidebar"
               >
-                <X className="w-4 h-4" />
+                <X className="size-4" strokeWidth={1.5} />
               </button>
             </div>
 

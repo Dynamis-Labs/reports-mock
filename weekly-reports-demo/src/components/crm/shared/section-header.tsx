@@ -21,7 +21,7 @@ export function SectionHeader({
   if (variant === "accent") {
     return (
       <div className="flex items-center gap-2 mb-3">
-        <Icon className="size-4 text-accent" />
+        <Icon className="size-4 text-accent" strokeWidth={1.5} />
         <h4 className="font-medium text-micro text-accent uppercase tracking-wider">
           {title}
         </h4>
@@ -31,7 +31,7 @@ export function SectionHeader({
 
   return (
     <div className="flex items-center gap-2 mb-3">
-      <Icon className="size-4 text-accent" />
+      <Icon className="size-4 text-accent" strokeWidth={1.5} />
       <h4 className="font-semibold text-ui text-foreground">{title}</h4>
     </div>
   );

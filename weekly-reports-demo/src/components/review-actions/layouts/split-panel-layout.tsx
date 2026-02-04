@@ -56,7 +56,7 @@ export function SplitPanelLayout({
         {/* Action header */}
         <div className="space-y-1">
           <div className="flex items-center gap-1.5 text-modal-label text-muted-foreground">
-            <Icon className="size-3.5" />
+            <Icon className="size-3.5" strokeWidth={1.5} />
             <span>{typeLabel}</span>
           </div>
           <h3 className="font-semibold text-modal-title text-foreground leading-tight">
@@ -67,7 +67,7 @@ export function SplitPanelLayout({
         {/* Calendar warning for meetings */}
         {!isEmail && !action.calendarConnected && (
           <p className="text-modal-micro text-muted-foreground flex items-center gap-1.5">
-            <AlertTriangle className="size-3" />
+            <AlertTriangle className="size-3" strokeWidth={1.5} />
             <span>
               Calendar not connected —{" "}
               <button className="underline hover:text-foreground transition-colors">
@@ -85,10 +85,10 @@ export function SplitPanelLayout({
             </label>
             <button
               onClick={() => setIsAdding(true)}
-              className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+              className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-white"
               aria-label={`Add ${participantLabel.toLowerCase()}`}
             >
-              <Plus className="size-3.5" />
+              <Plus className="size-3.5" strokeWidth={1.5} />
             </button>
           </div>
 
@@ -124,7 +124,7 @@ export function SplitPanelLayout({
                             participant.recipientType === "to" ||
                             !participant.recipientType
                               ? "text-muted-foreground/40 hover:text-muted-foreground"
-                              : "px-1 py-0.5 rounded bg-muted text-muted-foreground hover:bg-muted/80"
+                              : "px-1 py-0.5 rounded bg-muted text-white hover:bg-muted/80"
                           }`}
                         >
                           {participant.recipientType ?? "to"}
@@ -133,10 +133,13 @@ export function SplitPanelLayout({
 
                       <button
                         onClick={() => onRemoveParticipant(participant.id)}
-                        className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-muted transition-all"
+                        className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-muted hover:text-white transition-all"
                         aria-label={`Remove ${participant.name}`}
                       >
-                        <X className="size-3 text-muted-foreground" />
+                        <X
+                          className="size-3 text-muted-foreground"
+                          strokeWidth={1.5}
+                        />
                       </button>
                     </div>
                   </motion.div>
@@ -173,7 +176,7 @@ export function SplitPanelLayout({
                       disabled={!newName.trim()}
                       className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
                     >
-                      <Check className="size-4" />
+                      <Check className="size-4" strokeWidth={1.5} />
                     </button>
                     <button
                       onClick={() => {
@@ -183,7 +186,7 @@ export function SplitPanelLayout({
                       }}
                       className="p-1 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <X className="size-4" />
+                      <X className="size-4" strokeWidth={1.5} />
                     </button>
                   </div>
                 </motion.div>

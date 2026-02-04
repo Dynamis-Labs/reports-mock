@@ -100,7 +100,7 @@ function Select({ label, value, onChange, options }: SelectProps) {
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             "w-full h-10 px-3 rounded-lg",
-            "bg-muted border border-border-subtle",
+            "bg-muted border border-border-subtle text-white",
             "flex items-center justify-between gap-2",
             "text-ui text-left",
             "transition-colors duration-200",
@@ -151,7 +151,7 @@ function Select({ label, value, onChange, options }: SelectProps) {
                       "transition-colors duration-150",
                       option.value === value
                         ? "bg-accent-muted text-accent"
-                        : "hover:bg-muted/50",
+                        : "hover:bg-muted/50 hover:text-white",
                     )}
                   >
                     <span>{option.label}</span>
@@ -396,7 +396,7 @@ export function SettingsPane() {
                       placeholder="e.g., Focus on trends in sprint velocity, highlight blockers and their resolution time, and emphasize team achievements."
                       className={cn(
                         "w-full max-w-full p-3 rounded-lg",
-                        "bg-muted border border-border-subtle",
+                        "bg-muted border border-border-subtle text-white",
                         "text-ui placeholder:text-muted-foreground/60",
                         "resize-none min-h-[100px]",
                         "focus:outline-none focus:ring-1 focus:ring-accent",

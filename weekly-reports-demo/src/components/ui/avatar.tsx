@@ -38,7 +38,7 @@ export function Avatar({
         />
       )}
       <AvatarPrimitive.Fallback
-        className="flex h-full w-full items-center justify-center bg-muted font-medium text-muted-foreground"
+        className="flex h-full w-full items-center justify-center bg-muted font-medium text-white"
         delayMs={src ? 600 : 0}
       >
         {name ? getInitials(name) : "?"}

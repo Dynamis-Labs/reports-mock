@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Mic, Paperclip, Command } from "lucide-react";
+import { Mic, Paperclip, ArrowUp } from "lucide-react";
 import { useChatboxStore } from "../../stores/chatbox-store";
 import { springs } from "../../lib/motion";
 import { cn } from "../../lib/utils";
@@ -173,16 +173,14 @@ export function AskSentraChatbox() {
           )}
         />
 
-        {/* Collapsed: keyboard shortcut badge */}
+        {/* Collapsed: arrow submit button */}
         {state === "collapsed" && (
-          <div className="flex items-center gap-0.5 shrink-0">
-            <span className="flex items-center justify-center w-6 h-6 rounded bg-muted text-muted-foreground">
-              <Command className="w-3 h-3" />
-            </span>
-            <span className="flex items-center justify-center w-6 h-6 rounded bg-muted text-muted-foreground text-caption font-medium">
-              K
-            </span>
-          </div>
+          <button
+            className="flex items-center justify-center size-8 rounded-full bg-muted text-white hover:bg-muted/80 transition-colors shrink-0"
+            aria-label="Submit"
+          >
+            <ArrowUp className="size-4" strokeWidth={2} />
+          </button>
         )}
 
         {/* Expanded/Chat: action buttons */}
@@ -191,7 +189,7 @@ export function AskSentraChatbox() {
             <button
               className={cn(
                 "px-2 py-1 rounded-lg text-muted-foreground",
-                "hover:bg-muted hover:text-foreground transition-colors",
+                "hover:bg-muted hover:text-white transition-colors",
               )}
               aria-label="Auto"
             >
@@ -200,20 +198,20 @@ export function AskSentraChatbox() {
             <button
               className={cn(
                 "p-1.5 rounded-lg text-muted-foreground",
-                "hover:bg-muted hover:text-foreground transition-colors",
+                "hover:bg-muted hover:text-white transition-colors",
               )}
               aria-label="Attach file"
             >
-              <Paperclip className="w-4 h-4" />
+              <Paperclip className="size-4" strokeWidth={1.5} />
             </button>
             <button
               className={cn(
                 "p-1.5 rounded-lg text-muted-foreground",
-                "hover:bg-muted hover:text-foreground transition-colors",
+                "hover:bg-muted hover:text-white transition-colors",
               )}
               aria-label="Voice input"
             >
-              <Mic className="w-4 h-4" />
+              <Mic className="size-4" strokeWidth={1.5} />
             </button>
           </div>
         )}

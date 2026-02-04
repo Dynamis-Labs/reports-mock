@@ -4,6 +4,9 @@ export const springs = {
   // Quick, snappy interactions (buttons, toggles)
   quick: { type: "spring" as const, stiffness: 400, damping: 30 },
 
+  // Snappy for content transitions (slightly slower than quick)
+  snappy: { type: "spring" as const, stiffness: 350, damping: 28 },
+
   // Standard UI transitions (panels, modals)
   default: { type: "spring" as const, stiffness: 300, damping: 30 },
 

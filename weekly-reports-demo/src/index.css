@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════════════════
    WEEKLY REPORTS — CLEAN PROFESSIONAL DESIGN SYSTEM
-   Light mode • Single font family (Manrope) • Blue accents
+   Light mode • Single font family (Figtree) • Slate accents
    Inspired by Linear, Vercel, Notion — professional SaaS aesthetic
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -14,18 +14,18 @@
 
 @theme {
   /* Typography - Single font family */
-  --font-sans: "Manrope", system-ui, sans-serif;
+  --font-sans: "Figtree", system-ui, sans-serif;
 
-  /* Type Scale (pixel reference → rem) */
+  /* Type Scale (14px base, 8px grid aligned) */
   --text-display: 2rem; /* 32px - Report title */
   --text-title: 1.5rem; /* 24px - Section headings */
   --text-heading: 1.125rem; /* 18px - Panel titles */
   --text-body: 0.9375rem; /* 15px - Report content */
-  --text-ui: 0.875rem; /* 14px - UI labels */
+  --text-ui: 0.875rem; /* 14px - UI labels (BASE) */
   --text-caption: 0.75rem; /* 12px - Metadata, dates */
   --text-micro: 0.6875rem; /* 11px - Badges, counters */
 
-  /* Compact Type Scale (for modal/review UI - 40% larger than previous) */
+  /* Compact Type Scale (for modal/review UI) */
   --text-compact-heading: 1.3125rem; /* 21px */
   --text-compact-body: 1.125rem; /* 18px */
   --text-compact-ui: 1.05rem; /* ~17px */
@@ -38,44 +38,89 @@
   --text-modal-label: 0.75rem; /* 12px - labels, secondary */
   --text-modal-micro: 0.6875rem; /* 11px - badges, counts */
 
-  /* Colors - Light Mode */
-  --color-background: oklch(99% 0.005 260); /* Off-white */
-  --color-foreground: oklch(15% 0.01 260); /* Near-black */
-  --color-surface: oklch(97% 0.005 260); /* Light gray cards */
-  --color-surface-elevated: oklch(100% 0 0); /* Pure white */
-  --color-muted: oklch(95% 0.005 260); /* Subtle backgrounds */
-  --color-muted-foreground: oklch(45% 0.01 260); /* Secondary text */
-  --color-border: oklch(90% 0.01 260); /* Visible borders */
-  --color-border-subtle: oklch(94% 0.005 260); /* Very subtle dividers */
+  /* Icon Sizes (16px base) */
+  --icon-sm: 0.875rem; /* 14px */
+  --icon-base: 1rem; /* 16px - default */
+  --icon-lg: 1.25rem; /* 20px */
 
-  /* Accent - Blue (professional SaaS) */
-  --color-accent: oklch(68.5% 0.169 237.325); /* Vibrant blue */
-  --color-accent-foreground: oklch(100% 0 0); /* White text on accent */
-  --color-accent-muted: oklch(68.5% 0.169 237.325 / 10%); /* Blue at 10% */
+  /* Icon Stroke Widths */
+  --stroke-thin: 1;
+  --stroke-normal: 1.2;
+  --stroke-thick: 1.5;
 
-  /* Highlight - Blue for text selection (matches accent) */
-  --color-highlight: oklch(68.5% 0.169 237.325 / 25%);
-  --color-highlight-active: oklch(68.5% 0.169 237.325 / 40%);
+  /* ═══════════════════════════════════════════════════════════════════════
+     SLATE/GRAY COLOR PALETTE (shadcn/ui inspired)
+     ═══════════════════════════════════════════════════════════════════════ */
 
-  /* Semantic */
-  --color-success: oklch(55% 0.18 155); /* Green */
-  --color-warning: oklch(70% 0.18 70); /* Amber */
-  --color-error: oklch(55% 0.22 25); /* Red */
+  /* Slate palette - for UI elements */
+  --color-slate-50: hsl(210 40% 98%);
+  --color-slate-100: hsl(210 40% 96%);
+  --color-slate-200: hsl(214 32% 91%);
+  --color-slate-300: hsl(213 27% 84%);
+  --color-slate-400: hsl(215 20% 65%);
+  --color-slate-500: hsl(215 16% 47%);
+  --color-slate-600: hsl(215 19% 35%);
+  --color-slate-700: hsl(215 25% 27%);
+  --color-slate-800: hsl(217 33% 17%);
+  --color-slate-900: hsl(222 47% 11%);
+  --color-slate-950: hsl(229 84% 5%);
 
-  /* Sources - Blue accent for sources sidebar (matches main accent) */
-  --color-sources: oklch(68.5% 0.169 237.325);
-  --color-sources-foreground: oklch(100% 0 0);
-  --color-sources-muted: oklch(68.5% 0.169 237.325 / 10%);
+  /* Gray palette - for text/backgrounds */
+  --color-gray-50: hsl(0 0% 98%);
+  --color-gray-100: hsl(0 0% 96%);
+  --color-gray-200: hsl(0 0% 90%);
+  --color-gray-300: hsl(0 0% 83%);
+  --color-gray-400: hsl(0 0% 64%);
+  --color-gray-500: hsl(0 0% 45%);
+  --color-gray-600: hsl(0 0% 32%);
+  --color-gray-700: hsl(0 0% 25%);
+
+  /* Semantic Color Mappings - Light Mode */
+  --color-background: var(--color-slate-50);
+  --color-foreground: var(--color-slate-900);
+  --color-surface: var(--color-slate-100);
+  --color-surface-elevated: hsl(0 0% 100%); /* Pure white */
+  --color-muted: var(--color-slate-100);
+  --color-muted-foreground: var(--color-slate-500);
+  --color-border: var(--color-slate-200);
+  --color-border-subtle: var(--color-slate-100);
+
+  /* Accent - Vibrant Cyan Blue (#00a6f5) */
+  --color-accent: #00a6f5;
+  --color-accent-foreground: hsl(
+    0 0% 0%
+  ); /* Black text on accent backgrounds */
+  --color-accent-muted: hsl(199 100% 48% / 12%);
+
+  /* Highlight - Cyan blue for text selection */
+  --color-highlight: hsl(199 100% 48% / 20%);
+  --color-highlight-active: hsl(199 100% 48% / 35%);
+
+  /* Semantic Colors */
+  --color-success: hsl(142 71% 45%); /* Green */
+  --color-warning: hsl(38 92% 50%); /* Amber/Orange */
+  --color-error: hsl(0 84% 60%); /* Red */
+
+  /* Radar Severity Colors */
+  --color-severity-critical: hsl(0 84% 60%); /* Red */
+  --color-severity-high: hsl(25 95% 53%); /* Orange */
+  --color-severity-medium: hsl(45 93% 47%); /* Yellow */
+  --color-severity-low: var(--color-slate-400); /* Gray */
+
+  /* Sources accent (matches main accent) */
+  --color-sources: #00a6f5;
+  --color-sources-foreground: hsl(0 0% 0%);
+  --color-sources-muted: hsl(199 100% 48% / 12%);
 
   /* Sidebar backgrounds */
-  --color-sidebar: oklch(0.98 0 0);
+  --color-sidebar: var(--color-slate-50);
 
   /* Shadows - Softer for light mode */
-  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 3%);
-  --shadow-md: 0 2px 8px oklch(0% 0 0 / 5%);
-  --shadow-lg: 0 4px 16px oklch(0% 0 0 / 8%);
-  --shadow-xl: 0 8px 24px oklch(0% 0 0 / 10%);
-  --shadow-float: 0 12px 32px oklch(0% 0 0 / 12%);
+  --shadow-sm: 0 1px 2px hsl(0 0% 0% / 3%);
+  --shadow-md: 0 2px 8px hsl(0 0% 0% / 5%);
+  --shadow-lg: 0 4px 16px hsl(0 0% 0% / 8%);
+  --shadow-xl: 0 8px 24px hsl(0 0% 0% / 10%);
+  --shadow-float: 0 12px 32px hsl(0 0% 0% / 12%);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -83,28 +128,36 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .dark {
-  --color-background: oklch(0.205 0 0);
-  --color-foreground: oklch(0.985 0 0);
-  --color-surface: oklch(0.24 0 0);
-  --color-surface-elevated: oklch(0.26 0 0);
-  --color-muted: oklch(0.269 0 0);
-  --color-muted-foreground: oklch(0.708 0 0);
-  --color-border: oklch(1 0 0 / 10%);
-  --color-border-subtle: oklch(1 0 0 / 5%);
-  /* Highlight - Blue in dark mode too */
-  --color-highlight: oklch(55% 0.15 237.325 / 30%);
-  --color-highlight-active: oklch(60% 0.17 237.325 / 45%);
-  --color-sidebar: oklch(0.18 0 0);
-  /* Sources - Blue in dark mode (matches main accent) */
-  --color-sources: oklch(70% 0.169 237.325);
-  --color-sources-foreground: oklch(100% 0 0);
-  --color-sources-muted: oklch(70% 0.169 237.325 / 15%);
+  --color-background: var(--color-slate-950);
+  --color-foreground: var(--color-slate-50);
+  --color-surface: var(--color-slate-900);
+  --color-surface-elevated: var(--color-slate-800);
+  --color-muted: var(--color-slate-800);
+  --color-muted-foreground: var(--color-slate-400);
+  --color-border: var(--color-slate-700);
+  --color-border-subtle: var(--color-slate-800);
 
-  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 20%);
-  --shadow-md: 0 2px 8px oklch(0% 0 0 / 30%);
-  --shadow-lg: 0 4px 16px oklch(0% 0 0 / 40%);
-  --shadow-xl: 0 8px 24px oklch(0% 0 0 / 50%);
-  --shadow-float: 0 12px 32px oklch(0% 0 0 / 60%);
+  /* Accent - Vibrant Cyan Blue (#00a6f5) with black text */
+  --color-accent: #00a6f5;
+  --color-accent-foreground: hsl(0 0% 0%);
+  --color-accent-muted: hsl(199 100% 48% / 18%);
+
+  /* Highlight - Cyan blue in dark mode */
+  --color-highlight: hsl(199 100% 48% / 25%);
+  --color-highlight-active: hsl(199 100% 48% / 40%);
+
+  --color-sidebar: var(--color-slate-900);
+
+  /* Sources - matches accent in dark mode */
+  --color-sources: #00a6f5;
+  --color-sources-foreground: hsl(0 0% 0%);
+  --color-sources-muted: hsl(199 100% 48% / 18%);
+
+  --shadow-sm: 0 1px 2px hsl(0 0% 0% / 20%);
+  --shadow-md: 0 2px 8px hsl(0 0% 0% / 30%);
+  --shadow-lg: 0 4px 16px hsl(0 0% 0% / 40%);
+  --shadow-xl: 0 8px 24px hsl(0 0% 0% / 50%);
+  --shadow-float: 0 12px 32px hsl(0 0% 0% / 60%);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════

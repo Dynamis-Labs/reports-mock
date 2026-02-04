@@ -89,11 +89,11 @@ export function SourcesAccordion({ sources }: SourcesAccordionProps) {
               aria-controls={`sources-accordion-${category}`}
               className={cn(
                 "w-full px-4 py-3 flex items-center justify-between",
-                "hover:bg-muted transition-colors duration-150",
+                "hover:bg-muted hover:text-white transition-colors duration-150",
               )}
             >
               <div className="flex items-center gap-3">
-                <Icon className="w-4 h-4" />
+                <Icon className="size-4" />
                 <span className="text-ui font-medium text-foreground">
                   {config.label}
                 </span>
@@ -111,7 +111,10 @@ export function SourcesAccordion({ sources }: SourcesAccordionProps) {
                 animate={{ rotate: isExpanded ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                <ChevronDown
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.5}
+                />
               </motion.div>
             </button>
 

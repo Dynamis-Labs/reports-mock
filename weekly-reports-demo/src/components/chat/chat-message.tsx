@@ -111,7 +111,7 @@ export function ChatMessage({
               <span>Thought for {message.thinkingTime}s</span>
               <ChevronRight
                 className={cn(
-                  "w-3 h-3 transition-transform",
+                  "size-3 transition-transform",
                   isExpanded && "rotate-90",
                 )}
               />
@@ -154,7 +154,7 @@ export function ChatMessage({
             <span>Thought for {message.thinkingTime}s</span>
             <ChevronRight
               className={cn(
-                "w-3 h-3 transition-transform",
+                "size-3 transition-transform",
                 isExpanded && "rotate-90",
               )}
             />

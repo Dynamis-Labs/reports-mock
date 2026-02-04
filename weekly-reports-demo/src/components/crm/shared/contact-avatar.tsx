@@ -20,8 +20,8 @@ const sizeConfig = {
   sm: { container: "size-6", text: "text-[10px]" },
   md: { container: "size-8", text: "text-xs" },
   lg: { container: "size-10", text: "text-sm" },
-  xl: { container: "size-14", text: "text-base" },   // 56px - for cards
-  "2xl": { container: "size-20", text: "text-xl" },  // 80px - for drawer
+  xl: { container: "size-14", text: "text-base" }, // 56px - for cards
+  "2xl": { container: "size-20", text: "text-xl" }, // 80px - for drawer
 };
 
 export function ContactAvatar({

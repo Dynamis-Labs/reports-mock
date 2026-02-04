@@ -8,7 +8,7 @@ import type {
   RecipientType,
 } from "../types/action";
 
-export type ModalLayout = "split-panel" | "minimal-card" | "accordion";
+export type ModalLayout = "split-panel";
 
 interface ReviewActionsState {
   // Modal state
@@ -88,7 +88,7 @@ export const useReviewActionsStore = create<ReviewActionsState>()(
       currentIndex: 0,
       draftAction: null,
       direction: 0,
-      layout: "minimal-card" as ModalLayout,
+      layout: "split-panel" as ModalLayout,
 
       openModal: (actions) => {
         const pendingActions = actions.filter((a) => a.status === "pending");

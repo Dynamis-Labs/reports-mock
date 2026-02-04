@@ -6,16 +6,14 @@ Complete design specification for the Weekly Reports UI. This document reflects 
 
 ## Layout Structure
 
-4-panel layout with icon navigation, sidebar, content area, and overlay comments:
+Multi-section app with icon navigation, contextual sidebars, and content areas:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│ Nav │ Sidebar │              [ Content (max-w-2xl) ]               │
-│ 52px│ 220px   │        ←── centered on full viewport ──→           │
-│     │         │                                                     │
-│ Icon│ Reports │                    Report content                   │
-│ nav │ list    │                    with comments                    │
-│     │         │                    overlay on right                 │
+│ Nav │ Sidebar │  [Reports/Radar Toggle]  │                        │
+│ 52px│ 220px   │       Content Area        │    Optional Panels     │
+│     │         │    (max-w-2xl centered)   │    (Comments, etc)     │
+│     │         │                           │                        │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -29,6 +27,21 @@ Complete design specification for the Weekly Reports UI. This document reflects 
 | Content Col   | max-w-2xl | 672px, centered on viewport        |
 | Comment Layer | 256px     | Absolute positioned overlay (w-64) |
 
+### Page Breadcrumb Header
+
+36px height breadcrumb showing current location:
+
+- Section icon + label
+- Optional sub-page (e.g., "Reports / Week 6 Report")
+- Present on ALL pages for consistent navigation context
+
+### Reports/Radar Toggle
+
+Centered pill toggle at top of main content area:
+
+- Uses Motion `layoutId` for smooth background animation
+- State persisted via `reports-store.ts`
+
 ---
 
 ## Typography
@@ -36,7 +49,7 @@ Complete design specification for the Weekly Reports UI. This document reflects 
 ### Font Family
 
 ```css
-font-family: "Manrope", system-ui, sans-serif;
+font-family: "Figtree", system-ui, sans-serif;
 ```
 
 Import from Google Fonts with weights: 400, 500, 600
@@ -66,63 +79,110 @@ Refined typography for modal dialogs (smaller than main UI for better density):
 
 ---
 
-## Color System (OKLCH)
+## Color System (Slate/Gray HSL)
 
 ### Light Mode
 
 ```css
---color-background: oklch(99% 0.005 260); /* Off-white */
---color-foreground: oklch(15% 0.01 260); /* Near-black */
---color-surface: oklch(97% 0.005 260); /* Light gray cards */
---color-surface-elevated: oklch(100% 0 0); /* Pure white */
---color-muted: oklch(95% 0.005 260); /* Subtle backgrounds */
---color-muted-foreground: oklch(45% 0.01 260); /* Secondary text */
---color-border: oklch(90% 0.01 260); /* Visible borders */
---color-border-subtle: oklch(94% 0.005 260); /* Dividers */
+/* Background and Foreground */
+--color-background: hsl(210 40% 98%); /* Slate-50 */
+--color-foreground: hsl(222 47% 11%); /* Slate-900 */
 
-/* Accent - Blue */
---color-accent: oklch(68.5% 0.169 237.325);
---color-accent-foreground: oklch(100% 0 0);
---color-accent-muted: oklch(68.5% 0.169 237.325 / 10%);
+/* Surfaces */
+--color-surface: hsl(210 40% 96%); /* Slate-100 */
+--color-surface-elevated: hsl(0 0% 100%); /* White */
+
+/* Muted */
+--color-muted: hsl(210 40% 96%); /* Slate-100 */
+--color-muted-foreground: hsl(215 16% 47%); /* Slate-500 */
+
+/* Borders */
+--color-border: hsl(214 32% 91%); /* Slate-200 */
+--color-border-subtle: hsl(210 40% 96%); /* Slate-100 */
+
+/* Accent - Slate-based monochromatic */
+--color-accent: hsl(215 25% 27%); /* Slate-700 */
+--color-accent-foreground: hsl(210 40% 98%);
+--color-accent-muted: hsl(215 25% 27% / 10%);
 
 /* Highlight - Yellow */
---color-highlight: oklch(85% 0.15 90 / 40%);
---color-highlight-active: oklch(80% 0.18 90 / 60%);
+--color-highlight: hsl(48 96% 53% / 40%);
+--color-highlight-active: hsl(48 96% 53% / 60%);
 
 /* Semantic */
---color-success: oklch(55% 0.18 155);
---color-warning: oklch(70% 0.18 70);
---color-error: oklch(55% 0.22 25);
+--color-success: hsl(142 71% 45%);
+--color-warning: hsl(38 92% 50%);
+--color-error: hsl(0 84% 60%);
 
-/* Sources - Purple accent for sources sidebar */
---color-sources: oklch(65% 0.15 290);
---color-sources-foreground: oklch(100% 0 0);
---color-sources-muted: oklch(65% 0.15 290 / 10%);
+/* Severity Colors (for Radar) */
+--color-severity-critical: hsl(0 84% 60%); /* Red */
+--color-severity-high: hsl(25 95% 53%); /* Orange */
+--color-severity-medium: hsl(45 93% 47%); /* Yellow */
+--color-severity-low: hsl(215 16% 47%); /* Gray */
 
---color-sidebar: oklch(0.98 0 0);
+/* Sources - Purple accent */
+--color-sources: hsl(262 83% 58%);
+--color-sources-foreground: hsl(0 0% 100%);
+--color-sources-muted: hsl(262 83% 58% / 10%);
+
+--color-sidebar: hsl(210 40% 98%);
 ```
 
 ### Dark Mode
 
 ```css
---color-background: oklch(0.205 0 0);
---color-foreground: oklch(0.985 0 0);
---color-surface: oklch(0.24 0 0);
---color-surface-elevated: oklch(0.26 0 0);
---color-muted: oklch(0.269 0 0);
---color-muted-foreground: oklch(0.708 0 0);
---color-border: oklch(1 0 0 / 10%);
---color-border-subtle: oklch(1 0 0 / 5%);
---color-highlight: oklch(45% 0.12 85);
---color-highlight-active: oklch(50% 0.15 85);
---color-sidebar: oklch(0.18 0 0);
+--color-background: hsl(222 47% 11%); /* Slate-900 */
+--color-foreground: hsl(210 40% 98%); /* Slate-50 */
+--color-surface: hsl(217 33% 17%); /* Slate-800 */
+--color-surface-elevated: hsl(215 25% 27%); /* Slate-700 */
+--color-muted: hsl(217 33% 17%); /* Slate-800 */
+--color-muted-foreground: hsl(215 20% 65%); /* Slate-400 */
+--color-border: hsl(217 33% 17%); /* Slate-800 */
+--color-border-subtle: hsl(217 33% 17% / 50%);
+--color-highlight: hsl(48 96% 35%);
+--color-highlight-active: hsl(48 96% 45%);
+--color-sidebar: hsl(222 47% 11%);
+```
+
+---
+
+## Icon System
+
+### Base Sizes
+
+| Token         | Size | Usage                 |
+| ------------- | ---- | --------------------- |
+| `--icon-sm`   | 14px | Small inline icons    |
+| `--icon-base` | 16px | Default icon size     |
+| `--icon-lg`   | 20px | Large/prominent icons |
+
+### Stroke Widths
+
+| Token             | Value | Usage                     |
+| ----------------- | ----- | ------------------------- |
+| `--stroke-thin`   | 1     | Large decorative icons    |
+| `--stroke-normal` | 1.2   | Standard icons            |
+| `--stroke-thick`  | 1.5   | UI action icons (default) |
+
+**Standard pattern:**
+
+```tsx
+<Icon className="size-4" strokeWidth={1.5} />
 ```
 
 ---
 
 ## Spacing System
 
-Airy, spacious layout optimized for reading:
+8px base grid for consistent spacing:
+
+| Gap     | Value | Usage             |
+| ------- | ----- | ----------------- |
+| `gap-2` | 8px   | Standard spacing  |
+| `gap-4` | 16px  | Between sections  |
+| `gap-6` | 24px  | Major separations |
+
+### Content Spacing
 
 | Element                         | Value            |
 | ------------------------------- | ---------------- |
@@ -135,15 +195,6 @@ Airy, spacious layout optimized for reading:
 | Content padding                 | `py-12 lg:py-16` |
 | Footer margin-top               | `mt-20`          |
 | Comment card gap                | `120px`          |
-
-### Common Gaps
-
-| Token     | Value | Usage                           |
-| --------- | ----- | ------------------------------- |
-| `gap-1.5` | 6px   | Between icon and text           |
-| `gap-2`   | 8px   | Between tags, badges            |
-| `gap-3`   | 12px  | Between avatar and name         |
-| `gap-4`   | 16px  | Between major elements in a row |
 
 ---
 
@@ -158,14 +209,12 @@ interface ButtonProps {
 }
 ```
 
-**Sizes:**
+**Sizes (8px grid):**
 
-- `sm`: h-8, px-3, text-caption
-- `md`: h-9, px-4, text-ui
-- `lg`: h-10, px-5, text-ui
+- `sm`: h-8 (32px), px-3, text-caption
+- `md`: h-10 (40px), px-4, text-ui
+- `lg`: h-12 (48px), px-6, text-ui
 - `icon`: size-8 (32px × 32px)
-
-**Icon buttons:** Always use `size="icon"` with explicit `className="size-8"` for consistency.
 
 ### Badge
 
@@ -178,21 +227,20 @@ interface BadgeProps {
     | "outline"
     | "week"
     | "source"
-    | "count";
+    | "count"
+    | "urgent" // Red - for high priority
+    | "high" // Orange
+    | "medium" // Yellow
+    | "low"; // Gray
 }
 ```
 
-**Variants:**
+**Priority variants (for ToDos):**
 
-- `default`: bg-muted text-muted-foreground
-- `active`: bg-accent text-accent-foreground
-- `accent`: bg-accent-muted text-accent
-- `outline`: border border-border text-muted-foreground
-- `week`: bg-accent-muted text-accent font-semibold
-- `source`: bg-surface text-muted-foreground border
-- `count`: bg-accent text-accent-foreground (circular, size-5)
-
-**Base styles:** px-2, py-0.5, rounded-md, text-micro, font-medium
+- `urgent`: Red background, for urgent priority
+- `high`: Orange background, for high priority
+- `medium`: Yellow background, for medium priority
+- `low`: Gray background, for low priority
 
 ### Input
 
@@ -202,7 +250,7 @@ interface InputProps {
 }
 ```
 
-Base height: h-9 for standard, h-7 for compact (sidebar search)
+Base height: h-10 (40px) for standard, h-8 (32px) for compact
 
 ### Avatar
 
@@ -219,6 +267,130 @@ interface AvatarProps {
 - `sm`: size-6 (24px)
 - `md`: size-8 (32px)
 - `lg`: size-10 (40px)
+
+---
+
+## New Components
+
+### PageBreadcrumbHeader
+
+```tsx
+interface PageBreadcrumbHeaderProps {
+  items: { label: string; icon?: LucideIcon; href?: string }[];
+}
+```
+
+36px height breadcrumb for consistent navigation context.
+
+### ReportsRadarToggle
+
+```tsx
+interface ReportsRadarToggleProps {
+  value: "reports" | "radar";
+  onChange: (value: "reports" | "radar") => void;
+}
+```
+
+Pill-style toggle with Motion layoutId animation.
+
+### EmptyState
+
+```tsx
+interface EmptyStateProps {
+  icon?: LucideIcon;
+  title: string;
+  description?: string;
+}
+```
+
+Clean placeholder for "Coming Soon" sections.
+
+---
+
+## New Pages
+
+### ToDos Page (3-Column Kanban)
+
+| Column    | Status      | Description      |
+| --------- | ----------- | ---------------- |
+| Active    | `active`    | Tasks to be done |
+| Completed | `completed` | Finished tasks   |
+| Cancelled | `cancelled` | Abandoned tasks  |
+
+**Todo Card displays:**
+
+- Title
+- Linked event (meeting/email reference)
+- Due date
+- Priority tag (urgent/high/medium/low)
+
+**Interactions:**
+
+- Click card → opens drawer
+- Drawer has status change buttons
+
+### Radar Page (Risk Alerts)
+
+Shares layout with Reports via toggle. Displays risk alerts with severity levels:
+
+| Severity | Color  | Indicator |
+| -------- | ------ | --------- |
+| Critical | Red    | Dot       |
+| High     | Orange | Dot       |
+| Medium   | Yellow | Dot       |
+| Low      | Gray   | Dot       |
+
+Items grouped by severity in sidebar, detail view in reading pane.
+
+### Meetings Page
+
+Full-width page (no sidebar) showing meetings organized by time:
+
+| Section    | Content                        | Card Style         |
+| ---------- | ------------------------------ | ------------------ |
+| Past Today | Meetings that have ended today | Compact list items |
+| Up Next    | The next upcoming meeting      | Featured card      |
+| Later      | Future meetings (today+)       | Medium date cards  |
+
+**Section Dividers:**
+
+- "Scroll for history" - subtle indicator above past list
+- "UP NEXT" - green accent line with badge
+- "LATER" - simple section header
+
+**Meeting Cards:**
+
+| Card Type        | Features                                         |
+| ---------------- | ------------------------------------------------ |
+| MeetingListItem  | Calendar icon, title, badges, hover actions      |
+| UpNextCard       | Full featured: countdown, attendees, join button |
+| LaterMeetingCard | Circular date badge, title, time, platform       |
+
+**Visibility Badges:**
+
+- `shared` - Green (emerald-500/15)
+- `private` - Amber (amber-500/15)
+
+**Countdown Timer:**
+
+- Updates every minute via `useCountdown` hook
+- Shows format: "In 15 mins (2:00 PM)"
+- Special states: "Starting now", "In progress", "Ended"
+
+**Detail Views:**
+
+| Mode  | Trigger            | Content                                    |
+| ----- | ------------------ | ------------------------------------------ |
+| Brief | Click upcoming     | Agenda, attendees, meeting link, join btn  |
+| Recap | Click past meeting | Recording, overview, takeaways, AI actions |
+
+**Platform Indicators:**
+
+- Zoom: Blue video icon
+- Google Meet: Green video icon
+- Teams: Purple users icon
+- Phone: Slate phone icon
+- In-Person: Orange building icon
 
 ---
 
@@ -294,7 +466,7 @@ const staggerItem = {
 | Element    | Radius        |
 | ---------- | ------------- |
 | List items | rounded-md    |
-| Cards      | rounded-lg    |
+| Cards      | rounded-lg/xl |
 | Buttons    | rounded-md/lg |
 | Avatars    | rounded-full  |
 | Badges     | rounded-md    |
@@ -304,11 +476,11 @@ const staggerItem = {
 ## Shadows
 
 ```css
---shadow-sm: 0 1px 2px oklch(0% 0 0 / 3%);
---shadow-md: 0 2px 8px oklch(0% 0 0 / 5%);
---shadow-lg: 0 4px 16px oklch(0% 0 0 / 8%);
---shadow-xl: 0 8px 24px oklch(0% 0 0 / 10%);
---shadow-float: 0 12px 32px oklch(0% 0 0 / 12%);
+--shadow-sm: 0 1px 2px hsl(0 0% 0% / 3%);
+--shadow-md: 0 2px 8px hsl(0 0% 0% / 5%);
+--shadow-lg: 0 4px 16px hsl(0 0% 0% / 8%);
+--shadow-xl: 0 8px 24px hsl(0 0% 0% / 10%);
+--shadow-float: 0 12px 32px hsl(0 0% 0% / 12%);
 ```
 
 Usage:
@@ -342,27 +514,21 @@ The comments system enables Google Docs-style inline commenting on report conten
 - **Overlap prevention:** Cards stack with 120px minimum gap
 - **Inside scroll container:** Comment layer scrolls with content (Google Docs behavior)
 
-### Data Flow
-
-1. User selects text in `HighlightedContent`
-2. `useTextSelection` captures selection with offsets
-3. `CommentComposer` opens for user input
-4. Comment saved to `comment-store` with highlight data
-5. `HighlightRenderer` wraps text at stored offsets
-6. `CommentLayer` positions `CommentCard` at highlight location
-
 ---
 
 ## Key Implementation Notes
 
-1. **Icon buttons:** All use size-8 (32px) for consistency
-2. **Badges:** Use the Badge component, not inline spans
-3. **Dividers:** Use `border-b border-border-subtle` between sections
-4. **Dates:** Use `tabular-nums` for consistent digit spacing
-5. **Flex children:** Use `min-w-0` to prevent text overflow
-6. **Shrink prevention:** Use `shrink-0` on badges/avatars
-7. **Transitions:** All colors use `transition-colors duration-200`
-8. **Highlighting:** DOM-based (wraps text with `<span>` elements)
+1. **Icon standard:** All icons use `size-4` (16px) with `strokeWidth={1.5}` by default
+2. **Icon buttons:** All use size-8 (32px) for consistency
+3. **Badges:** Use the Badge component, not inline spans
+4. **Font family:** Figtree (not Manrope)
+5. **Color palette:** Slate/Gray HSL (not OKLCH)
+6. **Spacing grid:** 8px base (gap-2, gap-4, gap-6)
+7. **Dividers:** Use `border-b border-border-subtle` between sections
+8. **Dates:** Use `tabular-nums` for consistent digit spacing
+9. **Flex children:** Use `min-w-0` to prevent text overflow
+10. **Shrink prevention:** Use `shrink-0` on badges/avatars
+11. **Transitions:** All colors use `transition-colors duration-200`
 
 ---
 
@@ -379,37 +545,6 @@ The Review Actions Modal supports three switchable layouts:
 | `accordion`    | Collapsible sections, recipients collapsed by default | Maximum content visibility       |
 
 **Layout Switcher:** Located in the modal header before pagination. Three icons allow switching between layouts. Selection persists to localStorage.
-
-### Layout-Specific Details
-
-**Split Panel:**
-
-- Grid: `grid-cols-[200px_1fr] gap-8`
-- Modal width: `max-w-3xl` (wider to accommodate two columns)
-- Left column: action header + participants list
-- Right column: subject/name input + message/description textarea
-
-**Minimal Card:**
-
-- Centered card with max-width constraint
-- Recipients displayed as inline chips: `[Name ×]`
-- CC/BCC shown as inline badge: `[Name CC ×]`
-- Borderless inputs for document-like editing
-- Auto-growing textarea
-
-**Accordion:**
-
-- Stacked card sections with collapsible recipients
-- Recipients section collapsed by default (shows count + preview)
-- Content section always expanded
-- Click header to expand/collapse recipients
-
-### Common Patterns
-
-- **"+Add" placement:** Always in section header (icon button), never at bottom of list
-- **Typography:** Uses `text-modal-*` scale throughout
-- **Footer:** Confirm button only (no Skip button)
-- **Participant removal:** X button appears on hover
 
 ---
 

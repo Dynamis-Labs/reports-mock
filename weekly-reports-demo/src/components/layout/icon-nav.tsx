@@ -1,13 +1,11 @@
 import { motion } from "motion/react";
 import {
   Brain,
-  Grid3X3,
   Users,
-  Search,
-  Video,
+  Calendar,
   CheckSquare,
   FileText,
-  AlertTriangle,
+  Archive,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
@@ -30,13 +28,11 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { id: "memory", icon: Brain, label: "Memory" },
-  { id: "app-store", icon: Grid3X3, label: "App Store" },
   { id: "crm", icon: Users, label: "CRM" },
-  { id: "research", icon: Search, label: "Deep Research" },
-  { id: "meetings", icon: Video, label: "Meetings" },
+  { id: "meetings", icon: Calendar, label: "Meetings" },
   { id: "todos", icon: CheckSquare, label: "TODOs" },
   { id: "reports", icon: FileText, label: "Reports" },
-  { id: "risk-radar", icon: AlertTriangle, label: "Risk Radar" },
+  { id: "archive", icon: Archive, label: "Archive" },
 ];
 
 interface IconNavProps {
@@ -47,8 +43,8 @@ interface IconNavProps {
 export function IconNav({ activeSection, onSectionChange }: IconNavProps) {
   return (
     <nav className="w-[52px] shrink-0 flex flex-col items-center py-3 bg-sidebar border-r border-border">
-      {/* Nav Items */}
-      <div className="flex-1 flex flex-col items-center gap-0.5">
+      {/* Nav Items - 8px gap between items */}
+      <div className="flex-1 flex flex-col items-center gap-2">
         {navItems.map((item) => {
           const isActive = item.id === activeSection;
           const Icon = item.icon;
@@ -63,13 +59,13 @@ export function IconNav({ activeSection, onSectionChange }: IconNavProps) {
                     "transition-colors duration-200",
                     isActive
                       ? "bg-accent-muted text-accent"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      : "text-foreground/50 hover:bg-muted hover:text-white",
                   )}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", duration: 0.15, bounce: 0 }}
                 >
-                  <Icon className="size-4" />
+                  <Icon className="size-4" strokeWidth={1.5} />
                   {isActive && (
                     <motion.div
                       layoutId="activeNavIndicator"

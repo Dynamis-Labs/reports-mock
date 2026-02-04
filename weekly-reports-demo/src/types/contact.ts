@@ -46,6 +46,9 @@ export type CommunicationStyle =
 /** Contact warmth indicator */
 export type RelationshipWarmth = "hot" | "warm" | "cool" | "cold" | "new";
 
+/** Contact category for grouping */
+export type ContactCategory = "investor" | "client" | "other";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Interaction & Activity Types
 // ─────────────────────────────────────────────────────────────────────────────
@@ -153,6 +156,9 @@ export interface Contact {
   relationshipScore: number; // 0-100, used for visual indicators
   warmth: RelationshipWarmth;
   communicationStyle?: CommunicationStyle;
+
+  /** Category for accordion grouping: investor, client, or other */
+  category: ContactCategory;
 
   // ─── Role Badges (structured tags) ───────────────────────────────────────
   /** Primary role badges: "Decision Maker", "Technical Champion", etc. */

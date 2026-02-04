@@ -16,7 +16,7 @@ export function ThemeToggle() {
       onClick={toggle}
       className={cn(
         "size-10 rounded-lg flex items-center justify-center",
-        "text-muted-foreground hover:bg-muted hover:text-foreground",
+        "text-foreground/60 hover:bg-muted hover:text-white",
         "transition-colors duration-200",
       )}
       whileHover={{ scale: 1.05 }}

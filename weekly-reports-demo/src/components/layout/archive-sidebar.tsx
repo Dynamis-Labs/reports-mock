@@ -239,7 +239,7 @@ export function ArchiveSidebar({
                           "px-2.5 py-1 text-[11px] rounded-md transition-colors",
                           selectedYear === year
                             ? "bg-accent text-accent-foreground"
-                            : "bg-muted/70 text-muted-foreground hover:bg-muted",
+                            : "bg-muted/70 text-foreground/70 hover:bg-muted hover:text-foreground",
                         )}
                       >
                         {year}
@@ -262,7 +262,7 @@ export function ArchiveSidebar({
                             "px-2.5 py-1 text-[11px] rounded-md transition-colors",
                             selectedMonth === month
                               ? "bg-accent text-accent-foreground"
-                              : "bg-muted/50 text-muted-foreground hover:bg-muted",
+                              : "bg-muted/50 text-foreground/70 hover:bg-muted hover:text-foreground",
                           )}
                         >
                           {month.slice(0, 3)}

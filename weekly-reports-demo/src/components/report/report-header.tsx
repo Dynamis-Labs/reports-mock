@@ -43,7 +43,7 @@ export function ReportHeader({ report }: ReportHeaderProps) {
       <div className="flex items-center gap-3 mt-10 pt-8 border-t border-border-subtle">
         <div className="flex-1" />
         <Button variant="ghost" size="icon" className="size-8">
-          <Link2 className="size-4" />
+          <Link2 className="size-4" strokeWidth={1.5} />
         </Button>
         {actionCount > 0 && (
           <Button
@@ -52,7 +52,7 @@ export function ReportHeader({ report }: ReportHeaderProps) {
             className="gap-1.5"
             onClick={handleReviewClick}
           >
-            <Sparkles className="size-3.5" />
+            <Sparkles className="size-3.5" strokeWidth={1.5} />
             Review
             <Badge variant="count" className="ml-1">
               {actionCount}

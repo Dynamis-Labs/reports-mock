@@ -68,7 +68,7 @@ export function ActionItems({ actions }: ActionItemsProps) {
                   "bg-accent-muted",
                 )}
               >
-                <Icon className="w-5 h-5 text-accent" />
+                <Icon className="size-5 text-accent" strokeWidth={1.5} />
               </div>
 
               <div className="flex-1 min-w-0">

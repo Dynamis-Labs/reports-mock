@@ -3,7 +3,6 @@ import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useReviewActionsStore } from "../../stores/review-actions-store";
 import { springs } from "../../lib/motion";
 import { Button } from "../ui/button";
-import { LayoutSwitcher } from "./layout-switcher";
 
 export function ReviewActionsHeader() {
   const { closeModal, goToNext, goToPrevious, actions, currentIndex } =
@@ -27,7 +26,7 @@ export function ReviewActionsHeader() {
           className="size-8 text-muted-foreground hover:text-foreground"
           aria-label="Close modal"
         >
-          <ArrowLeft className="size-5" />
+          <ArrowLeft className="size-5" strokeWidth={1.5} />
         </Button>
 
         {/* Title */}
@@ -41,9 +40,6 @@ export function ReviewActionsHeader() {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Layout switcher */}
-        <LayoutSwitcher />
-
         {/* Navigation with integrated counter */}
         <div className="flex items-center gap-1 ml-4">
           <Button
@@ -54,7 +50,7 @@ export function ReviewActionsHeader() {
             className="size-8"
             aria-label="Previous action"
           >
-            <ChevronLeft className="size-5" />
+            <ChevronLeft className="size-5" strokeWidth={1.5} />
           </Button>
 
           <span className="text-modal-label text-muted-foreground tabular-nums min-w-[5ch] text-center">
@@ -69,7 +65,7 @@ export function ReviewActionsHeader() {
             className="size-8"
             aria-label="Next action"
           >
-            <ChevronRight className="size-5" />
+            <ChevronRight className="size-5" strokeWidth={1.5} />
           </Button>
         </div>
       </div>

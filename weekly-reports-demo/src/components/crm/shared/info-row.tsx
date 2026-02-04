@@ -25,7 +25,10 @@ export function InfoRow({
 }: InfoRowProps) {
   const content = (
     <div className="flex items-center gap-3 py-2">
-      <Icon className="size-4 text-muted-foreground/60 shrink-0" />
+      <Icon
+        className="size-4 text-muted-foreground/60 shrink-0"
+        strokeWidth={1.5}
+      />
       <div className="flex-1 min-w-0">
         <p className="text-micro text-muted-foreground/60 mb-0.5">{label}</p>
         <p
@@ -34,7 +37,12 @@ export function InfoRow({
           {value}
         </p>
       </div>
-      {href && <ExternalLink className="size-3.5 text-muted-foreground/40" />}
+      {href && (
+        <ExternalLink
+          className="size-3.5 text-muted-foreground/40"
+          strokeWidth={1.5}
+        />
+      )}
     </div>
   );
 

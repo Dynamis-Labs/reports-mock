@@ -5,11 +5,7 @@ import { useReviewActionsStore } from "../../stores/review-actions-store";
 import { modalContentVariants, springs } from "../../lib/motion";
 import { ReviewActionsHeader } from "./review-actions-header";
 import { Button } from "../ui/button";
-import {
-  SplitPanelLayout,
-  MinimalCardLayout,
-  AccordionLayout,
-} from "./layouts";
+import { SplitPanelLayout } from "./layouts";
 import { isEmailAction, isMeetingAction } from "../../types/action";
 
 export function ReviewActionsModal() {
@@ -18,7 +14,6 @@ export function ReviewActionsModal() {
     closeModal,
     markCompleted,
     draftAction,
-    layout,
     updateDraft,
     addParticipant,
     removeParticipant,
@@ -85,9 +80,7 @@ export function ReviewActionsModal() {
           >
             {/* Modal content */}
             <motion.div
-              className={`relative w-full mx-4 bg-surface-elevated rounded-xl shadow-float border border-border pointer-events-auto ${
-                layout === "split-panel" ? "max-w-3xl" : "max-w-2xl"
-              }`}
+              className="relative w-full mx-4 bg-surface-elevated rounded-xl shadow-float border border-border pointer-events-auto max-w-3xl"
               variants={modalContentVariants}
               initial="initial"
               animate="animate"
@@ -103,35 +96,13 @@ export function ReviewActionsModal() {
                 {draftAction &&
                   (isEmailAction(draftAction) ||
                     isMeetingAction(draftAction)) && (
-                    <>
-                      {layout === "split-panel" && (
-                        <SplitPanelLayout
-                          action={draftAction}
-                          onUpdateDraft={updateDraft}
-                          onAddParticipant={addParticipant}
-                          onRemoveParticipant={removeParticipant}
-                          onCycleRecipientType={cycleRecipientType}
-                        />
-                      )}
-                      {layout === "minimal-card" && (
-                        <MinimalCardLayout
-                          action={draftAction}
-                          onUpdateDraft={updateDraft}
-                          onAddParticipant={addParticipant}
-                          onRemoveParticipant={removeParticipant}
-                          onCycleRecipientType={cycleRecipientType}
-                        />
-                      )}
-                      {layout === "accordion" && (
-                        <AccordionLayout
-                          action={draftAction}
-                          onUpdateDraft={updateDraft}
-                          onAddParticipant={addParticipant}
-                          onRemoveParticipant={removeParticipant}
-                          onCycleRecipientType={cycleRecipientType}
-                        />
-                      )}
-                    </>
+                    <SplitPanelLayout
+                      action={draftAction}
+                      onUpdateDraft={updateDraft}
+                      onAddParticipant={addParticipant}
+                      onRemoveParticipant={removeParticipant}
+                      onCycleRecipientType={cycleRecipientType}
+                    />
                   )}
                 {!draftAction && (
                   <div className="flex items-center justify-center h-full text-modal-ui text-muted-foreground">

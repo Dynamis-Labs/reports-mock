@@ -3,7 +3,6 @@ import { Users } from "lucide-react";
 import { CrmHeader } from "./crm-header";
 import { CardGridLayout } from "./layouts";
 import { useCrmStore } from "../../stores/crm-store";
-import { mockContacts } from "../../data/mock-contacts";
 
 /**
  * CRM Page
@@ -13,11 +12,12 @@ import { mockContacts } from "../../data/mock-contacts";
  */
 
 export function CrmPage() {
-  const { searchQuery, selectedTags, selectedRelationships } = useCrmStore();
+  const { contacts, searchQuery, selectedTags, selectedRelationships } =
+    useCrmStore();
 
   // Filter contacts based on search and filters
   const filteredContacts = useMemo(() => {
-    return mockContacts.filter((contact) => {
+    return contacts.filter((contact) => {
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -51,7 +51,7 @@ export function CrmPage() {
 
       return true;
     });
-  }, [searchQuery, selectedTags, selectedRelationships]);
+  }, [contacts, searchQuery, selectedTags, selectedRelationships]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background">
@@ -61,8 +61,13 @@ export function CrmPage() {
         {filteredContacts.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <Users className="size-12 mx-auto mb-4 text-muted-foreground/20" />
-              <p className="text-muted-foreground font-medium">No contacts found</p>
+              <Users
+                className="size-12 mx-auto mb-4 text-muted-foreground/20"
+                strokeWidth={1}
+              />
+              <p className="text-muted-foreground font-medium">
+                No contacts found
+              </p>
               <p className="text-sm text-muted-foreground/50 mt-1">
                 Try adjusting your search or filters
               </p>

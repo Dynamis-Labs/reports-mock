@@ -24,7 +24,7 @@ export function InfoPopover({ children, className }: InfoPopoverProps) {
           )}
           onClick={(e) => e.stopPropagation()}
         >
-          <Info className="size-4" />
+          <Info className="size-4" strokeWidth={1.5} />
         </button>
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Portal>

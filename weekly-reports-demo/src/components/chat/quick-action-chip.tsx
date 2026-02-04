@@ -85,7 +85,7 @@ export function AllActionsButton({
         "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full",
         "bg-surface border border-border-subtle",
         "text-caption text-foreground font-medium",
-        "hover:bg-muted hover:border-border transition-colors cursor-pointer",
+        "hover:bg-muted hover:border-border hover:text-white transition-colors cursor-pointer",
         className,
       )}
     >

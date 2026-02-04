@@ -1,15 +1,17 @@
 import { motion } from "motion/react";
+import { Pin } from "lucide-react";
 import { cn } from "../../../../lib/utils";
 import { formatRelativeTime } from "../../../../lib/date-utils";
 import { staggerItem } from "../../../../lib/motion";
+import { useCrmStore } from "../../../../stores/crm-store";
 import type { Contact } from "../../../../types/contact";
 
 /**
  * Contact Card
  *
  * Square-ish dossier card with prominent photo.
- * Layout: Tall photo on left → stacked info on right
- * Info: Name, Title @ Company, Last Contact, Status
+ * Shows tags as small pills, time since contact in corner.
+ * Pin indicator when contact is pinned.
  */
 
 interface ContactCardProps {
@@ -25,32 +27,54 @@ export function ContactCard({
 }: ContactCardProps) {
   const fullName = `${contact.firstName} ${contact.lastName}`;
   const initials = `${contact.firstName[0]}${contact.lastName[0]}`;
-  const isOverdue = contact.nextFollowUp && contact.nextFollowUp <= new Date();
 
-  // Warmth-based status
-  const statusConfig = {
-    hot: { label: "Active", color: "bg-emerald-500" },
-    warm: { label: "Engaged", color: "bg-emerald-400" },
-    cool: { label: "Cooling", color: "bg-amber-500" },
-    cold: { label: "At Risk", color: "bg-red-400" },
-    new: { label: "New", color: "bg-blue-500" },
+  const { pinnedContactIds, togglePin } = useCrmStore();
+  const isPinned = pinnedContactIds?.includes(contact.id) ?? false;
+
+  // Get display tags (filter out section tags)
+  const displayTags = contact.tags.filter(
+    (tag) =>
+      !tag.startsWith("@") && !tag.startsWith("#") && !tag.startsWith("["),
+  );
+
+  const handlePinClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    togglePin?.(contact.id);
   };
-  const status = statusConfig[contact.warmth];
 
   return (
     <motion.button
       variants={staggerItem}
       onClick={onClick}
       className={cn(
-        "group relative text-left w-full rounded-xl overflow-hidden",
-        "bg-white dark:bg-surface/50",
+        "group relative text-left w-full rounded-lg overflow-hidden",
+        "bg-surface-elevated",
         "border transition-all duration-200",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
         isSelected
-          ? "border-foreground/20 shadow-md"
-          : "border-border/40 hover:border-border hover:shadow-sm",
+          ? "border-accent/40 shadow-sm"
+          : "border-border hover:border-border-subtle hover:shadow-sm",
+        isPinned && "border-amber-400/40",
       )}
     >
+      {/* Pin indicator */}
+      <button
+        onClick={handlePinClick}
+        className={cn(
+          "absolute top-2 right-2 z-10",
+          "transition-all duration-200",
+          isPinned
+            ? "text-amber-500 dark:text-amber-400"
+            : "opacity-0 group-hover:opacity-100 text-muted-foreground/40 hover:text-amber-500",
+        )}
+      >
+        <Pin
+          className="size-3.5"
+          strokeWidth={1.5}
+          fill={isPinned ? "currentColor" : "none"}
+        />
+      </button>
+
       <div className="flex">
         {/* Tall profile photo - left side */}
         <div className="w-24 shrink-0 bg-gradient-to-br from-muted to-muted/50 relative">
@@ -67,15 +91,6 @@ export function ContactCard({
               </span>
             </div>
           )}
-          {/* Status indicator dot */}
-          <div
-            className={cn(
-              "absolute bottom-2 right-2 size-2.5 rounded-full",
-              status.color,
-              "ring-2 ring-white dark:ring-surface/50",
-            )}
-            title={status.label}
-          />
         </div>
 
         {/* Info section - right side */}
@@ -93,21 +108,30 @@ export function ContactCard({
             </p>
           </div>
 
-          {/* Bottom: Last contact + overdue indicator */}
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border/30">
-            <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider">
-                Last contact
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              {isOverdue && (
-                <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+          {/* Tags */}
+          {displayTags.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {displayTags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="px-1.5 py-0.5 text-[9px] rounded bg-muted/50 text-muted-foreground truncate max-w-[70px]"
+                >
+                  {tag}
+                </span>
+              ))}
+              {displayTags.length > 3 && (
+                <span className="text-[9px] text-muted-foreground/50">
+                  +{displayTags.length - 3}
+                </span>
               )}
-              <span className="text-xs font-medium text-muted-foreground tabular-nums">
-                {formatRelativeTime(contact.lastContacted)}
-              </span>
             </div>
+          )}
+
+          {/* Bottom: Time in corner */}
+          <div className="flex items-center justify-end mt-2 pt-2 border-t border-border/30">
+            <span className="text-[10px] text-muted-foreground/60 tabular-nums">
+              {formatRelativeTime(contact.lastContacted)}
+            </span>
           </div>
         </div>
       </div>

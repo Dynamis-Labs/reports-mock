@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type {
+  Contact,
   ContactSortField,
   SortDirection,
-  CrmCardStyle,
 } from "../types/contact";
+import { mockContacts } from "../data/mock-contacts";
 
 /**
  * CRM Store
@@ -17,6 +18,10 @@ import type {
  */
 
 interface CrmState {
+  // ─── Contact Data ────────────────────────────────────────────────────────
+  /** All contacts (mutable copy of mock data) */
+  contacts: Contact[];
+
   // ─── View Configuration ──────────────────────────────────────────────────
   /** Sort field */
   sortField: ContactSortField;
@@ -45,8 +50,8 @@ interface CrmState {
   /** Whether filters panel is expanded */
   isFiltersPanelOpen: boolean;
 
-  /** Card display style */
-  cardStyle: CrmCardStyle;
+  /** Pinned contact IDs (float to top) */
+  pinnedContactIds: string[];
 
   // ─── Actions ─────────────────────────────────────────────────────────────
   // View actions
@@ -72,14 +77,21 @@ interface CrmState {
   toggleFiltersPanel: () => void;
   setFiltersPanelOpen: (open: boolean) => void;
 
-  // Card style actions
-  setCardStyle: (style: CrmCardStyle) => void;
+  // Contact data actions
+  updateContactTags: (contactId: string, tags: string[]) => void;
+
+  // Pin actions
+  togglePin: (contactId: string) => void;
+
+  // Derived data
+  getAllUniqueTags: () => string[];
 
   // Utility
   reset: () => void;
 }
 
 const initialState = {
+  contacts: mockContacts,
   sortField: "lastContacted" as ContactSortField,
   sortDirection: "desc" as SortDirection,
   selectedContactId: null,
@@ -88,7 +100,7 @@ const initialState = {
   selectedTags: [] as string[],
   selectedRelationships: [] as string[],
   isFiltersPanelOpen: false,
-  cardStyle: "polaroid" as CrmCardStyle,
+  pinnedContactIds: [] as string[],
 };
 
 export const useCrmStore = create<CrmState>()(
@@ -152,19 +164,46 @@ export const useCrmStore = create<CrmState>()(
 
       setFiltersPanelOpen: (open) => set({ isFiltersPanelOpen: open }),
 
-      // ─── Card Style Actions ────────────────────────────────────────────────
-      setCardStyle: (style) => set({ cardStyle: style }),
+      // ─── Contact Data Actions ───────────────────────────────────────────────
+      updateContactTags: (contactId, tags) =>
+        set((state) => ({
+          contacts: state.contacts.map((contact) =>
+            contact.id === contactId
+              ? { ...contact, tags, updatedAt: new Date() }
+              : contact,
+          ),
+        })),
+
+      // ─── Pin Actions ────────────────────────────────────────────────────────
+      togglePin: (contactId) =>
+        set((state) => ({
+          pinnedContactIds: state.pinnedContactIds.includes(contactId)
+            ? state.pinnedContactIds.filter((id) => id !== contactId)
+            : [...state.pinnedContactIds, contactId],
+        })),
+
+      // ─── Derived Data ───────────────────────────────────────────────────────
+      getAllUniqueTags: () => {
+        const state = useCrmStore.getState();
+        const tagSet = new Set<string>();
+        state.contacts.forEach((contact) => {
+          contact.tags.forEach((tag) => tagSet.add(tag));
+          contact.roleBadges.forEach((badge) => tagSet.add(badge));
+        });
+        return Array.from(tagSet).sort();
+      },
 
       // ─── Utility ───────────────────────────────────────────────────────────
       reset: () => set({ ...initialState }),
     }),
     {
-      name: "crm-preferences",
-      // Persist sort preferences and card style
+      name: "crm-data",
+      version: 3, // Bump version to clear old localStorage data
+      // Persist only user preferences, not contact data
       partialize: (state) => ({
         sortField: state.sortField,
         sortDirection: state.sortDirection,
-        cardStyle: state.cardStyle,
+        pinnedContactIds: state.pinnedContactIds,
       }),
     },
   ),

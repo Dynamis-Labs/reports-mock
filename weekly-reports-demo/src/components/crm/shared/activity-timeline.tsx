@@ -56,7 +56,7 @@ export function ActivityTimeline({
               key={interaction.id}
               className={cn(
                 "group flex items-center gap-3 py-2 px-2.5 -mx-2.5 rounded-lg",
-                "hover:bg-muted/60 transition-colors cursor-default",
+                "hover:bg-muted/60 hover:text-white transition-colors cursor-default",
               )}
             >
               <div
@@ -65,7 +65,10 @@ export function ActivityTimeline({
                   "bg-muted/50 group-hover:bg-muted transition-colors",
                 )}
               >
-                <Icon className={cn("size-3.5", config.color)} />
+                <Icon
+                  className={cn("size-3.5", config.color)}
+                  strokeWidth={1.5}
+                />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-ui text-foreground truncate leading-tight">
@@ -113,7 +116,7 @@ export function ActivityTimeline({
             transition={{ delay: i * 0.05, ...springs.quick }}
             className={cn(
               "group flex items-center gap-3 py-2 px-2.5 -mx-2.5 rounded-lg",
-              "hover:bg-muted/60 transition-colors cursor-default",
+              "hover:bg-muted/60 hover:text-white transition-colors cursor-default",
             )}
           >
             <div
@@ -122,7 +125,10 @@ export function ActivityTimeline({
                 "bg-muted/50 group-hover:bg-muted transition-colors",
               )}
             >
-              <Icon className={cn("size-3.5", config.color)} />
+              <Icon
+                className={cn("size-3.5", config.color)}
+                strokeWidth={1.5}
+              />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-ui text-foreground truncate leading-tight">

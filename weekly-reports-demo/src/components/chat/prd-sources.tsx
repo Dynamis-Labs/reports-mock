@@ -32,14 +32,14 @@ export function PRDSources({ slackUrl }: PRDSourcesProps) {
           transition={springs.quick}
           className={cn(
             "size-8 rounded-lg flex items-center justify-center",
-            "bg-muted text-muted-foreground",
+            "bg-muted text-white",
             "hover:bg-purple-100 hover:text-purple-600",
             "dark:hover:bg-purple-950 dark:hover:text-purple-400",
             "transition-colors duration-150",
           )}
           title="View in Slack"
         >
-          <SlackIcon className="w-4 h-4" />
+          <SlackIcon className="size-4" />
         </motion.button>
 
         {/* GitHub icon */}
@@ -49,13 +49,13 @@ export function PRDSources({ slackUrl }: PRDSourcesProps) {
           transition={springs.quick}
           className={cn(
             "size-8 rounded-lg flex items-center justify-center",
-            "bg-muted text-muted-foreground",
+            "bg-muted text-white",
             "hover:bg-accent-muted hover:text-accent",
             "transition-colors duration-150",
           )}
           title="View on GitHub"
         >
-          <Github className="w-4 h-4" />
+          <Github className="size-4" strokeWidth={1.5} />
         </motion.button>
       </div>
     </div>

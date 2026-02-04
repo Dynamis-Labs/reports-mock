@@ -111,23 +111,23 @@ export function CommentCard({
             onClick={startEdit}
             className={cn(
               "p-1.5 rounded text-muted-foreground transition-colors",
-              "hover:bg-muted hover:text-foreground",
-              "focus:outline-none focus:bg-muted focus:text-foreground",
+              "hover:bg-muted hover:text-white",
+              "focus:outline-none focus:bg-muted focus:text-white",
             )}
             aria-label="Edit comment"
           >
-            <Pencil className="size-3.5" />
+            <Pencil className="size-3.5" strokeWidth={1.5} />
           </button>
           <button
             onClick={startDelete}
             className={cn(
               "p-1.5 rounded text-muted-foreground transition-colors",
-              "hover:bg-muted hover:text-foreground",
-              "focus:outline-none focus:bg-muted focus:text-foreground",
+              "hover:bg-muted hover:text-white",
+              "focus:outline-none focus:bg-muted focus:text-white",
             )}
             aria-label="Delete comment"
           >
-            <X className="size-3.5" />
+            <X className="size-3.5" strokeWidth={1.5} />
           </button>
         </div>
       )}
@@ -163,7 +163,7 @@ export function CommentCard({
               onClick={cancelEdit}
               className={cn(
                 "px-2.5 py-1 text-micro font-medium rounded",
-                "text-muted-foreground hover:bg-muted transition-colors",
+                "text-muted-foreground hover:bg-muted hover:text-white transition-colors",
               )}
             >
               Cancel
@@ -219,7 +219,7 @@ export function CommentCard({
                 transition={springs.quick}
                 className={cn(
                   "px-3 py-1.5 text-micro font-medium rounded-md",
-                  "bg-background text-foreground hover:bg-muted transition-colors",
+                  "bg-background text-foreground hover:bg-muted hover:text-white transition-colors",
                 )}
               >
                 Cancel

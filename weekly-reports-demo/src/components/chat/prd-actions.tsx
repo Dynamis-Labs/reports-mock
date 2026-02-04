@@ -28,7 +28,10 @@ export function PRDActions() {
               "transition-colors duration-150",
             )}
           >
-            <Icon className="w-3.5 h-3.5 text-muted-foreground" />
+            <Icon
+              className="size-3.5 text-muted-foreground"
+              strokeWidth={1.5}
+            />
             <span className="text-caption text-foreground font-medium">
               {action.label}
             </span>

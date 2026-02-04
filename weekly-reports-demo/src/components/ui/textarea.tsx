@@ -9,7 +9,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       <textarea
         ref={ref}
         className={cn(
-          "w-full bg-surface-elevated border border-border rounded-lg px-4 py-3",
+          "w-full bg-surface-elevated border border-border rounded-lg px-4 py-2", // 8px vertical padding
           "text-ui text-foreground",
           "placeholder:text-muted-foreground/60",
           "focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent-muted",

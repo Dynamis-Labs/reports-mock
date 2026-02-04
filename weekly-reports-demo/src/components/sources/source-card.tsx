@@ -35,7 +35,7 @@ export function SourceCard({ source }: SourceCardProps) {
       className={cn(
         "w-full p-3 bg-surface border border-border rounded-lg text-left",
         "transition-colors duration-150",
-        "hover:bg-muted hover:border-[var(--color-sources)] cursor-pointer",
+        "hover:bg-muted hover:text-white hover:border-[var(--color-sources)] cursor-pointer",
       )}
     >
       <div className="flex items-center gap-2 mb-1">
@@ -43,7 +43,10 @@ export function SourceCard({ source }: SourceCardProps) {
           {source.title}
         </h4>
         {hasValidLink && (
-          <ExternalLink className="w-3 h-3 text-muted-foreground shrink-0" />
+          <ExternalLink
+            className="size-3 text-muted-foreground shrink-0"
+            strokeWidth={1.5}
+          />
         )}
       </div>
 

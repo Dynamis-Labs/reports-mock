@@ -49,11 +49,9 @@ function App() {
   const showReportsRadarToggle = isReportsSection;
 
   // Render the Reports/Radar toggle header - h-14 matching all other page headers
+  // Title is handled by the sidebar label; main header just shows the toggle
   const reportsRadarHeader = showReportsRadarToggle ? (
-    <div className="h-14 px-6 flex items-center justify-between border-b border-border-subtle bg-background shrink-0">
-      <h1 className="text-lg font-semibold text-foreground">
-        {viewMode === "radar" ? "Radar" : "Reports"}
-      </h1>
+    <div className="h-14 px-6 flex items-center justify-end border-b border-border-subtle bg-background shrink-0">
       <ReportsRadarToggle value={viewMode} onChange={setViewMode} />
     </div>
   ) : null;

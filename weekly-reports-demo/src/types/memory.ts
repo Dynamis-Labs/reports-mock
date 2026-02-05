@@ -84,6 +84,16 @@ export interface MemoryEvent {
   tags: string[];
   createdAt: Date;
   updatedAt: Date;
+
+  // ─── Connection & Detail Fields ───────────────────────────────────────────
+  /** IDs of related events (bidirectional connections across weeks) */
+  connectedEventIds?: string[];
+
+  /** Structured detail fields for enhanced slide-up panel */
+  impact?: string;
+  evidence?: string;
+  nextStep?: string;
+  channel?: string; // e.g., "#engineering"
 }
 
 /**

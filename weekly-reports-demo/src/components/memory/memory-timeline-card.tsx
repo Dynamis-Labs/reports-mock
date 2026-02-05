@@ -1,263 +1,230 @@
+import { forwardRef } from "react";
 import { motion } from "motion/react";
-import {
-  Video,
-  Mail,
-  MessageSquare,
-  FileText,
-  Calendar,
-  Flag,
-  Target,
-  AlertCircle,
-} from "lucide-react";
+import { Users, Mail, Target, Flag, Scale, AlertTriangle } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { Badge } from "../ui/badge";
-import { type MemoryEvent, type MemoryEventType } from "../../types/memory";
-import { useIsEventSelected, useMemoryStore } from "../../stores/memory-store";
+import {
+  eventTypeConfig,
+  type MemoryEvent,
+  type MemoryEventType,
+} from "../../types/memory";
+import {
+  useIsEventSelected,
+  useIsEventFocused,
+  useIsEventConnectedToFocus,
+  useIsEventDimmed,
+  useIsFocusMode,
+  useMemoryStore,
+} from "../../stores/memory-store";
 
 /**
- * Memory Timeline Card
+ * Memory Timeline Card - Large Square Design
  *
- * Individual card in the horizontal timeline, designed to match the
- * activity feed reference image:
- * - Left-colored border indicating event type
- * - Service icon (Zoom, Gmail, Slack, etc.)
- * - Title with date and platform badges
- * - "with [participants]" secondary line
- * - Summary description
+ * Redesigned card for the swim lanes timeline showing high-level accomplishments.
+ * Cards are larger (~280x~220px), closer to square with:
+ * - Type icon + type label in top-left
+ * - Date in top-right
+ * - Bold title
+ * - Brief description (3 lines max)
  *
- * Cards have a clean white background with subtle shadows on hover.
+ * Focus mode states:
+ * - Default: Normal appearance
+ * - Focused (source): Pulsing cyan ring
+ * - Connected: Cyan ring, stays bright
+ * - Dimmed: Faded, non-interactive
  */
 
 interface MemoryTimelineCardProps {
   event: MemoryEvent;
-  /** Compact mode for week-column display */
-  compact?: boolean;
+  zoomLevel?: number;
 }
 
-// Map event types to appropriate icons
-const eventTypeIcons: Record<MemoryEventType, typeof Video> = {
-  meeting: Video,
-  email: Mail,
-  commitment: Flag,
-  milestone: Target,
-  decision: FileText,
-  alert: AlertCircle,
-};
+// Format date for display
+function formatCardDate(date: Date): string {
+  const now = new Date();
+  const diffMs = date.getTime() - now.getTime();
+  const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
 
-// Map source types to icons
-const sourceTypeIcons: Record<string, typeof Video> = {
-  meeting: Video,
-  email: Mail,
-  slack: MessageSquare,
-  document: FileText,
-  calendar: Calendar,
-};
+  if (diffDays === 0) {
+    return `Today, ${date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })}`;
+  }
+  if (diffDays === 1) {
+    return `Tomorrow, ${date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    })}`;
+  }
+  if (diffDays === -1) {
+    return "Yesterday";
+  }
 
-// Get display label for the source/platform
-function getSourceLabel(event: MemoryEvent): string | null {
-  if (event.sources.length === 0) return null;
-
-  const sourceType = event.sources[0].type;
-  const labels: Record<string, string> = {
-    meeting: "Zoom",
-    email: "Gmail",
-    slack: "Slack",
-    document: "Doc",
-    calendar: "Calendar",
-  };
-
-  return labels[sourceType] || sourceType;
-}
-
-// Format date for badge display
-function formatBadgeDate(date: Date): string {
   return date.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
   });
 }
 
-// Get participants display string
-function getParticipantsDisplay(event: MemoryEvent): string | null {
-  if (event.participants.length === 0) return null;
+// Type-specific icons (using LucideIcon type which accepts style)
+import type { LucideIcon } from "lucide-react";
 
-  const names = event.participants.slice(0, 2).map((p) => p.name);
-  const remaining = event.participants.length - 2;
-
-  if (remaining > 0) {
-    return `with ${names.join(", ")} +${remaining}`;
-  }
-  return `with ${names.join(", ")}`;
-}
-
-// Border colors by event type (left accent)
-const borderColors: Record<MemoryEventType, string> = {
-  meeting: "border-l-blue-400",
-  email: "border-l-sky-400",
-  commitment: "border-l-amber-400",
-  milestone: "border-l-emerald-400",
-  decision: "border-l-violet-400",
-  alert: "border-l-red-400",
+const typeIcons: Record<MemoryEventType, LucideIcon> = {
+  meeting: Users,
+  email: Mail,
+  commitment: Target,
+  milestone: Flag,
+  decision: Scale,
+  alert: AlertTriangle,
 };
 
-// Icon background colors
-const iconBgColors: Record<MemoryEventType, string> = {
-  meeting: "bg-blue-500",
-  email: "bg-red-500", // Gmail red
-  commitment: "bg-amber-500",
-  milestone: "bg-emerald-500",
-  decision: "bg-violet-500",
-  alert: "bg-red-500",
-};
-
-// Icon background for Slack (distinct purple)
-const slackBg = "bg-[#4A154B]";
-
-export function MemoryTimelineCard({
-  event,
-  compact = false,
-}: MemoryTimelineCardProps) {
+export const MemoryTimelineCard = forwardRef<
+  HTMLButtonElement,
+  MemoryTimelineCardProps
+>(function MemoryTimelineCard({ event, zoomLevel = 1 }, ref) {
   const isSelected = useIsEventSelected(event.id);
+  const isFocused = useIsEventFocused(event.id);
+  const isConnected = useIsEventConnectedToFocus(event.id);
+  const isDimmed = useIsEventDimmed(event.id);
+  const isFocusMode = useIsFocusMode();
+  const toggleFocusMode = useMemoryStore((state) => state.toggleFocusMode);
   const selectEvent = useMemoryStore((state) => state.selectEvent);
 
-  const Icon = eventTypeIcons[event.type];
-  const sourceLabel = getSourceLabel(event);
-  const participantsDisplay = getParticipantsDisplay(event);
-
-  // Determine icon background based on source
-  const primarySource = event.sources[0]?.type;
-  let iconBg = iconBgColors[event.type];
-  if (primarySource === "slack") {
-    iconBg = slackBg;
-  }
-
-  // Get the appropriate icon for the source
-  const SourceIcon = primarySource
-    ? sourceTypeIcons[primarySource] || Icon
-    : Icon;
+  const typeConfig = eventTypeConfig[event.type];
+  const TypeIcon = typeIcons[event.type];
 
   const handleClick = () => {
+    if (isDimmed) return; // Don't interact with dimmed cards
+    toggleFocusMode(event.id);
     selectEvent(event.id);
   };
 
-  // Compact mode: smaller card for week-column display
-  if (compact) {
-    return (
-      <motion.button
-        type="button"
-        onClick={handleClick}
-        className={cn(
-          "w-[170px] text-left rounded-lg overflow-hidden",
-          "bg-surface-elevated border border-l-[3px]",
-          "transition-all duration-200",
-          borderColors[event.type],
-          isSelected
-            ? "border-border shadow-md ring-2 ring-accent/20"
-            : "border-border/60 hover:shadow-sm hover:border-border",
-        )}
-        whileHover={{ y: -1, scale: 1.01 }}
-        whileTap={{ scale: 0.98 }}
-        transition={{ type: "spring", duration: 0.2, bounce: 0 }}
-      >
-        <div className="p-3">
-          {/* Row 1: Icon + Type label */}
-          <div className="flex items-center gap-2 mb-1.5">
-            <div
-              className={cn(
-                "size-6 rounded flex items-center justify-center shrink-0",
-                iconBg,
-              )}
-            >
-              <SourceIcon className="size-3.5 text-white" strokeWidth={1.5} />
-            </div>
-            <Badge
-              variant="outline"
-              className="text-[9px] px-1 py-0 h-4 border-border bg-surface text-muted-foreground font-medium"
-            >
-              {formatBadgeDate(event.date)}
-            </Badge>
-          </div>
+  // Scale dimensions based on zoom level
+  const cardWidth = Math.round(240 * zoomLevel);
+  const cardMinHeight = Math.round(160 * zoomLevel);
+  const padding = Math.round(16 * zoomLevel);
+  const iconSize = Math.round(14 * zoomLevel);
+  const labelFontSize = Math.round(10 * zoomLevel);
+  const titleFontSize = Math.round(13 * zoomLevel);
+  const descFontSize = Math.round(11 * zoomLevel);
+  const borderRadius = Math.round(12 * zoomLevel);
+  const gap = Math.round(6 * zoomLevel);
 
-          {/* Title */}
-          <h4 className="font-medium text-xs text-foreground line-clamp-2 leading-snug">
-            {event.title}
-          </h4>
-        </div>
-      </motion.button>
-    );
-  }
-
-  // Full-size card (original)
   return (
     <motion.button
+      ref={ref}
       type="button"
       onClick={handleClick}
+      data-event-id={event.id}
+      style={{
+        width: cardWidth,
+        minHeight: cardMinHeight,
+        padding,
+        borderRadius,
+        gap,
+      }}
       className={cn(
-        "w-[280px] text-left rounded-lg overflow-hidden",
-        "bg-surface-elevated border border-l-4",
-        "transition-all duration-200",
-        borderColors[event.type],
-        isSelected
-          ? "border-border shadow-md ring-2 ring-accent/20"
-          : "border-border/60 hover:shadow-md hover:border-border",
+        // Base styles - Large square card
+        "text-left overflow-hidden",
+        "bg-surface-elevated border",
+        "flex flex-col",
+
+        // Default state
+        !isFocusMode && [
+          "transition-all duration-200",
+          isSelected
+            ? "border-border shadow-md ring-2 ring-accent/30"
+            : "border-border/50 hover:shadow-lg hover:border-border",
+        ],
+
+        // Focus mode states
+        isFocusMode && [
+          "transition-all duration-300",
+          // Focused (source) card - pulsing glow
+          isFocused && [
+            "relative z-30",
+            "ring-2 ring-accent shadow-xl",
+            "animate-focus-ring",
+          ],
+          // Connected card - bright with ring
+          isConnected &&
+            !isFocused && [
+              "relative z-30",
+              "ring-2 ring-accent/60",
+              "shadow-lg",
+            ],
+          // Dimmed card - faded and non-interactive
+          isDimmed && ["opacity-40", "pointer-events-none", "grayscale-[20%]"],
+        ],
       )}
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", duration: 0.2, bounce: 0 }}
+      // Only animate hover/tap when not dimmed
+      whileHover={!isDimmed ? { y: -3 } : undefined}
+      whileTap={!isDimmed ? { scale: 0.98 } : undefined}
+      transition={{ type: "spring", duration: 0.25, bounce: 0 }}
     >
-      <div className="p-4">
-        {/* Row 1: Icon + Title with badges */}
-        <div className="flex items-start gap-3">
-          {/* Service Icon */}
-          <div
-            className={cn(
-              "size-9 rounded-lg flex items-center justify-center shrink-0",
-              iconBg,
-            )}
+      {/* Row 1: Type icon + label + Date */}
+      <div
+        className="flex items-center justify-between"
+        style={{ marginBottom: gap * 1.5 }}
+      >
+        {/* Type badge with icon */}
+        <div className="flex items-center" style={{ gap: gap * 0.75 }}>
+          <TypeIcon
+            style={{ width: iconSize, height: iconSize }}
+            className="text-muted-foreground"
+            strokeWidth={1.5}
+          />
+          <span
+            className="font-semibold uppercase tracking-wider text-muted-foreground"
+            style={{ fontSize: labelFontSize }}
           >
-            <SourceIcon className="size-4.5 text-white" strokeWidth={1.5} />
-          </div>
-
-          {/* Title + Badges */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h4 className="font-semibold text-sm text-foreground truncate max-w-[140px]">
-                {event.title}
-              </h4>
-
-              {/* Date Badge */}
-              <Badge
-                variant="outline"
-                className="text-[10px] px-1.5 py-0 h-5 border-border bg-surface text-muted-foreground font-medium tabular-nums"
-              >
-                {formatBadgeDate(event.date)}
-              </Badge>
-
-              {/* Platform Badge */}
-              {sourceLabel && (
-                <Badge
-                  variant="outline"
-                  className="text-[10px] px-1.5 py-0 h-5 border-border bg-surface text-muted-foreground font-medium"
-                >
-                  {sourceLabel}
-                </Badge>
-              )}
-            </div>
-
-            {/* Participants */}
-            {participantsDisplay && (
-              <p className="text-xs text-muted-foreground/70 mt-0.5">
-                {participantsDisplay}
-              </p>
-            )}
-          </div>
+            {typeConfig.label}
+          </span>
         </div>
 
-        {/* Summary */}
-        <p className="text-xs text-muted-foreground mt-3 line-clamp-2 leading-relaxed">
-          {event.summary}
-        </p>
+        {/* Date */}
+        <span
+          className="text-muted-foreground tabular-nums"
+          style={{ fontSize: labelFontSize }}
+        >
+          {formatCardDate(event.date)}
+        </span>
       </div>
+
+      {/* Title */}
+      <h4
+        className="font-semibold text-foreground leading-snug line-clamp-2"
+        style={{ fontSize: titleFontSize, marginBottom: gap }}
+      >
+        {event.title}
+      </h4>
+
+      {/* Description - fills remaining space */}
+      <p
+        className="text-muted-foreground leading-relaxed line-clamp-3 flex-1"
+        style={{ fontSize: descFontSize }}
+      >
+        {event.summary}
+      </p>
+
+      {/* Connection indicator when focused */}
+      {isFocusMode && (isFocused || isConnected) && (
+        <div
+          className="border-t border-border/30"
+          style={{ marginTop: gap * 1.5, paddingTop: gap }}
+        >
+          <span
+            className="font-medium text-accent uppercase tracking-wider"
+            style={{ fontSize: Math.round(9 * zoomLevel) }}
+          >
+            {isFocused
+              ? `${event.connectedEventIds?.length || 0} Connected`
+              : "Related"}
+          </span>
+        </div>
+      )}
     </motion.button>
   );
-}
+});

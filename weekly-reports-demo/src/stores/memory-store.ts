@@ -26,6 +26,7 @@ import { mockInitiatives } from "../data/mock-initiatives";
  */
 
 type SidebarSection = "active" | "blocked";
+type ConnectionVisualizationMode = "dim-only" | "dim-with-lines";
 
 interface MemoryState {
   // ─── Data ────────────────────────────────────────────────────────────────
@@ -66,12 +67,38 @@ interface MemoryState {
   /** Whether the detail popup is open (legacy) */
   isPopupOpen: boolean;
 
+  // ─── Focus Mode State ───────────────────────────────────────────────────
+  /** ID of the event that initiated focus mode (clicked to show connections) */
+  focusedEventId: string | null;
+
+  /** Whether focus mode is active (dimming non-connected events) */
+  isFocusMode: boolean;
+
+  /** Visualization mode: 'dim-only' or 'dim-with-lines' */
+  connectionVisualizationMode: ConnectionVisualizationMode;
+
   // ─── Initiative Actions ──────────────────────────────────────────────────
   selectInitiative: (id: string | null) => void;
 
   // ─── Event Actions ───────────────────────────────────────────────────────
   selectEvent: (id: string | null) => void;
   clearSelection: () => void;
+
+  // ─── Focus Mode Actions ─────────────────────────────────────────────────
+  /** Enter focus mode for a specific event (shows its connections) */
+  enterFocusMode: (eventId: string) => void;
+
+  /** Exit focus mode and return to normal view */
+  exitFocusMode: () => void;
+
+  /** Toggle focus mode for an event */
+  toggleFocusMode: (eventId: string) => void;
+
+  /** Toggle between 'dim-only' and 'dim-with-lines' visualization modes */
+  toggleVisualizationMode: () => void;
+
+  /** Set visualization mode explicitly */
+  setVisualizationMode: (mode: ConnectionVisualizationMode) => void;
 
   // ─── Sources Panel Actions ───────────────────────────────────────────────
   openSourcesPanel: (sources: MemorySource[]) => void;
@@ -117,6 +144,16 @@ interface MemoryState {
   /** Get ordered week labels for an initiative */
   getWeekLabelsForInitiative: (initiativeId: string) => string[];
 
+  // ─── Focus Mode Computed ────────────────────────────────────────────────
+  /** Get all event IDs connected to a given event (bidirectional lookup) */
+  getConnectedEventIds: (eventId: string) => string[];
+
+  /** Check if an event is connected to the currently focused event */
+  isEventConnectedToFocus: (eventId: string) => boolean;
+
+  /** Check if an event should be dimmed (not connected to focused event) */
+  isEventDimmed: (eventId: string) => boolean;
+
   // Legacy computed
   getFilteredEvents: () => MemoryEvent[];
   getEventsByWeekGrouped: () => Map<string, MemoryEvent[]>;
@@ -139,6 +176,10 @@ const initialState = {
   selectedTypes: [] as MemoryEventType[],
   expandedWeeks: ["This Week", "Last Week"],
   isPopupOpen: false,
+  // Focus Mode
+  focusedEventId: null as string | null,
+  isFocusMode: false,
+  connectionVisualizationMode: "dim-only" as ConnectionVisualizationMode,
 };
 
 export const useMemoryStore = create<MemoryState>()(
@@ -164,6 +205,49 @@ export const useMemoryStore = create<MemoryState>()(
 
       clearSelection: () =>
         set({ selectedEventId: null, selectedInitiativeId: null }),
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // Focus Mode Actions
+      // ═══════════════════════════════════════════════════════════════════════
+
+      enterFocusMode: (eventId) =>
+        set({
+          focusedEventId: eventId,
+          isFocusMode: true,
+          selectedEventId: eventId, // Also select the event
+        }),
+
+      exitFocusMode: () =>
+        set({
+          focusedEventId: null,
+          isFocusMode: false,
+        }),
+
+      toggleFocusMode: (eventId) => {
+        const { focusedEventId, isFocusMode } = get();
+        if (isFocusMode && focusedEventId === eventId) {
+          // Already focused on this event, exit focus mode
+          set({ focusedEventId: null, isFocusMode: false });
+        } else {
+          // Enter focus mode for this event
+          set({
+            focusedEventId: eventId,
+            isFocusMode: true,
+            selectedEventId: eventId,
+          });
+        }
+      },
+
+      toggleVisualizationMode: () =>
+        set((state) => ({
+          connectionVisualizationMode:
+            state.connectionVisualizationMode === "dim-only"
+              ? "dim-with-lines"
+              : "dim-only",
+        })),
+
+      setVisualizationMode: (mode) =>
+        set({ connectionVisualizationMode: mode }),
 
       // ═══════════════════════════════════════════════════════════════════════
       // Sources Panel Actions
@@ -304,6 +388,63 @@ export const useMemoryStore = create<MemoryState>()(
         return getOrderedWeekLabels(events);
       },
 
+      // ═══════════════════════════════════════════════════════════════════════
+      // Focus Mode Computed
+      // ═══════════════════════════════════════════════════════════════════════
+
+      getConnectedEventIds: (eventId) => {
+        const { events, selectedInitiativeId } = get();
+        const event = events.find((e) => e.id === eventId);
+        if (!event) return [];
+
+        // Direct connections from this event
+        const direct = event.connectedEventIds || [];
+
+        // Reverse connections (events that connect TO this event)
+        const reverse = events
+          .filter((e) => e.connectedEventIds?.includes(eventId))
+          .map((e) => e.id);
+
+        // Combine and deduplicate
+        const allConnected = [...new Set([...direct, ...reverse])];
+
+        // Filter to only include events in the current initiative
+        // (since cross-initiative connections can't be visualized in the swimlane)
+        if (selectedInitiativeId) {
+          const initiativeEventIds = new Set(
+            events
+              .filter((e) => e.initiativeId === selectedInitiativeId)
+              .map((e) => e.id),
+          );
+          return allConnected.filter((id) => initiativeEventIds.has(id));
+        }
+
+        return allConnected;
+      },
+
+      isEventConnectedToFocus: (eventId) => {
+        const { isFocusMode, focusedEventId } = get();
+        if (!isFocusMode || !focusedEventId) return false;
+
+        // The focused event itself is always "connected"
+        if (focusedEventId === eventId) return true;
+
+        // Check if this event is in the connected list
+        const connectedIds = get().getConnectedEventIds(focusedEventId);
+        return connectedIds.includes(eventId);
+      },
+
+      isEventDimmed: (eventId) => {
+        const { isFocusMode, focusedEventId } = get();
+        if (!isFocusMode || !focusedEventId) return false;
+
+        // The focused event is never dimmed
+        if (focusedEventId === eventId) return false;
+
+        // Dimmed if NOT connected to the focused event
+        return !get().isEventConnectedToFocus(eventId);
+      },
+
       // Legacy computed
       getFilteredEvents: () => {
         const { events, searchQuery, selectedTypes } = get();
@@ -349,11 +490,12 @@ export const useMemoryStore = create<MemoryState>()(
     }),
     {
       name: "memory-storage",
-      version: 2, // Bump version for new structure
+      version: 3, // Bump version for focus mode
       partialize: (state) => ({
         // Only persist view preferences
         expandedSections: state.expandedSections,
         expandedWeeks: state.expandedWeeks,
+        connectionVisualizationMode: state.connectionVisualizationMode,
       }),
     },
   ),
@@ -383,4 +525,46 @@ export function useHasActiveFilters(): boolean {
   return useMemoryStore(
     (state) => state.searchQuery !== "" || state.selectedTypes.length > 0,
   );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Focus Mode Selector Hooks
+// ═══════════════════════════════════════════════════════════════════════════
+
+export function useIsFocusMode(): boolean {
+  return useMemoryStore((state) => state.isFocusMode);
+}
+
+export function useFocusedEventId(): string | null {
+  return useMemoryStore((state) => state.focusedEventId);
+}
+
+export function useIsEventFocused(eventId: string): boolean {
+  return useMemoryStore((state) => state.focusedEventId === eventId);
+}
+
+export function useIsEventConnectedToFocus(eventId: string): boolean {
+  return useMemoryStore((state) => {
+    if (!state.isFocusMode || !state.focusedEventId) return false;
+    if (state.focusedEventId === eventId) return true;
+
+    // Get connected events (already filtered to current initiative by getConnectedEventIds)
+    const connectedIds = state.getConnectedEventIds(state.focusedEventId);
+    return connectedIds.includes(eventId);
+  });
+}
+
+export function useIsEventDimmed(eventId: string): boolean {
+  return useMemoryStore((state) => {
+    if (!state.isFocusMode || !state.focusedEventId) return false;
+    if (state.focusedEventId === eventId) return false;
+
+    // Get connected events (already filtered to current initiative by getConnectedEventIds)
+    const connectedIds = state.getConnectedEventIds(state.focusedEventId);
+    return !connectedIds.includes(eventId);
+  });
+}
+
+export function useConnectionVisualizationMode(): ConnectionVisualizationMode {
+  return useMemoryStore((state) => state.connectionVisualizationMode);
 }

@@ -402,6 +402,52 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   MEMORY TIMELINE — FOCUS MODE ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Focus ring pulse for source card in focus mode */
+@keyframes focus-ring-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 2px var(--color-accent),
+      0 0 0 4px transparent;
+  }
+  50% {
+    box-shadow:
+      0 0 0 2px var(--color-accent),
+      0 0 20px rgba(0, 166, 245, 0.35);
+  }
+}
+
+.animate-focus-ring {
+  animation: focus-ring-pulse 2s ease-in-out infinite;
+}
+
+/* Connected card glow effect */
+.card-connected {
+  box-shadow:
+    0 0 0 2px rgba(0, 166, 245, 0.6),
+    0 0 15px rgba(0, 166, 245, 0.2);
+}
+
+/* Dimmed card state */
+.card-dimmed {
+  opacity: 0.4;
+  filter: grayscale(20%);
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    filter 0.25s ease,
+    transform 0.25s ease;
+}
+
+/* Connection line glow filter (for SVG) */
+.connection-line-glow {
+  filter: drop-shadow(0 0 4px rgba(0, 166, 245, 0.5));
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    UTILITY CLASSES
    ═══════════════════════════════════════════════════════════════════════════ */
 

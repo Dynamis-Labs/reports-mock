@@ -3,6 +3,8 @@
  *
  * Business/strategy focused events spanning 16 weeks (8 past + 8 future).
  * Categories: Product Strategy, Fundraising, GTM, Hiring
+ *
+ * Events have bidirectional connections defined via connectedEventIds.
  */
 
 import type { MemoryEvent } from "../types/memory";
@@ -49,242 +51,7 @@ function getWeekLabel(date: Date): string {
   return `In ${weekDiff} Weeks`;
 }
 
-// Random event titles and summaries for Q1 Product Strategy
-const productStrategyEvents = [
-  {
-    title: "API Review Session",
-    summary:
-      "Reviewed API endpoint design with backend team. Approved new pagination approach.",
-    type: "meeting" as const,
-  },
-  {
-    title: "User Research Findings",
-    summary:
-      "Presented findings from 20 user interviews. Key insight: users want better search.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Sprint Retro",
-    summary:
-      "Team retrospective on sprint 22. Identified 3 areas for improvement.",
-    type: "meeting" as const,
-  },
-  {
-    title: "Feature Flag Review",
-    summary: "Decided to keep beta flags for 2 more weeks before GA rollout.",
-    type: "decision" as const,
-  },
-  {
-    title: "Design System Update",
-    summary:
-      "Updated component library with new form elements and accessibility improvements.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Performance Audit",
-    summary:
-      "Lighthouse scores improved from 72 to 89. Core Web Vitals now passing.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Tech Debt Discussion",
-    summary:
-      "Prioritized tech debt items for Q1. Database migration moved to top.",
-    type: "meeting" as const,
-  },
-  {
-    title: "Mobile App Kickoff",
-    summary:
-      "Started planning mobile app development. React Native selected as framework.",
-    type: "decision" as const,
-  },
-  {
-    title: "QA Strategy Review",
-    summary:
-      "Aligned on automated testing coverage goals. Target: 80% by Q1 end.",
-    type: "meeting" as const,
-  },
-  {
-    title: "Documentation Sprint",
-    summary:
-      "Completed API documentation overhaul. 45 new code examples added.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Competitor Analysis",
-    summary:
-      "Deep dive into competitor features. Identified 3 differentiation opportunities.",
-    type: "meeting" as const,
-  },
-  {
-    title: "Security Review",
-    summary: "Passed security audit. Zero critical vulnerabilities found.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Integration Planning",
-    summary: "Mapped out Slack and Salesforce integration requirements.",
-    type: "meeting" as const,
-  },
-  {
-    title: "UX Improvements",
-    summary: "Shipped 12 micro-interactions and loading state improvements.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Analytics Implementation",
-    summary: "Deployed new analytics tracking. Now capturing 25 new events.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Error Handling Overhaul",
-    summary: "Standardized error messages across all API endpoints.",
-    type: "decision" as const,
-  },
-  {
-    title: "Onboarding Flow Update",
-    summary: "Reduced onboarding steps from 7 to 4. Conversion up 15%.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Accessibility Audit",
-    summary: "Achieved WCAG 2.1 AA compliance across all main flows.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Database Migration Plan",
-    summary: "Finalized migration strategy to PostgreSQL 15.",
-    type: "decision" as const,
-  },
-  {
-    title: "Customer Feedback Review",
-    summary: "Analyzed 500+ support tickets. Top 3 pain points identified.",
-    type: "meeting" as const,
-  },
-  {
-    title: "Release Notes Published",
-    summary: "Published v2.4.0 release notes. 12 new features documented.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Load Testing Results",
-    summary: "System handles 10K concurrent users. 99.9% uptime maintained.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Feature Prioritization",
-    summary: "Stack ranked 40 feature requests. Top 10 scheduled for Q1.",
-    type: "decision" as const,
-  },
-  {
-    title: "SDK Beta Launch",
-    summary: "Released Python SDK beta to 50 developers. Positive feedback.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Caching Strategy",
-    summary: "Implemented Redis caching. API response times down 60%.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Search Improvements",
-    summary: "Deployed Elasticsearch upgrade. Search relevance up 40%.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Notification System",
-    summary: "Shipped email digest feature. 10K users opted in.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Dark Mode Launch",
-    summary: "Dark mode now available. 35% of users enabled it.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Export Feature",
-    summary: "Added CSV/PDF export for all reports.",
-    type: "milestone" as const,
-  },
-  {
-    title: "Webhook System",
-    summary: "Launched webhook integration. 200 endpoints configured.",
-    type: "milestone" as const,
-  },
-];
-
-// Generate random events for Q1 Product Strategy across all weeks
-function generateProductStrategyEvents(): MemoryEvent[] {
-  const events: MemoryEvent[] = [];
-  let eventId = 100;
-
-  // Generate for 8 weeks past to 8 weeks future
-  for (let weekOffset = -8; weekOffset <= 8; weekOffset++) {
-    // Random number of events per week (1-8)
-    const numEvents = Math.floor(Math.random() * 8) + 1;
-
-    for (let i = 0; i < numEvents; i++) {
-      const dayInWeek = Math.floor(Math.random() * 7); // 0-6 days within the week
-      const daysFromToday = weekOffset * 7 + dayInWeek;
-      const eventDate =
-        daysFromToday < 0
-          ? daysAgo(Math.abs(daysFromToday))
-          : daysFromNow(daysFromToday);
-
-      const eventTemplate =
-        productStrategyEvents[
-          Math.floor(Math.random() * productStrategyEvents.length)
-        ];
-
-      events.push({
-        id: `mem-ps-${eventId++}`,
-        title: eventTemplate.title,
-        summary: eventTemplate.summary,
-        type: eventTemplate.type,
-        status: daysFromToday < 0 ? "resolved" : "active",
-        date: eventDate,
-        weekLabel: getWeekLabel(eventDate),
-        weekNumber: getWeekNumber(eventDate),
-        initiativeId: "init-1", // Q1 Product Strategy
-        participants: [
-          { id: "p-1", name: "Sarah Chen" },
-          { id: "p-2", name: "Marcus Williams" },
-        ],
-        actionItems:
-          Math.random() > 0.5
-            ? [
-                {
-                  id: `ai-${eventId}-1`,
-                  title: "Follow up on action items",
-                  isCompleted: daysFromToday < 0,
-                },
-                {
-                  id: `ai-${eventId}-2`,
-                  title: "Update documentation",
-                  isCompleted: daysFromToday < -3,
-                },
-              ]
-            : [],
-        sources: [
-          { id: `s-${eventId}-1`, title: "Meeting Notes", type: "document" },
-        ],
-        category: "Product Strategy",
-        tags: ["product", "q1"],
-        createdAt: eventDate,
-        updatedAt: eventDate,
-      });
-    }
-  }
-
-  return events;
-}
-
-const generatedProductStrategyEvents = generateProductStrategyEvents();
-
 export const mockMemoryEvents: MemoryEvent[] = [
-  // Generated Q1 Product Strategy events (all weeks populated)
-  ...generatedProductStrategyEvents,
-
   // ═══════════════════════════════════════════════════════════════════════════
   // THIS WEEK - 4 events
   // ═══════════════════════════════════════════════════════════════════════════
@@ -322,6 +89,12 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["scope", "planning", "q1"],
     createdAt: daysAgo(0),
     updatedAt: daysAgo(0),
+    // Connection & Detail Fields
+    connectedEventIds: ["mem-5", "mem-14", "mem-20"], // Connected to Roadmap Finalized, Vision Workshop, Q1 Launch
+    impact: "Critical milestone enabling team to focus on execution",
+    evidence: "Roadmap document frozen, change control process activated",
+    nextStep: "Communicate scope freeze to all stakeholders via Slack",
+    channel: "#product-strategy",
   },
   {
     id: "mem-2",
@@ -352,6 +125,7 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["blockers", "weekly-sync"],
     createdAt: daysAgo(1),
     updatedAt: daysAgo(1),
+    connectedEventIds: ["mem-10", "mem-19"], // Connected to Hiring Blocked, Launch Prep
   },
   {
     id: "mem-3",
@@ -384,6 +158,14 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["marketing", "launch", "gtm"],
     createdAt: daysAgo(2),
     updatedAt: daysAgo(1),
+    // Connection & Detail Fields
+    connectedEventIds: ["mem-9", "mem-15", "mem-19", "mem-21"], // Pipeline Review, Security Audit, Launch Prep, Enterprise Kickoff
+    impact:
+      "Cross-team alignment updated and communicated in weekly staff sync",
+    evidence:
+      "Notes captured from the last two reviews and shared in the program channel",
+    nextStep: "Confirm follow-up owners and update the timeline summary",
+    channel: "#marketing",
   },
   {
     id: "mem-4",
@@ -412,6 +194,7 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["partnerships", "a16z", "investors"],
     createdAt: daysAgo(1),
     updatedAt: daysAgo(0),
+    connectedEventIds: ["mem-6", "mem-11", "mem-18"], // Term Sheet, Series A Kickoff, Board Meeting
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -445,6 +228,12 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["roadmap", "q1", "planning"],
     createdAt: daysAgo(5),
     updatedAt: daysAgo(4),
+    // Connection & Detail Fields
+    connectedEventIds: ["mem-1", "mem-14", "mem-17", "mem-20"], // Scope Freeze, Vision Workshop, Q4 Planning, Q1 Launch
+    impact: "Alignment achieved across engineering and product teams",
+    evidence: "Roadmap document published to wiki with 3 confirmed features",
+    nextStep: "Begin sprint planning for first Q1 deliverable",
+    channel: "#product-strategy",
   },
   {
     id: "mem-6",
@@ -482,6 +271,7 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["term-sheet", "benchmark", "series-a"],
     createdAt: daysAgo(7),
     updatedAt: daysAgo(5),
+    connectedEventIds: ["mem-4", "mem-11", "mem-13", "mem-18", "mem-22"], // A16Z Meeting, Series A Kickoff, Counter-proposal, Board Meeting, Series A Close
   },
   {
     id: "mem-7",
@@ -507,6 +297,7 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["investors", "update", "monthly"],
     createdAt: daysAgo(6),
     updatedAt: daysAgo(6),
+    connectedEventIds: ["mem-8", "mem-16"], // Board Deck, Investor Outreach
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -539,6 +330,7 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["board", "deck", "q4"],
     createdAt: daysAgo(10),
     updatedAt: daysAgo(8),
+    connectedEventIds: ["mem-7", "mem-11", "mem-18"], // Investor Update, Series A Kickoff, Board Meeting
   },
   {
     id: "mem-9",
@@ -571,6 +363,7 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["sales", "pipeline", "enterprise"],
     createdAt: daysAgo(12),
     updatedAt: daysAgo(10),
+    connectedEventIds: ["mem-3", "mem-15", "mem-21"], // GTM Brief, Security Audit, Enterprise Kickoff
   },
   {
     id: "mem-10",
@@ -607,6 +400,7 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["hiring", "blocked", "engineering"],
     createdAt: daysAgo(11),
     updatedAt: daysAgo(9),
+    connectedEventIds: ["mem-2", "mem-23"], // Weekly Sync, Team Expansion
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -639,6 +433,19 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["series-a", "fundraising", "kickoff"],
     createdAt: daysAgo(17),
     updatedAt: daysAgo(15),
+    // Connection & Detail Fields
+    connectedEventIds: [
+      "mem-4",
+      "mem-6",
+      "mem-8",
+      "mem-16",
+      "mem-18",
+      "mem-22",
+    ], // A16Z, Term Sheet, Board Deck, Investor Outreach, Board Meeting, Series A Close
+    impact: "Fundraising process officially launched with 20 funds contacted",
+    evidence: "Data room complete, partner meetings scheduled with 8 firms",
+    nextStep: "Track responses and schedule follow-up calls",
+    channel: "#fundraising",
   },
   {
     id: "mem-12",
@@ -667,6 +474,7 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["legal", "ip", "compliance"],
     createdAt: daysAgo(18),
     updatedAt: daysAgo(16),
+    connectedEventIds: ["mem-22"], // Series A Close
   },
   {
     id: "mem-13",
@@ -699,10 +507,11 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["term-sheet", "deadline", "benchmark"],
     createdAt: daysAgo(19),
     updatedAt: daysAgo(17),
+    connectedEventIds: ["mem-6", "mem-18"], // Term Sheet Review, Board Meeting
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 4-5 WEEKS AGO - 2 events
+  // 4 WEEKS AGO - 3 events
   // ═══════════════════════════════════════════════════════════════════════════
   {
     id: "mem-14",
@@ -732,7 +541,70 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["vision", "strategy", "offsite"],
     createdAt: daysAgo(28),
     updatedAt: daysAgo(25),
+    connectedEventIds: ["mem-1", "mem-5", "mem-17", "mem-20", "mem-24"], // Scope Freeze, Roadmap Finalized, Q4 Planning, Q1 Launch, API Redesign
+    impact: "Strategic alignment achieved on three product pillars for 2026",
+    evidence: "Workshop notes and Miro board shared with all-hands",
+    nextStep: "Cascade vision pillars into Q1 OKRs",
+    channel: "#product-strategy",
   },
+  {
+    id: "mem-24",
+    title: "API v2 Redesign Kick-off",
+    summary:
+      "Started technical planning for API v2. New GraphQL layer, improved rate limiting, and developer SDK improvements.",
+    type: "meeting",
+    status: "resolved",
+    date: daysAgo(26),
+    weekLabel: getWeekLabel(daysAgo(26)),
+    weekNumber: getWeekNumber(daysAgo(26)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-4", name: "James Liu" },
+      { id: "p-2", name: "Marcus Williams" },
+    ],
+    actionItems: [
+      { id: "ai-46", title: "Draft API spec document", isCompleted: true },
+      { id: "ai-47", title: "Review with frontend team", isCompleted: true },
+    ],
+    sources: [
+      { id: "s-47", title: "API Spec Doc", type: "document" },
+      { id: "s-48", title: "Technical Design", type: "document" },
+    ],
+    category: "Product Strategy",
+    tags: ["api", "technical", "v2"],
+    createdAt: daysAgo(26),
+    updatedAt: daysAgo(24),
+    connectedEventIds: ["mem-14", "mem-5", "mem-20"], // Vision Workshop, Roadmap, Q1 Launch
+  },
+  {
+    id: "mem-25",
+    title: "Competitive Analysis Complete",
+    summary:
+      "Finished deep-dive on top 5 competitors. Key insights: pricing gap opportunity, feature parity in core areas, UX differentiation possible.",
+    type: "milestone",
+    status: "resolved",
+    date: daysAgo(27),
+    weekLabel: getWeekLabel(daysAgo(27)),
+    weekNumber: getWeekNumber(daysAgo(27)),
+    initiativeId: "init-3", // Enterprise GTM Launch
+    participants: [
+      { id: "p-7", name: "Alex Rivera" },
+      { id: "p-8", name: "Nina Patel" },
+    ],
+    actionItems: [
+      { id: "ai-48", title: "Share findings with product", isCompleted: true },
+    ],
+    sources: [{ id: "s-49", title: "Competitive Matrix", type: "document" }],
+    category: "GTM",
+    tags: ["competitive", "analysis", "market"],
+    createdAt: daysAgo(27),
+    updatedAt: daysAgo(25),
+    connectedEventIds: ["mem-3", "mem-9"], // GTM Brief, Pipeline Review
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 5 WEEKS AGO - 4 events
+  // ═══════════════════════════════════════════════════════════════════════════
   {
     id: "mem-15",
     title: "Enterprise Security Audit",
@@ -760,10 +632,87 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["security", "soc2", "compliance"],
     createdAt: daysAgo(32),
     updatedAt: daysAgo(30),
+    connectedEventIds: ["mem-3", "mem-9", "mem-21", "mem-26"], // GTM Brief, Pipeline Review, Enterprise Kickoff, Infrastructure Review
+  },
+  {
+    id: "mem-26",
+    title: "Infrastructure Review",
+    summary:
+      "Reviewed cloud infrastructure for scale. Identified need for multi-region deployment before enterprise launch.",
+    type: "meeting",
+    status: "resolved",
+    date: daysAgo(34),
+    weekLabel: getWeekLabel(daysAgo(34)),
+    weekNumber: getWeekNumber(daysAgo(34)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-4", name: "James Liu" },
+      { id: "p-18", name: "DevOps Lead" },
+    ],
+    actionItems: [
+      { id: "ai-49", title: "Plan multi-region deployment", isCompleted: true },
+    ],
+    sources: [{ id: "s-50", title: "Infrastructure Audit", type: "document" }],
+    category: "Product Strategy",
+    tags: ["infrastructure", "scale", "devops"],
+    createdAt: daysAgo(34),
+    updatedAt: daysAgo(32),
+    connectedEventIds: ["mem-15", "mem-17"], // Security Audit, Q4 Planning
+  },
+  {
+    id: "mem-32",
+    title: "Data Room Preparation",
+    summary:
+      "Compiled financials, cap table, customer contracts, and key metrics for investor due diligence. Organized by category for easy navigation.",
+    type: "commitment",
+    status: "resolved",
+    date: daysAgo(33),
+    weekLabel: getWeekLabel(daysAgo(33)),
+    weekNumber: getWeekNumber(daysAgo(33)),
+    initiativeId: "init-2", // Series A Fundraise
+    participants: [
+      { id: "p-11", name: "Maria Garcia" },
+      { id: "p-9", name: "Jon Martinez" },
+    ],
+    actionItems: [
+      { id: "ai-55", title: "Upload Q3 financials", isCompleted: true },
+      { id: "ai-56", title: "Verify cap table accuracy", isCompleted: true },
+    ],
+    sources: [{ id: "s-56", title: "Data Room Index", type: "document" }],
+    category: "Fundraising",
+    tags: ["data-room", "due-diligence", "preparation"],
+    createdAt: daysAgo(33),
+    updatedAt: daysAgo(31),
+    connectedEventIds: ["mem-11", "mem-16", "mem-22"],
+  },
+  {
+    id: "mem-33",
+    title: "Candidate Pipeline Review",
+    summary:
+      "Reviewed 23 engineering candidates. Shortlisted 8 for final rounds. Strong interest from ex-FAANG engineers.",
+    type: "meeting",
+    status: "resolved",
+    date: daysAgo(35),
+    weekLabel: getWeekLabel(daysAgo(35)),
+    weekNumber: getWeekNumber(daysAgo(35)),
+    initiativeId: "init-4", // Engineering Hiring
+    participants: [
+      { id: "p-4", name: "James Liu" },
+      { id: "p-16", name: "HR Lead" },
+    ],
+    actionItems: [
+      { id: "ai-57", title: "Schedule final interviews", isCompleted: true },
+    ],
+    sources: [{ id: "s-57", title: "Candidate Tracker", type: "document" }],
+    category: "Hiring",
+    tags: ["hiring", "engineering", "candidates"],
+    createdAt: daysAgo(35),
+    updatedAt: daysAgo(33),
+    connectedEventIds: ["mem-10", "mem-23"],
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // 6-8 WEEKS AGO - 2 events
+  // 6 WEEKS AGO - 3 events
   // ═══════════════════════════════════════════════════════════════════════════
   {
     id: "mem-16",
@@ -792,7 +741,64 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["outreach", "investors", "series-a"],
     createdAt: daysAgo(42),
     updatedAt: daysAgo(40),
+    connectedEventIds: ["mem-7", "mem-11", "mem-22"], // Investor Update, Series A Kickoff, Series A Close
   },
+  {
+    id: "mem-34",
+    title: "Market Research Findings",
+    summary:
+      "Completed TAM/SAM/SOM analysis for enterprise market. Identified $4.2B addressable market with 18% CAGR.",
+    type: "milestone",
+    status: "resolved",
+    date: daysAgo(40),
+    weekLabel: getWeekLabel(daysAgo(40)),
+    weekNumber: getWeekNumber(daysAgo(40)),
+    initiativeId: "init-3", // Enterprise GTM Launch
+    participants: [
+      { id: "p-7", name: "Alex Rivera" },
+      { id: "p-8", name: "Nina Patel" },
+    ],
+    actionItems: [
+      { id: "ai-58", title: "Present to leadership", isCompleted: true },
+    ],
+    sources: [
+      { id: "s-58", title: "Market Analysis Report", type: "document" },
+    ],
+    category: "GTM",
+    tags: ["market-research", "tam", "analysis"],
+    createdAt: daysAgo(40),
+    updatedAt: daysAgo(38),
+    connectedEventIds: ["mem-25", "mem-9"],
+  },
+  {
+    id: "mem-35",
+    title: "Brand Guidelines Finalized",
+    summary:
+      "Locked brand identity for Q1 launch. New color palette, typography system, and voice guidelines approved.",
+    type: "decision",
+    status: "resolved",
+    date: daysAgo(41),
+    weekLabel: getWeekLabel(daysAgo(41)),
+    weekNumber: getWeekNumber(daysAgo(41)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-1", name: "Sarah Chen" },
+      { id: "p-22", name: "Design Lead" },
+    ],
+    actionItems: [
+      { id: "ai-59", title: "Distribute to all teams", isCompleted: true },
+    ],
+    sources: [{ id: "s-59", title: "Brand Guidelines PDF", type: "document" }],
+    category: "Product Strategy",
+    tags: ["brand", "design", "guidelines"],
+    createdAt: daysAgo(41),
+    updatedAt: daysAgo(39),
+    connectedEventIds: ["mem-14", "mem-20"],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // 7 WEEKS AGO - 2 events
+  // ═══════════════════════════════════════════════════════════════════════════
   {
     id: "mem-17",
     title: "Q4 Planning Kickoff",
@@ -821,10 +827,121 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["planning", "okrs", "q4"],
     createdAt: daysAgo(50),
     updatedAt: daysAgo(48),
+    connectedEventIds: ["mem-5", "mem-14"], // Roadmap Finalized, Vision Workshop
+  },
+  {
+    id: "mem-36",
+    title: "Pitch Deck Review with Advisors",
+    summary:
+      "External advisors reviewed pitch deck. Feedback: strengthen unit economics slide, add customer testimonials.",
+    type: "meeting",
+    status: "resolved",
+    date: daysAgo(48),
+    weekLabel: getWeekLabel(daysAgo(48)),
+    weekNumber: getWeekNumber(daysAgo(48)),
+    initiativeId: "init-2", // Series A Fundraise
+    participants: [
+      { id: "p-9", name: "Jon Martinez" },
+      { id: "p-19", name: "Board Advisor" },
+    ],
+    actionItems: [
+      { id: "ai-60", title: "Revise unit economics slide", isCompleted: true },
+      { id: "ai-61", title: "Collect customer quotes", isCompleted: true },
+    ],
+    sources: [
+      { id: "s-60", title: "Advisor Feedback Notes", type: "document" },
+    ],
+    category: "Fundraising",
+    tags: ["pitch-deck", "advisors", "feedback"],
+    createdAt: daysAgo(48),
+    updatedAt: daysAgo(46),
+    connectedEventIds: ["mem-16", "mem-11"],
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // NEXT WEEK - 2 events (FUTURE)
+  // 8 WEEKS AGO - 3 events
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    id: "mem-37",
+    title: "Annual Strategy Retreat",
+    summary:
+      "Leadership offsite to set 2026 company direction. Key themes: enterprise expansion, AI integration, international growth.",
+    type: "meeting",
+    status: "resolved",
+    date: daysAgo(56),
+    weekLabel: getWeekLabel(daysAgo(56)),
+    weekNumber: getWeekNumber(daysAgo(56)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-1", name: "Sarah Chen" },
+      { id: "p-9", name: "Jon Martinez" },
+      { id: "p-2", name: "Marcus Williams" },
+      { id: "p-7", name: "Alex Rivera" },
+    ],
+    actionItems: [
+      { id: "ai-62", title: "Document strategy decisions", isCompleted: true },
+      { id: "ai-63", title: "Create initiative roadmaps", isCompleted: true },
+    ],
+    sources: [{ id: "s-61", title: "Retreat Summary", type: "document" }],
+    category: "Product Strategy",
+    tags: ["strategy", "retreat", "2026"],
+    createdAt: daysAgo(56),
+    updatedAt: daysAgo(54),
+    connectedEventIds: ["mem-17", "mem-14"],
+  },
+  {
+    id: "mem-38",
+    title: "Seed Extension Closed",
+    summary:
+      "Closed $2M seed extension at existing valuation. Bridge funding secured for Series A timeline.",
+    type: "milestone",
+    status: "resolved",
+    date: daysAgo(54),
+    weekLabel: getWeekLabel(daysAgo(54)),
+    weekNumber: getWeekNumber(daysAgo(54)),
+    initiativeId: "init-2", // Series A Fundraise
+    participants: [
+      { id: "p-9", name: "Jon Martinez" },
+      { id: "p-11", name: "Maria Garcia" },
+    ],
+    actionItems: [
+      { id: "ai-64", title: "Wire transfer confirmation", isCompleted: true },
+    ],
+    sources: [{ id: "s-62", title: "Closing Documents", type: "document" }],
+    category: "Fundraising",
+    tags: ["seed-extension", "funding", "closed"],
+    createdAt: daysAgo(54),
+    updatedAt: daysAgo(52),
+    connectedEventIds: ["mem-16", "mem-11"],
+  },
+  {
+    id: "mem-39",
+    title: "Enterprise Pilot Program Launch",
+    summary:
+      "Launched pilot program with 5 enterprise prospects. 90-day trials with dedicated support and success metrics.",
+    type: "milestone",
+    status: "resolved",
+    date: daysAgo(55),
+    weekLabel: getWeekLabel(daysAgo(55)),
+    weekNumber: getWeekNumber(daysAgo(55)),
+    initiativeId: "init-3", // Enterprise GTM Launch
+    participants: [
+      { id: "p-7", name: "Alex Rivera" },
+      { id: "p-15", name: "Sales Team" },
+    ],
+    actionItems: [
+      { id: "ai-65", title: "Onboard pilot customers", isCompleted: true },
+    ],
+    sources: [{ id: "s-63", title: "Pilot Program Brief", type: "document" }],
+    category: "GTM",
+    tags: ["enterprise", "pilot", "launch"],
+    createdAt: daysAgo(55),
+    updatedAt: daysAgo(53),
+    connectedEventIds: ["mem-9", "mem-21"],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // NEXT WEEK - 4 events (FUTURE)
   // ═══════════════════════════════════════════════════════════════════════════
   {
     id: "mem-18",
@@ -853,6 +970,18 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["board", "meeting", "q4"],
     createdAt: daysAgo(3),
     updatedAt: daysAgo(1),
+    connectedEventIds: [
+      "mem-4",
+      "mem-6",
+      "mem-8",
+      "mem-11",
+      "mem-13",
+      "mem-22",
+    ],
+    impact: "Board alignment on Series A strategy and Q4 performance",
+    evidence: "Board deck draft complete, Q&A prep in progress",
+    nextStep: "Finalize deck and practice presentation run-through",
+    channel: "#exec-team",
   },
   {
     id: "mem-19",
@@ -882,10 +1011,61 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["launch", "preparation", "review"],
     createdAt: daysAgo(2),
     updatedAt: daysAgo(1),
+    connectedEventIds: ["mem-2", "mem-3", "mem-20", "mem-27"], // Weekly Sync, GTM Brief, Q1 Launch, Press Briefing
+  },
+  {
+    id: "mem-27",
+    title: "Press Briefing Scheduled",
+    summary:
+      "Coordinating with TechCrunch and The Verge for Q1 launch coverage. Embargo lifts launch day.",
+    type: "commitment",
+    status: "active",
+    date: daysFromNow(4),
+    weekLabel: getWeekLabel(daysFromNow(4)),
+    weekNumber: getWeekNumber(daysFromNow(4)),
+    initiativeId: "init-3", // Enterprise GTM Launch
+    participants: [
+      { id: "p-22", name: "PR Team" },
+      { id: "p-7", name: "Alex Rivera" },
+    ],
+    actionItems: [
+      { id: "ai-50", title: "Finalize press kit", isCompleted: false },
+    ],
+    sources: [{ id: "s-51", title: "Press Kit Draft", type: "document" }],
+    category: "GTM",
+    tags: ["press", "pr", "launch"],
+    createdAt: daysAgo(1),
+    updatedAt: daysAgo(0),
+    connectedEventIds: ["mem-19", "mem-20"], // Launch Prep, Q1 Launch
+  },
+  {
+    id: "mem-28",
+    title: "Engineering Sprint Planning",
+    summary:
+      "Sprint planning for final Q1 delivery sprint. Focus on bug fixes and performance optimization.",
+    type: "meeting",
+    status: "active",
+    date: daysFromNow(7),
+    weekLabel: getWeekLabel(daysFromNow(7)),
+    weekNumber: getWeekNumber(daysFromNow(7)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-4", name: "James Liu" },
+      { id: "p-2", name: "Marcus Williams" },
+    ],
+    actionItems: [
+      { id: "ai-51", title: "Prioritize bug backlog", isCompleted: false },
+    ],
+    sources: [{ id: "s-52", title: "Sprint Board", type: "document" }],
+    category: "Product Strategy",
+    tags: ["sprint", "engineering", "planning"],
+    createdAt: daysAgo(0),
+    updatedAt: daysAgo(0),
+    connectedEventIds: ["mem-1", "mem-5", "mem-20"], // Scope Freeze, Roadmap, Q1 Launch
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // IN 2-3 WEEKS - 2 events (FUTURE)
+  // IN 2 WEEKS - 3 events (FUTURE)
   // ═══════════════════════════════════════════════════════════════════════════
   {
     id: "mem-20",
@@ -915,7 +1095,76 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["launch", "q1", "product"],
     createdAt: daysAgo(5),
     updatedAt: daysAgo(2),
+    connectedEventIds: [
+      "mem-1",
+      "mem-5",
+      "mem-14",
+      "mem-19",
+      "mem-24",
+      "mem-27",
+      "mem-28",
+      "mem-29",
+    ], // Many connections to this major milestone
+    impact: "Major product release with 3 flagship features going live",
+    evidence: "QA sign-off pending, press release coordinated with PR team",
+    nextStep: "Final QA pass and press embargo coordination",
+    channel: "#product-strategy",
   },
+  {
+    id: "mem-29",
+    title: "Launch Day War Room",
+    summary:
+      "All-hands on deck for launch. Engineering, support, and marketing coordinating in real-time.",
+    type: "meeting",
+    status: "active",
+    date: daysFromNow(14),
+    weekLabel: getWeekLabel(daysFromNow(14)),
+    weekNumber: getWeekNumber(daysFromNow(14)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-1", name: "Sarah Chen" },
+      { id: "p-4", name: "James Liu" },
+      { id: "p-7", name: "Alex Rivera" },
+    ],
+    actionItems: [
+      { id: "ai-52", title: "Monitor system metrics", isCompleted: false },
+    ],
+    sources: [{ id: "s-53", title: "War Room Runbook", type: "document" }],
+    category: "Product Strategy",
+    tags: ["launch", "war-room", "coordination"],
+    createdAt: daysAgo(3),
+    updatedAt: daysAgo(1),
+    connectedEventIds: ["mem-20", "mem-28"], // Q1 Launch, Sprint Planning
+  },
+  {
+    id: "mem-30",
+    title: "Marketing Campaign Go-Live",
+    summary:
+      "Paid ads, email campaigns, and social media blitz coordinated with product launch.",
+    type: "milestone",
+    status: "active",
+    date: daysFromNow(13),
+    weekLabel: getWeekLabel(daysFromNow(13)),
+    weekNumber: getWeekNumber(daysFromNow(13)),
+    initiativeId: "init-3", // Enterprise GTM Launch
+    participants: [
+      { id: "p-7", name: "Alex Rivera" },
+      { id: "p-8", name: "Nina Patel" },
+    ],
+    actionItems: [
+      { id: "ai-53", title: "Final ad creative approval", isCompleted: false },
+    ],
+    sources: [{ id: "s-54", title: "Campaign Brief", type: "document" }],
+    category: "GTM",
+    tags: ["marketing", "campaign", "launch"],
+    createdAt: daysAgo(4),
+    updatedAt: daysAgo(2),
+    connectedEventIds: ["mem-3", "mem-20", "mem-27"], // GTM Brief, Q1 Launch, Press Briefing
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // IN 3 WEEKS - 2 events (FUTURE)
+  // ═══════════════════════════════════════════════════════════════════════════
   {
     id: "mem-21",
     title: "Enterprise Customer Kickoff",
@@ -947,10 +1196,92 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["enterprise", "customer", "kickoff"],
     createdAt: daysAgo(7),
     updatedAt: daysAgo(3),
+    connectedEventIds: ["mem-3", "mem-9", "mem-15", "mem-31"], // GTM Brief, Pipeline Review, Security Audit, Post-launch Review
+  },
+  {
+    id: "mem-31",
+    title: "Post-Launch Review",
+    summary:
+      "Team retrospective on Q1 launch. Review metrics, identify wins, and document learnings.",
+    type: "meeting",
+    status: "active",
+    date: daysFromNow(20),
+    weekLabel: getWeekLabel(daysFromNow(20)),
+    weekNumber: getWeekNumber(daysFromNow(20)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-1", name: "Sarah Chen" },
+      { id: "p-2", name: "Marcus Williams" },
+      { id: "p-7", name: "Alex Rivera" },
+    ],
+    actionItems: [
+      { id: "ai-54", title: "Compile launch metrics", isCompleted: false },
+    ],
+    sources: [{ id: "s-55", title: "Retro Template", type: "document" }],
+    category: "Product Strategy",
+    tags: ["retro", "review", "launch"],
+    createdAt: daysAgo(2),
+    updatedAt: daysAgo(1),
+    connectedEventIds: ["mem-20", "mem-21", "mem-29"], // Q1 Launch, Enterprise Kickoff, War Room
   },
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // IN 4-6 WEEKS - 2 events (FUTURE)
+  // IN 4 WEEKS - 2 events (FUTURE)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    id: "mem-40",
+    title: "Partner Ecosystem Summit",
+    summary:
+      "Hosting integration partners for product roadmap preview. 12 partners confirmed, 3 potential new partnerships.",
+    type: "meeting",
+    status: "active",
+    date: daysFromNow(26),
+    weekLabel: getWeekLabel(daysFromNow(26)),
+    weekNumber: getWeekNumber(daysFromNow(26)),
+    initiativeId: "init-3", // Enterprise GTM Launch
+    participants: [
+      { id: "p-7", name: "Alex Rivera" },
+      { id: "p-8", name: "Nina Patel" },
+    ],
+    actionItems: [
+      { id: "ai-66", title: "Finalize agenda", isCompleted: false },
+      { id: "ai-67", title: "Prepare partner materials", isCompleted: false },
+    ],
+    sources: [{ id: "s-64", title: "Summit Agenda Draft", type: "document" }],
+    category: "GTM",
+    tags: ["partners", "summit", "ecosystem"],
+    createdAt: daysAgo(5),
+    updatedAt: daysAgo(3),
+    connectedEventIds: ["mem-21", "mem-30"],
+  },
+  {
+    id: "mem-41",
+    title: "Q1 All-Hands Meeting",
+    summary:
+      "Company-wide alignment meeting to celebrate Q1 launch and share H1 priorities.",
+    type: "meeting",
+    status: "active",
+    date: daysFromNow(28),
+    weekLabel: getWeekLabel(daysFromNow(28)),
+    weekNumber: getWeekNumber(daysFromNow(28)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-1", name: "Sarah Chen" },
+      { id: "p-9", name: "Jon Martinez" },
+    ],
+    actionItems: [
+      { id: "ai-68", title: "Prepare presentation deck", isCompleted: false },
+    ],
+    sources: [{ id: "s-65", title: "All-Hands Template", type: "document" }],
+    category: "Product Strategy",
+    tags: ["all-hands", "q1", "alignment"],
+    createdAt: daysAgo(3),
+    updatedAt: daysAgo(1),
+    connectedEventIds: ["mem-20", "mem-31"],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // IN 5 WEEKS - 2 events (FUTURE)
   // ═══════════════════════════════════════════════════════════════════════════
   {
     id: "mem-22",
@@ -979,7 +1310,42 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["series-a", "close", "milestone"],
     createdAt: daysAgo(10),
     updatedAt: daysAgo(5),
+    // Connection & Detail Fields
+    connectedEventIds: ["mem-6", "mem-11", "mem-12", "mem-16", "mem-18"], // Term Sheet, Series A Kickoff, Legal Review, Investor Outreach, Board Meeting
+    impact: "Company capitalization complete with $15M at $60M+ valuation",
+    evidence: "Term sheet signed, legal review complete",
+    nextStep: "Complete due diligence and finalize closing documents",
+    channel: "#fundraising",
   },
+  {
+    id: "mem-42",
+    title: "International Expansion Planning",
+    summary:
+      "Initial scoping for EMEA market entry. Legal structure, localization requirements, and partnership models.",
+    type: "meeting",
+    status: "active",
+    date: daysFromNow(33),
+    weekLabel: getWeekLabel(daysFromNow(33)),
+    weekNumber: getWeekNumber(daysFromNow(33)),
+    initiativeId: "init-3", // Enterprise GTM Launch
+    participants: [
+      { id: "p-7", name: "Alex Rivera" },
+      { id: "p-9", name: "Jon Martinez" },
+    ],
+    actionItems: [
+      { id: "ai-69", title: "Research legal requirements", isCompleted: false },
+    ],
+    sources: [{ id: "s-66", title: "EMEA Expansion Brief", type: "document" }],
+    category: "GTM",
+    tags: ["international", "emea", "expansion"],
+    createdAt: daysAgo(2),
+    updatedAt: daysAgo(1),
+    connectedEventIds: ["mem-22", "mem-40"],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // IN 6 WEEKS - 3 events (FUTURE)
+  // ═══════════════════════════════════════════════════════════════════════════
   {
     id: "mem-23",
     title: "Engineering Team Expansion",
@@ -1007,6 +1373,196 @@ export const mockMemoryEvents: MemoryEvent[] = [
     tags: ["hiring", "engineering", "expansion"],
     createdAt: daysAgo(8),
     updatedAt: daysAgo(4),
+    connectedEventIds: ["mem-10"], // Hiring Blocked
+  },
+  {
+    id: "mem-43",
+    title: "Series A Announcement",
+    summary:
+      "Public announcement of Series A funding. Coordinated press release with TechCrunch exclusive.",
+    type: "milestone",
+    status: "active",
+    date: daysFromNow(42),
+    weekLabel: getWeekLabel(daysFromNow(42)),
+    weekNumber: getWeekNumber(daysFromNow(42)),
+    initiativeId: "init-2", // Series A Fundraise
+    participants: [
+      { id: "p-9", name: "Jon Martinez" },
+      { id: "p-22", name: "PR Team" },
+    ],
+    actionItems: [
+      { id: "ai-70", title: "Draft press release", isCompleted: false },
+    ],
+    sources: [{ id: "s-67", title: "PR Timeline", type: "document" }],
+    category: "Fundraising",
+    tags: ["announcement", "press", "series-a"],
+    createdAt: daysAgo(4),
+    updatedAt: daysAgo(2),
+    connectedEventIds: ["mem-22", "mem-27"],
+  },
+  {
+    id: "mem-44",
+    title: "Q2 Product Planning",
+    summary:
+      "Kickoff planning for Q2 feature roadmap. Focus areas: AI capabilities, mobile app, analytics v2.",
+    type: "meeting",
+    status: "active",
+    date: daysFromNow(41),
+    weekLabel: getWeekLabel(daysFromNow(41)),
+    weekNumber: getWeekNumber(daysFromNow(41)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-1", name: "Sarah Chen" },
+      { id: "p-2", name: "Marcus Williams" },
+    ],
+    actionItems: [
+      {
+        id: "ai-71",
+        title: "Gather team input on priorities",
+        isCompleted: false,
+      },
+    ],
+    sources: [{ id: "s-68", title: "Q2 Planning Template", type: "document" }],
+    category: "Product Strategy",
+    tags: ["q2", "planning", "roadmap"],
+    createdAt: daysAgo(1),
+    updatedAt: daysAgo(0),
+    connectedEventIds: ["mem-20", "mem-31", "mem-41"],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // IN 7 WEEKS - 2 events (FUTURE)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    id: "mem-45",
+    title: "New Office Move-In",
+    summary:
+      "Relocating to larger headquarters. 15,000 sq ft space to accommodate team growth.",
+    type: "milestone",
+    status: "active",
+    date: daysFromNow(49),
+    weekLabel: getWeekLabel(daysFromNow(49)),
+    weekNumber: getWeekNumber(daysFromNow(49)),
+    initiativeId: "init-4", // Engineering Hiring
+    participants: [
+      { id: "p-16", name: "HR Lead" },
+      { id: "p-9", name: "Jon Martinez" },
+    ],
+    actionItems: [
+      { id: "ai-72", title: "Coordinate IT setup", isCompleted: false },
+      { id: "ai-73", title: "Plan office layout", isCompleted: false },
+    ],
+    sources: [{ id: "s-69", title: "Move Logistics Doc", type: "document" }],
+    category: "Hiring",
+    tags: ["office", "expansion", "facilities"],
+    createdAt: daysAgo(10),
+    updatedAt: daysAgo(5),
+    connectedEventIds: ["mem-23", "mem-43"],
+  },
+  {
+    id: "mem-46",
+    title: "Customer Advisory Board Meeting",
+    summary:
+      "Quarterly CAB meeting with top 10 customers. Roadmap preview and feedback session.",
+    type: "meeting",
+    status: "active",
+    date: daysFromNow(47),
+    weekLabel: getWeekLabel(daysFromNow(47)),
+    weekNumber: getWeekNumber(daysFromNow(47)),
+    initiativeId: "init-3", // Enterprise GTM Launch
+    participants: [
+      { id: "p-1", name: "Sarah Chen" },
+      { id: "p-7", name: "Alex Rivera" },
+    ],
+    actionItems: [
+      { id: "ai-74", title: "Send invitations", isCompleted: false },
+    ],
+    sources: [{ id: "s-70", title: "CAB Agenda Template", type: "document" }],
+    category: "GTM",
+    tags: ["customers", "advisory", "feedback"],
+    createdAt: daysAgo(3),
+    updatedAt: daysAgo(1),
+    connectedEventIds: ["mem-21", "mem-31", "mem-40"],
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // IN 8 WEEKS - 3 events (FUTURE)
+  // ═══════════════════════════════════════════════════════════════════════════
+  {
+    id: "mem-47",
+    title: "H1 Board Meeting",
+    summary:
+      "First board meeting post-Series A. Review H1 progress, set H2 objectives, discuss expansion plans.",
+    type: "meeting",
+    status: "active",
+    date: daysFromNow(54),
+    weekLabel: getWeekLabel(daysFromNow(54)),
+    weekNumber: getWeekNumber(daysFromNow(54)),
+    initiativeId: "init-2", // Series A Fundraise
+    participants: [
+      { id: "p-9", name: "Jon Martinez" },
+      { id: "p-20", name: "Board Members" },
+    ],
+    actionItems: [
+      { id: "ai-75", title: "Prepare H1 metrics deck", isCompleted: false },
+    ],
+    sources: [{ id: "s-71", title: "Board Deck Template", type: "document" }],
+    category: "Fundraising",
+    tags: ["board", "h1", "review"],
+    createdAt: daysAgo(7),
+    updatedAt: daysAgo(3),
+    connectedEventIds: ["mem-18", "mem-22", "mem-43"],
+  },
+  {
+    id: "mem-48",
+    title: "Summer Intern Program Start",
+    summary:
+      "8 engineering interns joining for 12-week program. Focus on AI/ML and mobile development.",
+    type: "commitment",
+    status: "active",
+    date: daysFromNow(56),
+    weekLabel: getWeekLabel(daysFromNow(56)),
+    weekNumber: getWeekNumber(daysFromNow(56)),
+    initiativeId: "init-4", // Engineering Hiring
+    participants: [
+      { id: "p-4", name: "James Liu" },
+      { id: "p-16", name: "HR Lead" },
+    ],
+    actionItems: [
+      { id: "ai-76", title: "Finalize intern projects", isCompleted: false },
+    ],
+    sources: [{ id: "s-72", title: "Intern Program Guide", type: "document" }],
+    category: "Hiring",
+    tags: ["interns", "summer", "program"],
+    createdAt: daysAgo(5),
+    updatedAt: daysAgo(2),
+    connectedEventIds: ["mem-23", "mem-45"],
+  },
+  {
+    id: "mem-49",
+    title: "Mobile App Beta Launch",
+    summary:
+      "Private beta release of iOS and Android apps to 500 selected users. 4-week testing period.",
+    type: "milestone",
+    status: "active",
+    date: daysFromNow(55),
+    weekLabel: getWeekLabel(daysFromNow(55)),
+    weekNumber: getWeekNumber(daysFromNow(55)),
+    initiativeId: "init-1", // Q1 Product Strategy
+    participants: [
+      { id: "p-2", name: "Marcus Williams" },
+      { id: "p-4", name: "James Liu" },
+    ],
+    actionItems: [
+      { id: "ai-77", title: "Recruit beta testers", isCompleted: false },
+      { id: "ai-78", title: "Prepare feedback survey", isCompleted: false },
+    ],
+    sources: [{ id: "s-73", title: "Beta Launch Plan", type: "document" }],
+    category: "Product Strategy",
+    tags: ["mobile", "beta", "launch"],
+    createdAt: daysAgo(4),
+    updatedAt: daysAgo(1),
+    connectedEventIds: ["mem-20", "mem-44"],
   },
 ];
 

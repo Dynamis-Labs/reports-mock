@@ -1,4 +1,3 @@
-import { Brain } from "lucide-react";
 import { PageBreadcrumbHeader } from "../layout/page-breadcrumb-header";
 import { MemoryInitiativeSidebar } from "./memory-initiative-sidebar";
 import { MemoryInitiativeHeader } from "./memory-initiative-header";
@@ -34,21 +33,18 @@ export function MemoryPage() {
   const selectedInitiativeId = useMemoryStore(
     (state) => state.selectedInitiativeId,
   );
-  const selectedEventId = useMemoryStore((state) => state.selectedEventId);
 
   // Get data from store
   const initiatives = useMemoryStore((state) => state.initiatives);
-  const events = useMemoryStore((state) => state.events);
 
-  // Derive selected objects
+  // Derive selected initiative
   const selectedInitiative =
     initiatives.find((i) => i.id === selectedInitiativeId) || null;
-  const selectedEvent = events.find((e) => e.id === selectedEventId) || null;
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background relative">
       {/* Breadcrumb Header */}
-      <PageBreadcrumbHeader items={[{ label: "Memory", icon: Brain }]} />
+      <PageBreadcrumbHeader items={[{ label: "Memory" }]} />
 
       {/* Main Layout: Sidebar + Content */}
       <div className="flex-1 flex overflow-hidden">
@@ -63,8 +59,8 @@ export function MemoryPage() {
           {/* Timeline with week markers */}
           <MemoryTimeline />
 
-          {/* Event Detail Panel - Floating overlay positioned higher */}
-          <MemoryEventDetail event={selectedEvent} />
+          {/* Event Detail Panel - Slide-up panel (shows in focus mode) */}
+          <MemoryEventDetail />
         </main>
       </div>
 

@@ -1,40 +1,52 @@
-import { useRef, useCallback, useMemo, useEffect, useState } from "react";
-import { motion } from "motion/react";
-import { CalendarDays, ChevronLeft, ChevronRight, Circle } from "lucide-react";
+import { useRef, useCallback, useMemo, useEffect, useState, memo } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Circle,
+  GitBranch,
+  ZoomIn,
+  ZoomOut,
+} from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { MemoryTimelineCard } from "./memory-timeline-card";
-import { useMemoryStore } from "../../stores/memory-store";
+import { ConnectionLines } from "./connection-lines";
+import {
+  useMemoryStore,
+  useIsFocusMode,
+  useConnectionVisualizationMode,
+} from "../../stores/memory-store";
 import type { MemoryEvent } from "../../types/memory";
 
 /**
  * Memory Timeline - Extended Horizontal Swimlane
  *
- * 16-week horizontal timeline (8 weeks past + 8 weeks future):
- * - Week columns scroll horizontally
- * - Auto-scrolls to "This Week" on load
- * - Clicking a card opens the detail panel below
- * - Navigation buttons for smooth scrolling
- * - Today indicator with pulsing dot
+ * Redesigned 16-week horizontal timeline (8 weeks past + 8 weeks future):
+ * - Scalable columns with zoom control
+ * - Focus mode with dark overlay and connection highlighting
+ * - Toggle between "dim-only" and "dim-with-lines" visualization modes
+ * - Keyboard support (Escape to exit focus mode)
+ * - Solid vertical lines between weeks
  */
 
-const WEEK_COLUMN_WIDTH = 180; // px per week column
+// Zoom levels for the timeline
+const ZOOM_LEVELS = [0.6, 0.75, 0.85, 1.0, 1.15];
+const DEFAULT_ZOOM_INDEX = 3; // Start at 1.0 (100%)
+const BASE_COLUMN_WIDTH = 300; // Base width at zoom 1.0
 
-// Generate week labels for the range
-function generateWeekRange(): {
+// Week data structure for timeline columns
+interface WeekData {
   label: string;
   dateRange: string;
   weekOffset: number;
   isCurrentWeek: boolean;
   isFuture: boolean;
-}[] {
-  const weeks: {
-    label: string;
-    dateRange: string;
-    weekOffset: number;
-    isCurrentWeek: boolean;
-    isFuture: boolean;
-  }[] = [];
+}
+
+// Generate week labels for the range
+function generateWeekRange(): WeekData[] {
+  const weeks: WeekData[] = [];
 
   const now = new Date();
   const currentWeekStart = new Date(now);
@@ -99,25 +111,28 @@ function getWeekOffset(eventDate: Date): number {
 }
 
 interface WeekColumnProps {
-  weekData: {
-    label: string;
-    dateRange: string;
-    weekOffset: number;
-    isCurrentWeek: boolean;
-    isFuture: boolean;
-  };
+  weekData: WeekData;
   events: MemoryEvent[];
   isLast: boolean;
+  columnWidth: number;
+  zoomLevel: number;
 }
 
-function WeekColumn({ weekData, events, isLast }: WeekColumnProps) {
+const WeekColumn = memo(function WeekColumn({
+  weekData,
+  events,
+  isLast,
+  columnWidth,
+  zoomLevel,
+}: WeekColumnProps) {
   return (
     <div
       className={cn(
         "shrink-0 flex flex-col h-full",
-        !isLast && "border-r border-dashed border-border/30",
+        // Add solid border between weeks
+        !isLast && "border-r border-border/40",
       )}
-      style={{ width: WEEK_COLUMN_WIDTH }}
+      style={{ width: columnWidth }}
     >
       {/* Week Header */}
       <div
@@ -136,24 +151,26 @@ function WeekColumn({ weekData, events, isLast }: WeekColumnProps) {
           )}
           <p
             className={cn(
-              "text-micro font-semibold uppercase tracking-wider",
+              "font-semibold uppercase tracking-wider",
               weekData.isCurrentWeek
                 ? "text-accent"
                 : weekData.isFuture
                   ? "text-muted-foreground/50"
                   : "text-muted-foreground/70",
             )}
+            style={{ fontSize: `${10 * zoomLevel}px` }}
           >
             {weekData.label}
           </p>
         </div>
         <p
           className={cn(
-            "text-[10px] mt-0.5",
+            "mt-0.5",
             weekData.isCurrentWeek
               ? "text-accent/70"
               : "text-muted-foreground/40",
           )}
+          style={{ fontSize: `${9 * zoomLevel}px` }}
         >
           {weekData.dateRange}
         </p>
@@ -162,9 +179,10 @@ function WeekColumn({ weekData, events, isLast }: WeekColumnProps) {
       {/* Events Column */}
       <div
         className={cn(
-          "flex-1 flex flex-col items-center py-4 gap-3 overflow-y-auto",
-          weekData.isFuture && "opacity-60",
+          "flex-1 flex flex-col items-center py-4 px-2 overflow-y-auto",
+          weekData.isFuture && "opacity-70",
         )}
+        style={{ gap: Math.round(12 * zoomLevel) }}
       >
         {events.map((event, index) => (
           <motion.div
@@ -172,27 +190,126 @@ function WeekColumn({ weekData, events, isLast }: WeekColumnProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{
-              delay: index * 0.03,
-              duration: 0.25,
+              delay: index * 0.04,
+              duration: 0.3,
               ease: [0.25, 0.46, 0.45, 0.94],
             }}
           >
-            <MemoryTimelineCard event={event} compact />
+            <MemoryTimelineCard event={event} zoomLevel={zoomLevel} />
           </motion.div>
         ))}
         {events.length === 0 && (
-          <p className="text-[10px] text-muted-foreground/20 italic py-8">
+          <p
+            className="text-muted-foreground/30 italic py-8"
+            style={{ fontSize: `${11 * zoomLevel}px` }}
+          >
             No events
           </p>
         )}
       </div>
     </div>
   );
+});
+
+/**
+ * Focus Mode Overlay
+ *
+ * Dark overlay that appears when in focus mode.
+ * Uses pointer-events-none to allow scroll pass-through.
+ * Cards handle their own click events for exit.
+ */
+function FocusModeOverlay() {
+  const isFocusMode = useIsFocusMode();
+
+  return (
+    <AnimatePresence>
+      {isFocusMode && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.55 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25, ease: "easeOut" }}
+          className="absolute inset-0 bg-black z-20 pointer-events-none"
+          aria-hidden="true"
+        />
+      )}
+    </AnimatePresence>
+  );
+}
+
+/**
+ * Current Week Indicator
+ *
+ * A glowing white/cyan bar that marks the current week in focus mode.
+ * Helps users orient themselves and indicates that anything to the right
+ * (future weeks) is tentative and subject to change.
+ */
+interface CurrentWeekIndicatorProps {
+  currentWeekIndex: number;
+  columnWidth: number;
+}
+
+function CurrentWeekIndicator({
+  currentWeekIndex,
+  columnWidth,
+}: CurrentWeekIndicatorProps) {
+  const isFocusMode = useIsFocusMode();
+
+  if (!isFocusMode) return null;
+
+  // Position at the right edge of the current week column
+  const leftPosition = (currentWeekIndex + 1) * columnWidth;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scaleY: 0 }}
+      animate={{ opacity: 1, scaleY: 1 }}
+      exit={{ opacity: 0, scaleY: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className="absolute top-0 bottom-0 z-25 pointer-events-none"
+      style={{ left: leftPosition - 2 }}
+    >
+      {/* Main indicator line */}
+      <div className="relative h-full w-1">
+        {/* Glow effect */}
+        <div className="absolute inset-0 w-1 bg-white/30 blur-sm" />
+        {/* Solid core */}
+        <div className="absolute inset-0 w-[2px] bg-white/70 left-[1px]" />
+        {/* Accent highlight */}
+        <div className="absolute inset-0 w-[1px] bg-accent/50 left-[2px]" />
+      </div>
+
+      {/* "Now" label */}
+      <div className="absolute top-2 -translate-x-1/2 left-1/2">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.2 }}
+          className="px-1.5 py-0.5 bg-white/90 dark:bg-white/80 rounded text-[9px] font-bold uppercase tracking-wider text-black shadow-lg"
+        >
+          Now
+        </motion.div>
+      </div>
+
+      {/* "Future" indicator on right side */}
+      <div className="absolute top-2 left-4">
+        <motion.div
+          initial={{ opacity: 0, x: -5 }}
+          animate={{ opacity: 0.6, x: 0 }}
+          transition={{ delay: 0.25, duration: 0.2 }}
+          className="text-[8px] font-medium uppercase tracking-wider text-white/50 whitespace-nowrap"
+        >
+          Tentative →
+        </motion.div>
+      </div>
+    </motion.div>
+  );
 }
 
 export function MemoryTimeline() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [hasScrolledToToday, setHasScrolledToToday] = useState(false);
+  const [zoomIndex, setZoomIndex] = useState(DEFAULT_ZOOM_INDEX);
 
   const selectedInitiativeId = useMemoryStore(
     (state) => state.selectedInitiativeId,
@@ -200,6 +317,16 @@ export function MemoryTimeline() {
   const getEventsForInitiative = useMemoryStore(
     (state) => state.getEventsForInitiative,
   );
+  const exitFocusMode = useMemoryStore((state) => state.exitFocusMode);
+  const toggleVisualizationMode = useMemoryStore(
+    (state) => state.toggleVisualizationMode,
+  );
+  const isFocusMode = useIsFocusMode();
+  const visualizationMode = useConnectionVisualizationMode();
+
+  // Current zoom level
+  const zoomLevel = ZOOM_LEVELS[zoomIndex];
+  const columnWidth = BASE_COLUMN_WIDTH * zoomLevel;
 
   // Get events for selected initiative
   const events = selectedInitiativeId
@@ -242,9 +369,7 @@ export function MemoryTimeline() {
       // Calculate scroll position to center "This Week"
       const containerWidth = scrollRef.current.clientWidth;
       const targetScroll =
-        currentWeekIndex * WEEK_COLUMN_WIDTH -
-        containerWidth / 2 +
-        WEEK_COLUMN_WIDTH / 2;
+        currentWeekIndex * columnWidth - containerWidth / 2 + columnWidth / 2;
 
       scrollRef.current.scrollTo({
         left: Math.max(0, targetScroll),
@@ -252,49 +377,63 @@ export function MemoryTimeline() {
       });
       setHasScrolledToToday(true);
     }
-  }, [currentWeekIndex, hasScrolledToToday]);
+  }, [currentWeekIndex, hasScrolledToToday, columnWidth]);
+
+  // Keyboard handler for Escape to exit focus mode
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isFocusMode) {
+        exitFocusMode();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isFocusMode, exitFocusMode]);
 
   const scrollLeft = useCallback(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({
-        left: -WEEK_COLUMN_WIDTH * 2,
+        left: -columnWidth,
         behavior: "smooth",
       });
     }
-  }, []);
+  }, [columnWidth]);
 
   const scrollRight = useCallback(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollBy({
-        left: WEEK_COLUMN_WIDTH * 2,
+        left: columnWidth,
         behavior: "smooth",
       });
     }
-  }, []);
+  }, [columnWidth]);
 
   const scrollToToday = useCallback(() => {
     if (scrollRef.current && currentWeekIndex >= 0) {
       const containerWidth = scrollRef.current.clientWidth;
       const targetScroll =
-        currentWeekIndex * WEEK_COLUMN_WIDTH -
-        containerWidth / 2 +
-        WEEK_COLUMN_WIDTH / 2;
+        currentWeekIndex * columnWidth - containerWidth / 2 + columnWidth / 2;
 
       scrollRef.current.scrollTo({
         left: Math.max(0, targetScroll),
         behavior: "smooth",
       });
     }
-  }, [currentWeekIndex]);
+  }, [currentWeekIndex, columnWidth]);
+
+  const zoomIn = useCallback(() => {
+    setZoomIndex((prev) => Math.min(prev + 1, ZOOM_LEVELS.length - 1));
+  }, []);
+
+  const zoomOut = useCallback(() => {
+    setZoomIndex((prev) => Math.max(prev - 1, 0));
+  }, []);
 
   if (!selectedInitiativeId) {
     return (
       <div className="flex-1 flex items-center justify-center bg-surface/20">
         <div className="text-center">
-          <CalendarDays
-            className="size-12 mx-auto mb-4 text-muted-foreground/20"
-            strokeWidth={1}
-          />
           <p className="text-muted-foreground font-medium">
             Select an initiative
           </p>
@@ -308,92 +447,153 @@ export function MemoryTimeline() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-surface/20 relative">
-      {/* Header with navigation */}
-      <div className="px-6 py-3 flex items-center justify-between border-b border-border/30 shrink-0 bg-background/50 backdrop-blur-sm">
-        <div className="flex items-center gap-3">
-          <h3 className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider">
-            Timeline
-          </h3>
-          <span className="text-[10px] text-muted-foreground/40">
-            {weeks.length} weeks • Scroll to explore
-          </span>
-        </div>
-
-        {/* Navigation Controls */}
+      {/* Controls Bar - Above the swimlanes */}
+      <div className="px-4 py-2 flex items-center justify-between border-b border-border/30 shrink-0 bg-background/80 backdrop-blur-sm z-40">
+        {/* Left: Visualization toggle + Today button */}
         <div className="flex items-center gap-2">
+          {/* Visualization Mode Toggle */}
           <button
             type="button"
-            onClick={scrollLeft}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-            title="Scroll left (past)"
+            onClick={toggleVisualizationMode}
+            className={cn(
+              "flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition-colors",
+              visualizationMode === "dim-with-lines"
+                ? "bg-accent/10 text-accent"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+            )}
+            title="Toggle connection lines"
           >
-            <ChevronLeft className="size-4" strokeWidth={1.5} />
+            <GitBranch className="size-3.5" strokeWidth={1.5} />
+            <span>
+              {visualizationMode === "dim-with-lines"
+                ? "Lines On"
+                : "Lines Off"}
+            </span>
           </button>
+
+          <div className="w-px h-4 bg-border/50" />
 
           <Button
             variant="outline"
             size="sm"
             onClick={scrollToToday}
-            className="h-7 px-2.5 text-xs gap-1.5"
+            className="h-6 px-2 text-[11px] gap-1"
           >
-            <Circle className="size-2 fill-accent text-accent" />
+            <Circle className="size-1.5 fill-accent text-accent" />
             Today
           </Button>
+        </div>
+
+        {/* Right: Navigation + Zoom controls */}
+        <div className="flex items-center gap-2">
+          {/* Navigation */}
+          <button
+            type="button"
+            onClick={scrollLeft}
+            className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            title="Scroll left (past)"
+          >
+            <ChevronLeft className="size-4" strokeWidth={1.5} />
+          </button>
 
           <button
             type="button"
             onClick={scrollRight}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
             title="Scroll right (future)"
           >
             <ChevronRight className="size-4" strokeWidth={1.5} />
           </button>
+
+          <div className="w-px h-4 bg-border/50" />
+
+          {/* Zoom Controls */}
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={zoomOut}
+              disabled={zoomIndex === 0}
+              className={cn(
+                "p-1 rounded-md transition-colors",
+                zoomIndex === 0
+                  ? "text-muted-foreground/30 cursor-not-allowed"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+              )}
+              title="Zoom out"
+            >
+              <ZoomOut className="size-3.5" strokeWidth={1.5} />
+            </button>
+
+            <span className="text-[10px] text-muted-foreground w-8 text-center tabular-nums">
+              {Math.round(zoomLevel * 100)}%
+            </span>
+
+            <button
+              type="button"
+              onClick={zoomIn}
+              disabled={zoomIndex === ZOOM_LEVELS.length - 1}
+              className={cn(
+                "p-1 rounded-md transition-colors",
+                zoomIndex === ZOOM_LEVELS.length - 1
+                  ? "text-muted-foreground/30 cursor-not-allowed"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
+              )}
+              title="Zoom in"
+            >
+              <ZoomIn className="size-3.5" strokeWidth={1.5} />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Timeline Content */}
-      <div
-        ref={scrollRef}
-        className="flex-1 overflow-x-auto overflow-y-hidden"
-        style={{
-          scrollbarWidth: "thin",
-          scrollbarColor: "var(--color-border) transparent",
-        }}
-      >
-        {/* Horizontal dotted line connecting weeks */}
-        <div className="relative h-full">
-          <div className="absolute top-[52px] left-0 right-0 h-[1px] pointer-events-none z-10">
-            <svg className="w-full h-full" preserveAspectRatio="none">
-              <line
-                x1="0"
-                y1="0"
-                x2="100%"
-                y2="0"
-                stroke="var(--color-border)"
-                strokeWidth="1"
-                strokeDasharray="4 4"
-                opacity="0.3"
-              />
-            </svg>
-          </div>
+      <div className="flex-1 relative overflow-hidden">
+        {/* Focus Mode Overlay */}
+        <FocusModeOverlay />
 
-          {/* Week Columns */}
-          <div className="flex h-full" style={{ minWidth: "max-content" }}>
-            {weeks.map((weekData, index) => (
-              <WeekColumn
-                key={weekData.weekOffset}
-                weekData={weekData}
-                events={eventsByWeekOffset.get(weekData.weekOffset) || []}
-                isLast={index === weeks.length - 1}
-              />
-            ))}
+        {/* Scrollable Timeline */}
+        <div
+          ref={scrollRef}
+          className="h-full overflow-x-auto overflow-y-hidden"
+          style={{
+            scrollbarWidth: "thin",
+            scrollbarColor: "var(--color-border) transparent",
+          }}
+        >
+          <div className="relative h-full">
+            {/* Connection Lines (SVG overlay for dim-with-lines mode) */}
+            <ConnectionLines containerRef={scrollRef} />
+
+            {/* Current Week Indicator (focus mode only) */}
+            <AnimatePresence>
+              {isFocusMode && (
+                <CurrentWeekIndicator
+                  currentWeekIndex={currentWeekIndex}
+                  columnWidth={columnWidth}
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Week Columns */}
+            <div className="flex h-full" style={{ minWidth: "max-content" }}>
+              {weeks.map((weekData, index) => (
+                <WeekColumn
+                  key={weekData.weekOffset}
+                  weekData={weekData}
+                  events={eventsByWeekOffset.get(weekData.weekOffset) || []}
+                  isLast={index === weeks.length - 1}
+                  columnWidth={columnWidth}
+                  zoomLevel={zoomLevel}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Gradient fade indicators for scroll direction */}
-      <div className="absolute left-0 top-[52px] bottom-0 w-8 bg-gradient-to-r from-surface/80 to-transparent pointer-events-none z-20" />
-      <div className="absolute right-0 top-[52px] bottom-0 w-8 bg-gradient-to-l from-surface/80 to-transparent pointer-events-none z-20" />
+        {/* Gradient fade indicators for scroll direction */}
+        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-surface/90 to-transparent pointer-events-none z-15" />
+        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-surface/90 to-transparent pointer-events-none z-15" />
+      </div>
     </div>
   );
 }

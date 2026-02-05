@@ -26,8 +26,8 @@ const participants: Record<string, MemoryParticipant> = {
   tom: { id: "p-12", name: "Tom Baker" },
 };
 
-// Base date: Feb 3, 2026
-const NOW = new Date(2026, 1, 3);
+// Use current date for dynamic week calculations
+const NOW = new Date();
 
 function daysAgo(days: number): Date {
   const date = new Date(NOW);

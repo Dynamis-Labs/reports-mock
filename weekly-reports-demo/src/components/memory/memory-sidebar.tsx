@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "motion/react";
 import { Search, ChevronDown } from "lucide-react";
 import { cn } from "../../lib/utils";
+import { formatRelativeTime } from "../../lib/date-utils";
 import { Input } from "../ui/input";
 import { eventTypeConfig, type MemoryEvent } from "../../types/memory";
 import {
@@ -22,17 +23,6 @@ import {
 
 interface SidebarEventItemProps {
   event: MemoryEvent;
-}
-
-function formatRelativeTime(date: Date): string {
-  const now = new Date(2026, 1, 3);
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
 function SidebarEventItem({ event }: SidebarEventItemProps) {

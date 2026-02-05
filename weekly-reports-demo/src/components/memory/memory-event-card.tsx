@@ -20,23 +20,28 @@ interface MemoryEventCardProps {
 }
 
 function formatEventTime(date: Date): string {
-  const now = new Date(2026, 1, 3); // Match mock data base date
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const eventDay = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  );
+  const diffDays = Math.floor(
+    (today.getTime() - eventDay.getTime()) / (1000 * 60 * 60 * 24),
+  );
+
+  const timeStr = date.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
 
   if (diffDays === 0) {
-    return `Today ${date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    })}`;
+    return `Today ${timeStr}`;
   }
   if (diffDays === 1) {
-    return `Yesterday ${date.toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    })}`;
+    return `Yesterday ${timeStr}`;
   }
   return date.toLocaleDateString("en-US", {
     month: "short",

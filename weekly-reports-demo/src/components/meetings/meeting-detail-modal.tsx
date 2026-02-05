@@ -27,7 +27,14 @@ import {
 } from "../../lib/motion";
 import { Button } from "../ui/button";
 import { VisibilityBadge, PlatformIndicator, AttendeeChips } from "./shared";
-import type { Meeting } from "../../types/meeting";
+import { ContactDrawer } from "../crm/layouts/card-grid/contact-drawer";
+import {
+  findContactForAttendee,
+  createContactFromAttendee,
+} from "../../lib/contact-meeting-utils";
+import { mockContacts } from "../../data/mock-contacts";
+import type { Meeting, MeetingAttendee } from "../../types/meeting";
+import type { Contact } from "../../types/contact";
 import type { MeetingDetailMode } from "../../stores/meetings-store";
 
 /**
@@ -84,6 +91,21 @@ export function MeetingDetailModal({
 }: MeetingDetailModalProps) {
   const [followUpText, setFollowUpText] = useState("");
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
+  const [selectedAttendee, setSelectedAttendee] = useState<Contact | null>(
+    null,
+  );
+  const [isAttendeeDrawerOpen, setIsAttendeeDrawerOpen] = useState(false);
+
+  // Handle attendee click to open contact drawer
+  const handleAttendeeClick = (attendee: MeetingAttendee) => {
+    const contact = findContactForAttendee(attendee, mockContacts);
+    if (contact) {
+      setSelectedAttendee(contact);
+    } else {
+      setSelectedAttendee(createContactFromAttendee(attendee));
+    }
+    setIsAttendeeDrawerOpen(true);
+  };
 
   // Handle escape key
   const handleKeyDown = useCallback(
@@ -129,13 +151,13 @@ export function MeetingDetailModal({
     }
   }, [isOpen]);
 
-  const handleAiAction = (actionId: string) => {
-    console.log("AI action triggered:", actionId);
+  const handleAiAction = (_actionId: string) => {
+    // TODO: Implement AI action handling
   };
 
   const handleFollowUp = () => {
     if (followUpText.trim()) {
-      console.log("Follow-up submitted:", followUpText);
+      // TODO: Implement follow-up submission
       setFollowUpText("");
     }
   };
@@ -170,7 +192,7 @@ export function MeetingDetailModal({
           >
             {/* Modal content */}
             <motion.div
-              className="relative w-full bg-surface-elevated rounded-xl shadow-float border border-border pointer-events-auto max-w-2xl max-h-[85vh] flex flex-col"
+              className="relative w-full bg-surface-elevated rounded-xl shadow-float border border-border pointer-events-auto max-w-lg max-h-[80vh] flex flex-col"
               variants={modalContentVariants}
               initial="initial"
               animate="animate"
@@ -262,7 +284,7 @@ export function MeetingDetailModal({
                               Agenda
                             </h3>
                           </div>
-                          <div className="prose prose-sm dark:prose-invert max-w-none">
+                          <div className="prose prose-sm max-w-none [&_*]:text-foreground [&_a]:text-accent [&_strong]:text-foreground [&_h1]:text-foreground [&_h2]:text-foreground [&_h3]:text-foreground">
                             <ReactMarkdown>{meeting.agenda}</ReactMarkdown>
                           </div>
                         </motion.section>
@@ -293,22 +315,24 @@ export function MeetingDetailModal({
                         </div>
                         <div className="space-y-2">
                           {meeting.attendees.map((attendee) => (
-                            <div
+                            <button
                               key={attendee.id}
-                              className="flex items-center gap-3 p-3 rounded-lg bg-muted/30"
+                              type="button"
+                              onClick={() => handleAttendeeClick(attendee)}
+                              className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors w-full text-left cursor-pointer"
                             >
                               <span className="size-8 rounded-full bg-accent/20 text-accent flex items-center justify-center text-ui font-medium">
                                 {attendee.initials}
                               </span>
                               <div>
-                                <p className="text-sm font-medium">
+                                <p className="text-sm font-medium text-foreground">
                                   {attendee.name}
                                 </p>
                                 <p className="text-xs text-muted-foreground">
                                   {attendee.email}
                                 </p>
                               </div>
-                            </div>
+                            </button>
                           ))}
                         </div>
                       </motion.section>
@@ -543,5 +567,14 @@ export function MeetingDetailModal({
     </AnimatePresence>
   );
 
-  return createPortal(content, document.body);
+  return (
+    <>
+      {createPortal(content, document.body)}
+      <ContactDrawer
+        contact={selectedAttendee}
+        isOpen={isAttendeeDrawerOpen}
+        onClose={() => setIsAttendeeDrawerOpen(false)}
+      />
+    </>
+  );
 }

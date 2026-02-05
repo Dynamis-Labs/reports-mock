@@ -31,14 +31,13 @@ export function MeetingSummaryTab({ meeting }: MeetingSummaryTabProps) {
   const [followUpText, setFollowUpText] = useState("");
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
 
-  const handleAiAction = (actionId: string) => {
-    // Placeholder for AI action handling
-    console.log("AI action triggered:", actionId);
+  const handleAiAction = (_actionId: string) => {
+    // TODO: Implement AI action handling
   };
 
   const handleFollowUp = () => {
     if (followUpText.trim()) {
-      console.log("Follow-up submitted:", followUpText);
+      // TODO: Implement follow-up submission
       setFollowUpText("");
     }
   };

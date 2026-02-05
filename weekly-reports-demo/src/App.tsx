@@ -9,7 +9,6 @@ import { SourcesSidebar } from "./components/sources";
 import { ReadingPane } from "./components/report/reading-pane";
 import { SettingsPane } from "./components/settings";
 import { ReviewActionsModal } from "./components/review-actions";
-import { AskSentraChatbox } from "./components/chat";
 import { CrmPage } from "./components/crm";
 import { TodosPage } from "./components/todos";
 import { ArchivePage } from "./components/archive";
@@ -49,12 +48,13 @@ function App() {
   const isReportsSection = activeSection === "reports";
   const showReportsRadarToggle = isReportsSection;
 
-  // Render the Reports/Radar toggle header - compact, centered in viewport
+  // Render the Reports/Radar toggle header - h-14 matching all other page headers
   const reportsRadarHeader = showReportsRadarToggle ? (
-    <div className="h-9 flex items-center justify-center border-b border-border-subtle bg-background relative">
-      <div className="fixed top-2 left-1/2 -translate-x-1/2 z-30">
-        <ReportsRadarToggle value={viewMode} onChange={setViewMode} />
-      </div>
+    <div className="h-14 px-6 flex items-center justify-between border-b border-border-subtle bg-background shrink-0">
+      <h1 className="text-lg font-semibold text-foreground">
+        {viewMode === "radar" ? "Radar" : "Reports"}
+      </h1>
+      <ReportsRadarToggle value={viewMode} onChange={setViewMode} />
     </div>
   ) : null;
 
@@ -170,7 +170,6 @@ function App() {
           commentPanel={getCommentPanel()}
         />
         <ReviewActionsModal />
-        {!isSettingsOpen && <AskSentraChatbox />}
         <SourcesSidebar />
       </TooltipProvider>
     </ThemeProvider>

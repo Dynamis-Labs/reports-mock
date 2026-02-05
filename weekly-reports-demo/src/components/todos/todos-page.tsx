@@ -1,4 +1,3 @@
-import { CheckSquare } from "lucide-react";
 import { PageBreadcrumbHeader } from "../layout/page-breadcrumb-header";
 import { TodoColumn } from "./todo-column";
 import { useTodoStore } from "../../stores/todo-store";
@@ -17,7 +16,7 @@ export function TodosPage() {
   return (
     <div className="flex flex-col h-full">
       {/* Breadcrumb Header */}
-      <PageBreadcrumbHeader items={[{ label: "TODOs", icon: CheckSquare }]} />
+      <PageBreadcrumbHeader items={[{ label: "TODOs" }]} />
 
       {/* Main Content - Centered 3-Column Kanban */}
       <div className="flex-1 overflow-hidden p-6">

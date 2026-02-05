@@ -8,6 +8,8 @@ export interface MeetingAttendee {
   avatarUrl?: string;
   initials: string;
   attended: boolean;
+  /** Optional link to CRM contact for profile drawer */
+  linkedContactId?: string;
 }
 
 export interface MeetingKeyTakeaway {

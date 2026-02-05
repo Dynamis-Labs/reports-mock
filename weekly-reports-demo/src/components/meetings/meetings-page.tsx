@@ -1,5 +1,4 @@
 import { useEffect, useRef } from "react";
-import { Calendar } from "lucide-react";
 import { PageBreadcrumbHeader } from "../layout/page-breadcrumb-header";
 import { MeetingsHeaderActions } from "./meetings-header";
 import { PastSection, UpNextSection, LaterSection } from "./sections";
@@ -77,7 +76,7 @@ export function MeetingsPage() {
     <div className="flex flex-col h-full">
       {/* Breadcrumb Header */}
       <PageBreadcrumbHeader
-        items={[{ label: "Meetings", icon: Calendar }]}
+        items={[{ label: "Meetings" }]}
         actions={<MeetingsHeaderActions />}
       />
 

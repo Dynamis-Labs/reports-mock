@@ -12,7 +12,10 @@ import {
   Check,
   Heart,
   ArrowUpRight,
+  ArrowRight,
   ExternalLink,
+  Building2,
+  Calendar,
 } from "lucide-react";
 import { cn } from "../../../../lib/utils";
 import { Button } from "../../../ui/button";
@@ -21,6 +24,9 @@ import { ActivityTimeline } from "../../shared/activity-timeline";
 import { TagEditor } from "../../shared/tag-editor";
 import { springs, staggerContainer, staggerItem } from "../../../../lib/motion";
 import { useCrmStore } from "../../../../stores/crm-store";
+import { useMeetingsStore } from "../../../../stores/meetings-store";
+import { findMostRecentMeeting } from "../../../../lib/contact-meeting-utils";
+import { mockMeetings } from "../../../../data/mock-meetings";
 import type { Contact } from "../../../../types/contact";
 
 /**
@@ -92,6 +98,30 @@ function CompactContactInfo({ contact }: { contact: Contact }) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Last Meeting Button
+// ─────────────────────────────────────────────────────────────────────────────
+
+function LastMeetingButton({ contact }: { contact: Contact }) {
+  const { selectMeeting } = useMeetingsStore();
+  const lastMeeting = findMostRecentMeeting(contact, mockMeetings);
+
+  if (!lastMeeting) return null;
+
+  const isPast = lastMeeting.date < new Date();
+
+  return (
+    <button
+      onClick={() => selectMeeting(lastMeeting.id, isPast ? "recap" : "brief")}
+      className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
+    >
+      <Calendar className="size-3.5" strokeWidth={1.5} />
+      <span>Last meeting</span>
+      <ArrowRight className="size-3" strokeWidth={1.5} />
+    </button>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Drawer Content
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -134,6 +164,9 @@ function DrawerContent({ contact }: { contact: Contact }) {
         </h2>
         <p className="text-base text-muted-foreground">{contact.title}</p>
         <p className="text-sm text-muted-foreground/60">{contact.company}</p>
+
+        {/* Last Meeting Link */}
+        <LastMeetingButton contact={contact} />
       </motion.header>
 
       {/* ═══════════════════════════════════════════════════════════════════════
@@ -333,7 +366,47 @@ function DrawerContent({ contact }: { contact: Contact }) {
       </motion.section>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          7. Contact Info (compact, at bottom)
+          7. Company Activity
+          ═══════════════════════════════════════════════════════════════════════ */}
+      {contact.insights.companyNews &&
+        contact.insights.companyNews.length > 0 && (
+          <motion.section variants={staggerItem}>
+            <div className="flex items-center gap-2 mb-2">
+              <Building2
+                className="size-3.5 text-muted-foreground/60"
+                strokeWidth={1.5}
+              />
+              <h4 className="font-medium text-xs text-muted-foreground/60 uppercase tracking-wider">
+                {contact.company} Activity
+              </h4>
+            </div>
+            <ul className="space-y-2">
+              {contact.insights.companyNews.slice(0, 4).map((news) => (
+                <li
+                  key={news.id}
+                  className="group flex items-start gap-2 text-sm text-foreground/80"
+                >
+                  <span className="size-1 rounded-full bg-foreground/30 mt-2 shrink-0" />
+                  <span className="flex-1">{news.headline}</span>
+                  {news.sourceUrl && (
+                    <a
+                      href={news.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+                      title="View source"
+                    >
+                      <ArrowUpRight className="size-3.5" strokeWidth={1.5} />
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </motion.section>
+        )}
+
+      {/* ═══════════════════════════════════════════════════════════════════════
+          8. Contact Info (compact, at bottom)
           ═══════════════════════════════════════════════════════════════════════ */}
       <motion.section
         variants={staggerItem}

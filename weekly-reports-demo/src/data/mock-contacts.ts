@@ -856,6 +856,28 @@ export const mockContacts: Contact[] = [
       ],
       bestReachTime: "Tuesdays and Thursdays, 9-11 AM PT",
       insightsUpdatedAt: daysAgo(2),
+      companyNews: [
+        {
+          id: "news-acc-1",
+          headline: "Accenture announces $3B investment in AI capabilities",
+          date: daysAgo(5),
+          sourceUrl: "https://newsroom.accenture.com",
+          category: "press",
+        },
+        {
+          id: "news-acc-2",
+          headline: "New partnership with Google Cloud for generative AI",
+          date: daysAgo(12),
+          sourceUrl: "https://newsroom.accenture.com",
+          category: "product",
+        },
+        {
+          id: "news-acc-3",
+          headline: "Q1 earnings beat expectations, revenue up 8%",
+          date: daysAgo(18),
+          category: "funding",
+        },
+      ],
     },
 
     notes: {
@@ -944,6 +966,28 @@ export const mockContacts: Contact[] = [
       ],
       bestReachTime: "Early mornings, 7-8 AM ET",
       insightsUpdatedAt: daysAgo(7),
+      companyNews: [
+        {
+          id: "news-jpm-1",
+          headline: "JPMorgan launches new AI-powered fraud detection system",
+          date: daysAgo(3),
+          sourceUrl: "https://www.jpmorganchase.com/news",
+          category: "product",
+        },
+        {
+          id: "news-jpm-2",
+          headline: "Expands technology workforce with 2,000 new hires",
+          date: daysAgo(10),
+          category: "leadership",
+        },
+        {
+          id: "news-jpm-3",
+          headline: "Record quarterly profit driven by trading revenues",
+          date: daysAgo(21),
+          sourceUrl: "https://www.jpmorganchase.com/ir",
+          category: "funding",
+        },
+      ],
     },
 
     notes: {
@@ -1026,6 +1070,28 @@ export const mockContacts: Contact[] = [
       interests: ["Developer experience", "Open source", "API design", "Rust"],
       bestReachTime: "Async - Twitter DMs or Slack",
       insightsUpdatedAt: daysAgo(3),
+      companyNews: [
+        {
+          id: "news-stripe-1",
+          headline: "Stripe launches new embedded finance platform for SaaS",
+          date: daysAgo(2),
+          sourceUrl: "https://stripe.com/newsroom",
+          category: "product",
+        },
+        {
+          id: "news-stripe-2",
+          headline: "Valued at $50B in latest secondary market transactions",
+          date: daysAgo(15),
+          category: "funding",
+        },
+        {
+          id: "news-stripe-3",
+          headline: "Opens new engineering hub in Toronto",
+          date: daysAgo(25),
+          sourceUrl: "https://stripe.com/blog",
+          category: "leadership",
+        },
+      ],
     },
 
     notes: {
@@ -1099,6 +1165,27 @@ export const mockContacts: Contact[] = [
       interests: ["Platform reliability", "Cost optimization"],
       bestReachTime: "Schedule through EA",
       insightsUpdatedAt: daysAgo(1),
+      companyNews: [
+        {
+          id: "news-sfdc-1",
+          headline: "Salesforce launches Agentforce AI platform",
+          date: daysAgo(7),
+          sourceUrl: "https://salesforce.com/news",
+          category: "product",
+        },
+        {
+          id: "news-sfdc-2",
+          headline: "Announces acquisition of data analytics startup",
+          date: daysAgo(14),
+          category: "funding",
+        },
+        {
+          id: "news-sfdc-3",
+          headline: "CEO Marc Benioff speaks at World Economic Forum",
+          date: daysAgo(20),
+          category: "leadership",
+        },
+      ],
     },
 
     notes: {
@@ -1177,6 +1264,21 @@ export const mockContacts: Contact[] = [
       interests: ["Internal tooling", "Developer productivity"],
       bestReachTime: "Flexible - responds quickly to email",
       insightsUpdatedAt: daysAgo(0),
+      companyNews: [
+        {
+          id: "news-shop-1",
+          headline: "Shopify reports strong holiday season, GMV up 24%",
+          date: daysAgo(8),
+          sourceUrl: "https://news.shopify.com",
+          category: "funding",
+        },
+        {
+          id: "news-shop-2",
+          headline: "Launches Shop Pay installments in Europe",
+          date: daysAgo(16),
+          category: "product",
+        },
+      ],
     },
 
     notes: {

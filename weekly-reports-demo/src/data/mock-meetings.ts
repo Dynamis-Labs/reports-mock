@@ -700,6 +700,110 @@ export const mockMeetings: Meeting[] = [
     keyTakeaways: [],
   },
 
+  // ─── Historical Meetings with CRM-linked Attendees ─────────────────────────
+  {
+    id: "meeting-crm-1",
+    title: "Accenture Technical Deep Dive",
+    summary: "Technical architecture review with Sarah Chen and her team.",
+    description: "Deep dive into our API architecture and integration points.",
+    date: getDaysFromNow(-2),
+    startTime: "11:00 AM",
+    duration: 60,
+    platform: "zoom",
+    hasRecording: true,
+    recordingUrl: "https://zoom.us/rec/accenture-tech",
+    visibility: "shared",
+    attendees: [
+      {
+        id: "att-crm-1",
+        name: "Sarah Chen",
+        email: "sarah.chen@accenture.com",
+        initials: "SC",
+        attended: true,
+        linkedContactId: "cli-1", // Links to Accenture VP
+      },
+      {
+        id: "att-crm-2",
+        name: "Technical Team",
+        email: "tech@accenture.com",
+        initials: "TT",
+        attended: true,
+      },
+    ],
+    overview:
+      "Walked through our API architecture with Sarah's team. They're impressed with our scalability. Next step: security review.",
+    keyTakeaways: [
+      { id: "kt-crm-1", text: "API architecture approved by their team" },
+      { id: "kt-crm-2", text: "Security review scheduled for next week" },
+      { id: "kt-crm-3", text: "POC timeline: 3 weeks" },
+    ],
+  },
+  {
+    id: "meeting-crm-2",
+    title: "JPMorgan Security Review",
+    summary: "Security architecture walkthrough with James Morrison.",
+    description: "Compliance and security discussion with JPM team.",
+    date: getDaysFromNow(-3),
+    startTime: "9:00 AM",
+    duration: 90,
+    platform: "teams",
+    hasRecording: false,
+    visibility: "private",
+    attendees: [
+      {
+        id: "att-crm-3",
+        name: "James Morrison",
+        email: "james.morrison@jpmorgan.com",
+        initials: "JM",
+        attended: true,
+        linkedContactId: "cli-2", // Links to JPMorgan MD
+      },
+      {
+        id: "att-crm-4",
+        name: "CISO Team",
+        email: "security@jpmorgan.com",
+        initials: "CT",
+        attended: true,
+      },
+    ],
+    overview:
+      "Detailed security review with James and their CISO. They need penetration test results before proceeding.",
+    keyTakeaways: [
+      { id: "kt-crm-4", text: "Share pen test results within 48 hours" },
+      { id: "kt-crm-5", text: "SOC2 Type II certification confirmed" },
+      { id: "kt-crm-6", text: "Follow-up with legal team on DPA" },
+    ],
+  },
+  {
+    id: "meeting-crm-3",
+    title: "Stripe Integration Planning",
+    summary: "CLI improvements discussion with Priya Sharma.",
+    description: "Planning session for developer experience improvements.",
+    date: getDaysFromNow(-4),
+    startTime: "3:00 PM",
+    duration: 45,
+    platform: "meet",
+    hasRecording: false,
+    visibility: "shared",
+    attendees: [
+      {
+        id: "att-crm-5",
+        name: "Priya Sharma",
+        email: "priya@stripe.com",
+        initials: "PS",
+        attended: true,
+        linkedContactId: "cli-3", // Links to Stripe Staff Engineer
+      },
+    ],
+    overview:
+      "Priya gave detailed feedback on our CLI. She loves the autocomplete but wants better error messages.",
+    keyTakeaways: [
+      { id: "kt-crm-7", text: "Improve CLI error message clarity" },
+      { id: "kt-crm-8", text: "Add --verbose flag for debugging" },
+      { id: "kt-crm-9", text: "Consider conference talk collaboration" },
+    ],
+  },
+
   // ─── Historical Meetings (for archive/history) ────────────────────────────
   {
     id: "meeting-hist-1",

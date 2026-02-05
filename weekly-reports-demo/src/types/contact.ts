@@ -85,6 +85,19 @@ export interface ActivityEvent {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Company News
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Company news item for activity feed */
+export interface CompanyNewsItem {
+  id: string;
+  headline: string;
+  date: Date;
+  sourceUrl?: string;
+  category?: "press" | "product" | "funding" | "leadership" | "general";
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Contact Insights (The "Pokedex" Data)
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -110,6 +123,9 @@ export interface ContactInsights {
 
   /** Last updated timestamp for AI insights */
   insightsUpdatedAt?: Date;
+
+  /** Recent news/updates about the contact's company */
+  companyNews?: CompanyNewsItem[];
 }
 
 /** User-written notes and observations */

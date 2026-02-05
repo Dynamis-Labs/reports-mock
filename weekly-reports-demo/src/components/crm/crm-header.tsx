@@ -1,12 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import {
-  Search,
-  X,
-  SlidersHorizontal,
-  Users,
-  ChevronDown,
-  Check,
-} from "lucide-react";
+import { Search, X, SlidersHorizontal, ChevronDown, Check } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "../../lib/utils";
 import { useCrmStore, useHasActiveFilters } from "../../stores/crm-store";
@@ -63,8 +56,8 @@ export function CrmHeader() {
 
   return (
     <header className="shrink-0 bg-background">
-      {/* Breadcrumb */}
-      <PageBreadcrumbHeader items={[{ label: "CRM", icon: Users }]} />
+      {/* Page Title Header */}
+      <PageBreadcrumbHeader items={[{ label: "CRM" }]} />
 
       {/* Main header row */}
       <div className="px-6 py-4 flex items-center justify-between gap-6 border-b border-border/60">

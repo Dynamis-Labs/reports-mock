@@ -109,22 +109,18 @@ export function ReadingPane({ report }: ReadingPaneProps) {
         {/* Relative container for absolute positioning of comment layer */}
         <div ref={positioningRef} className="relative min-h-full">
           {/*
-            To center on the VIEWPORT (screen center at 960px on 1920 screen):
-            Content left edge = (viewport - content width) / 2
-            Within main panel = that position - (nav + sidebar width)
-
-            Formula: margin-left = (100vw - 672px) / 2 - 272px
-            At 1920px: (1920 - 672) / 2 - 272 = 624 - 272 = 352px
+            Content is viewport-centered to align with the chatbox.
+            Chatbox: fixed left-1/2 -translate-x-1/2, width 640px
+            Report: marginLeft offsets for nav (52px) + sidebar (220px) = 272px
           */}
           <motion.div
             className={cn(
-              "max-w-2xl px-8 py-12 lg:px-12 lg:py-16",
+              "w-full max-w-[640px] px-8 py-12 lg:px-12 lg:py-16",
               // Add right padding when comments exist to make room
               hasComments && "pr-8",
             )}
             style={{
-              // Center content on viewport, accounting for sidebar
-              marginLeft: "calc((100vw - 672px) / 2 - 272px)",
+              marginLeft: "calc((100vw - 640px) / 2 - 272px)",
             }}
             variants={staggerContainer}
             initial="hidden"

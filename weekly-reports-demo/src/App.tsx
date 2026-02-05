@@ -15,6 +15,7 @@ import { ArchivePage } from "./components/archive";
 import { MemoryPage } from "./components/memory";
 import { MeetingsPage } from "./components/meetings";
 import { RadarSidebar, RadarReadingPane } from "./components/radar";
+import { AskSentraChatbox } from "./components/chat/ask-sentra-chatbox";
 import { useSettingsStore } from "./stores/settings-store";
 import { useReportsStore } from "./stores/reports-store";
 import { mockReports } from "./data/mock-reports";
@@ -49,9 +50,9 @@ function App() {
   const showReportsRadarToggle = isReportsSection;
 
   // Render the Reports/Radar toggle header - h-14 matching all other page headers
-  // Title is handled by the sidebar label; main header just shows the toggle
+  // Toggle is centered in the header for visual balance
   const reportsRadarHeader = showReportsRadarToggle ? (
-    <div className="h-14 px-6 flex items-center justify-end border-b border-border-subtle bg-background shrink-0">
+    <div className="h-14 px-6 flex items-center justify-center border-b border-border-subtle bg-background shrink-0">
       <ReportsRadarToggle value={viewMode} onChange={setViewMode} />
     </div>
   ) : null;
@@ -169,6 +170,7 @@ function App() {
         />
         <ReviewActionsModal />
         <SourcesSidebar />
+        <AskSentraChatbox />
       </TooltipProvider>
     </ThemeProvider>
   );

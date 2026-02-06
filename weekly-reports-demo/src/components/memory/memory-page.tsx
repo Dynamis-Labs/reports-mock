@@ -1,4 +1,3 @@
-import { PageBreadcrumbHeader } from "../layout/page-breadcrumb-header";
 import { MemoryInitiativeSidebar } from "./memory-initiative-sidebar";
 import { MemoryInitiativeHeader } from "./memory-initiative-header";
 import { MemoryTimeline } from "./memory-timeline";
@@ -17,9 +16,7 @@ import { useMemoryStore } from "../../stores/memory-store";
  * - Sources panel: Slides in from right when sources button clicked
  *
  * Layout:
- * ┌────────────────────────────────────────────────────────────────┐
- * │ Breadcrumb Header                                              │
- * ├───────────┬────────────────────────────────────────────────────┤
+ * ┌───────────┬────────────────────────────────────────────────────┐
  * │           │ Initiative Header                                  │
  * │  Sidebar  ├────────────────────────────────────────────────────┤
  * │  (220px)  │ Timeline (week columns with event cards)           │
@@ -43,9 +40,6 @@ export function MemoryPage() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background relative">
-      {/* Breadcrumb Header */}
-      <PageBreadcrumbHeader items={[{ label: "Memory" }]} />
-
       {/* Main Layout: Sidebar + Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Left Sidebar - Initiative Swimlanes */}

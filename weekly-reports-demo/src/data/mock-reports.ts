@@ -1,6 +1,13 @@
 import type { Action } from "../types/action";
 import type { DigestSection } from "../types/sources";
 
+export type ReportCategory =
+  | "leadership"
+  | "gtm"
+  | "product"
+  | "engineering"
+  | "finance";
+
 export interface DataSource {
   id: string;
   type: "slack" | "linear" | "calendar" | "email" | "document";
@@ -36,6 +43,7 @@ export interface WeeklyReport {
   actions?: Action[];
   reportType?: "standard" | "leadership-digest";
   sections?: DigestSection[];
+  category: ReportCategory;
 }
 
 export const mockReports: WeeklyReport[] = [
@@ -43,6 +51,7 @@ export const mockReports: WeeklyReport[] = [
     id: "report-leadership-digest",
     title: "Leadership Digest",
     reportType: "leadership-digest",
+    category: "leadership",
     weekNumber: 6,
     dateRange: {
       start: new Date(2026, 1, 2),
@@ -322,6 +331,7 @@ Key infrastructure improvements include the rollout of the new CI/CD pipeline, r
   {
     id: "report-5",
     title: "Product Weekly Report",
+    category: "product",
     weekNumber: 5,
     dateRange: {
       start: new Date(2026, 0, 26),
@@ -486,6 +496,7 @@ This week marked a pivotal moment for the company with the successful public ann
   {
     id: "report-4",
     title: "GTM Strategy Update",
+    category: "gtm",
     weekNumber: 4,
     dateRange: {
       start: new Date(2026, 0, 19),
@@ -515,6 +526,7 @@ The public announcement is scheduled for Monday. All systems are ready for the e
   {
     id: "report-3",
     title: "Engineering Weekly",
+    category: "engineering",
     weekNumber: 3,
     dateRange: {
       start: new Date(2026, 0, 12),
@@ -545,6 +557,7 @@ A productive week focused on advancing enterprise conversations and accelerating
   {
     id: "report-2",
     title: "FP&A Daily Update",
+    category: "finance",
     weekNumber: 2,
     dateRange: {
       start: new Date(2026, 0, 5),
@@ -572,6 +585,7 @@ First full week of the new year. The team set ambitious Q1 goals and began execu
   {
     id: "report-1",
     title: "Product Weekly Report",
+    category: "product",
     weekNumber: 1,
     dateRange: {
       start: new Date(2025, 11, 29),
@@ -593,6 +607,7 @@ Year-end wrap-up and planning for 2026. The team took a well-deserved break whil
   {
     id: "report-dec-4",
     title: "Engineering Weekly",
+    category: "engineering",
     weekNumber: 52,
     dateRange: {
       start: new Date(2025, 11, 22),
@@ -617,6 +632,7 @@ Final engineering sprint of the year focused on stability and bug fixes before t
   {
     id: "report-dec-3",
     title: "Sales Pipeline Review",
+    category: "gtm",
     weekNumber: 51,
     dateRange: {
       start: new Date(2025, 11, 15),
@@ -641,6 +657,7 @@ Strong Q4 close with several deals moving to signature stage before year-end.
   {
     id: "report-dec-2",
     title: "FP&A Monthly Close",
+    category: "finance",
     weekNumber: 50,
     dateRange: {
       start: new Date(2025, 11, 8),
@@ -662,6 +679,7 @@ November books closed. Preparing year-end financial statements and board materia
   {
     id: "report-dec-1",
     title: "Product Weekly Report",
+    category: "product",
     weekNumber: 49,
     dateRange: {
       start: new Date(2025, 11, 1),

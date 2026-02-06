@@ -9,28 +9,89 @@ import { ReadingPane } from "../report/reading-pane";
 import { RadarReadingPane } from "../radar/radar-reading-pane";
 
 /**
- * Transform existing reports into archived reports format
- * (Radar items are now displayed separately in the Radars tab)
+ * Determine archive report type from a WeeklyReport
+ */
+function getReportType(
+  report: (typeof mockReports)[number],
+): ArchivedReport["type"] {
+  if (report.reportType === "leadership-digest") return "weekly";
+  if (report.title.toLowerCase().includes("daily")) return "daily";
+  return "standard";
+}
+
+const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * Generate historical entries for each unique report title.
+ * Creates ~6 older weekly versions going back from the earliest
+ * existing instance of that title, so the archive has a rich history.
+ */
+function generateHistoricalReports(): ArchivedReport[] {
+  // Find the latest report per title to use as the template
+  const latestByTitle = new Map<
+    string,
+    { type: ArchivedReport["type"]; earliestDate: Date }
+  >();
+
+  for (const report of mockReports) {
+    const existing = latestByTitle.get(report.title);
+    const reportType = getReportType(report);
+
+    if (!existing || report.generatedAt < existing.earliestDate) {
+      latestByTitle.set(report.title, {
+        type: reportType,
+        earliestDate: existing
+          ? existing.earliestDate < report.generatedAt
+            ? existing.earliestDate
+            : report.generatedAt
+          : report.generatedAt,
+      });
+    }
+  }
+
+  const historical: ArchivedReport[] = [];
+
+  for (const [title, info] of latestByTitle.entries()) {
+    // Generate 6 older versions, each 1 week before the earliest existing
+    for (let i = 1; i <= 6; i++) {
+      const date = new Date(info.earliestDate.getTime() - i * WEEK_MS);
+      historical.push({
+        id: `hist-${title.toLowerCase().replace(/\s+/g, "-")}-${i}`,
+        title,
+        summary: `Archived ${title} from week of ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}...`,
+        type: info.type,
+        date,
+        isUnread: false,
+      });
+    }
+  }
+
+  return historical;
+}
+
+/**
+ * Transform existing reports + generated history into archived reports format
  */
 function getArchivedReports(): ArchivedReport[] {
   const reports: ArchivedReport[] = [];
 
-  // Add weekly reports only (no radar items mixed in)
   for (const report of mockReports) {
     reports.push({
       id: report.id,
       title: report.title,
       summary: report.content.slice(0, 150).replace(/[#*]/g, "").trim() + "...",
-      type:
-        report.reportType === "leadership-digest"
-          ? "weekly"
-          : report.title.toLowerCase().includes("daily")
-            ? "daily"
-            : "standard",
+      type: getReportType(report),
       date: report.generatedAt,
       isUnread: report.id === mockReports[0]?.id,
     });
   }
+
+  // Add historical entries so "View History" shows a rich timeline
+  const historical = generateHistoricalReports();
+  reports.push(...historical);
+
+  // Sort all reports by date (most recent first)
+  reports.sort((a, b) => b.date.getTime() - a.date.getTime());
 
   return reports;
 }

@@ -7,6 +7,9 @@ import {
   SlackIcon,
   LinearIcon,
   GoogleCalendarIcon,
+  MonitorIcon,
+  ExternalLinkIcon,
+  FileTextIcon,
 } from "../icons/source-icons";
 import type { SourceItem, SourceCategory } from "../../types/sources";
 
@@ -21,9 +24,19 @@ const categoryConfig: Record<
   meetings: { label: "Meetings", Icon: GoogleCalendarIcon },
   slack: { label: "Slack", Icon: SlackIcon },
   linear: { label: "Linear", Icon: LinearIcon },
+  system: { label: "System Logs", Icon: MonitorIcon },
+  external: { label: "External", Icon: ExternalLinkIcon },
+  reports: { label: "Reports", Icon: FileTextIcon },
 };
 
-const categoryOrder: SourceCategory[] = ["meetings", "slack", "linear"];
+const categoryOrder: SourceCategory[] = [
+  "meetings",
+  "slack",
+  "linear",
+  "system",
+  "external",
+  "reports",
+];
 
 export function SourcesAccordion({ sources }: SourcesAccordionProps) {
   const [expandedSections, setExpandedSections] = useState<Set<SourceCategory>>(
@@ -35,6 +48,9 @@ export function SourcesAccordion({ sources }: SourcesAccordionProps) {
       meetings: [],
       slack: [],
       linear: [],
+      system: [],
+      external: [],
+      reports: [],
     };
 
     for (const source of sources) {

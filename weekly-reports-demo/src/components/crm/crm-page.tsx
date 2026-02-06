@@ -12,8 +12,13 @@ import { useCrmStore } from "../../stores/crm-store";
  */
 
 export function CrmPage() {
-  const { contacts, searchQuery, selectedTags, selectedRelationships } =
-    useCrmStore();
+  const {
+    contacts,
+    searchQuery,
+    selectedTags,
+    selectedRelationships,
+    selectedCategories,
+  } = useCrmStore();
 
   // Filter contacts based on search and filters
   const filteredContacts = useMemo(() => {
@@ -49,9 +54,22 @@ export function CrmPage() {
         }
       }
 
+      // Category filter
+      if (selectedCategories.length > 0) {
+        if (!selectedCategories.includes(contact.category)) {
+          return false;
+        }
+      }
+
       return true;
     });
-  }, [contacts, searchQuery, selectedTags, selectedRelationships]);
+  }, [
+    contacts,
+    searchQuery,
+    selectedTags,
+    selectedRelationships,
+    selectedCategories,
+  ]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background">

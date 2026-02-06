@@ -50,10 +50,8 @@ export function ContactCard({
         "group relative text-left w-full rounded-lg overflow-hidden",
         "bg-surface-elevated",
         "border transition-all duration-200",
-        "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
-        isSelected
-          ? "border-accent/40 shadow-sm"
-          : "border-border hover:border-border-subtle hover:shadow-sm",
+        "focus:outline-none",
+        "border-border hover:border-border-subtle hover:shadow-sm",
         isPinned && "border-amber-400/40",
       )}
     >

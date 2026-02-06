@@ -1,4 +1,10 @@
-export type SourceCategory = "meetings" | "slack" | "linear";
+export type SourceCategory =
+  | "meetings"
+  | "slack"
+  | "linear"
+  | "system"
+  | "external"
+  | "reports";
 
 export interface SourceItem {
   id: string;

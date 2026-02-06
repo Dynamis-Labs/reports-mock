@@ -1,17 +1,22 @@
 import { motion } from "motion/react";
 import { UpNextCard } from "../cards";
-import type { Meeting } from "../../../types/meeting";
+import type { Meeting, MeetingAttendee } from "../../../types/meeting";
 
 interface UpNextSectionProps {
   meeting: Meeting | null;
   onViewBrief: (meeting: Meeting) => void;
+  onAttendeeClick?: (attendee: MeetingAttendee) => void;
 }
 
 /**
- * Featured section for the next upcoming meeting
- * Shows green accent divider and prominent card
+ * Featured section for the next upcoming meeting.
+ * Clean divider before the prominent UpNextCard.
  */
-export function UpNextSection({ meeting, onViewBrief }: UpNextSectionProps) {
+export function UpNextSection({
+  meeting,
+  onViewBrief,
+  onAttendeeClick,
+}: UpNextSectionProps) {
   if (!meeting) {
     return (
       <section className="py-6">
@@ -28,22 +33,20 @@ export function UpNextSection({ meeting, onViewBrief }: UpNextSectionProps) {
 
   return (
     <section className="py-6">
-      {/* Neutral divider with badge */}
+      {/* Subtle divider */}
       <motion.div
         initial={{ opacity: 0, scaleX: 0 }}
         animate={{ opacity: 1, scaleX: 1 }}
         transition={{ duration: 0.4 }}
-        className="flex items-center gap-3 mb-6"
-      >
-        <div className="h-px flex-1 bg-border-subtle" />
-        <span className="text-micro font-medium uppercase tracking-wider text-muted-foreground px-2">
-          Up Next
-        </span>
-        <div className="h-px flex-1 bg-border-subtle" />
-      </motion.div>
+        className="h-px bg-border-subtle mb-6"
+      />
 
-      {/* Featured card */}
-      <UpNextCard meeting={meeting} onViewBrief={() => onViewBrief(meeting)} />
+      {/* Featured card — "Up Next" label is inside the card */}
+      <UpNextCard
+        meeting={meeting}
+        onViewBrief={() => onViewBrief(meeting)}
+        onAttendeeClick={onAttendeeClick}
+      />
     </section>
   );
 }

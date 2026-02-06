@@ -1,26 +1,32 @@
 import { motion } from "motion/react";
 import { LaterMeetingCard } from "../cards";
 import { staggerContainer, staggerItem } from "../../../lib/motion";
-import type { Meeting } from "../../../types/meeting";
+import type { Meeting, MeetingAttendee } from "../../../types/meeting";
 
 interface LaterSectionProps {
   meetings: Meeting[];
   onSelectMeeting: (meeting: Meeting) => void;
+  onAttendeeClick?: (attendee: MeetingAttendee) => void;
 }
 
 /**
- * Section showing later/upcoming meetings
- * Meetings displayed as medium-sized cards
+ * Section showing later/upcoming meetings as medium cards.
+ * Consistent visual treatment with other sections.
  */
-export function LaterSection({ meetings, onSelectMeeting }: LaterSectionProps) {
+export function LaterSection({
+  meetings,
+  onSelectMeeting,
+  onAttendeeClick,
+}: LaterSectionProps) {
   if (meetings.length === 0) {
     return null;
   }
 
   return (
     <section className="py-6">
-      {/* Section header */}
-      <h3 className="text-micro uppercase tracking-wider text-muted-foreground mb-4">
+      {/* Divider + label */}
+      <div className="h-px bg-border-subtle mb-4" />
+      <h3 className="text-micro uppercase tracking-wider text-muted-foreground mb-3">
         Later
       </h3>
 
@@ -29,13 +35,14 @@ export function LaterSection({ meetings, onSelectMeeting }: LaterSectionProps) {
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
-        className="space-y-3"
+        className="space-y-2.5"
       >
         {meetings.map((meeting) => (
           <motion.div key={meeting.id} variants={staggerItem}>
             <LaterMeetingCard
               meeting={meeting}
               onClick={() => onSelectMeeting(meeting)}
+              onAttendeeClick={onAttendeeClick}
             />
           </motion.div>
         ))}

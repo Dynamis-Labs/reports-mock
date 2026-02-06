@@ -37,4 +37,5 @@ export interface Meeting {
   agenda?: string; // Pre-meeting brief content
   meetingUrl?: string; // Join link for upcoming meetings
   description?: string; // Short description for cards
+  location?: string; // Physical location for in-person meetings
 }

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type {
   Contact,
+  ContactCategory,
   ContactSortField,
   SortDirection,
 } from "../types/contact";
@@ -46,6 +47,9 @@ interface CrmState {
   /** Selected relationship types filter */
   selectedRelationships: string[];
 
+  /** Selected category filters (investor, client, other) */
+  selectedCategories: ContactCategory[];
+
   // ─── UI State ────────────────────────────────────────────────────────────
   /** Whether filters panel is expanded */
   isFiltersPanelOpen: boolean;
@@ -71,6 +75,7 @@ interface CrmState {
   toggleTag: (tag: string) => void;
   setSelectedTags: (tags: string[]) => void;
   toggleRelationship: (relationship: string) => void;
+  toggleCategory: (category: ContactCategory) => void;
   clearFilters: () => void;
 
   // UI actions
@@ -99,6 +104,7 @@ const initialState = {
   searchQuery: "",
   selectedTags: [] as string[],
   selectedRelationships: [] as string[],
+  selectedCategories: [] as ContactCategory[],
   isFiltersPanelOpen: false,
   pinnedContactIds: [] as string[],
 };
@@ -151,11 +157,19 @@ export const useCrmStore = create<CrmState>()(
             : [...state.selectedRelationships, relationship],
         })),
 
+      toggleCategory: (category) =>
+        set((state) => ({
+          selectedCategories: state.selectedCategories.includes(category)
+            ? state.selectedCategories.filter((c) => c !== category)
+            : [...state.selectedCategories, category],
+        })),
+
       clearFilters: () =>
         set({
           searchQuery: "",
           selectedTags: [],
           selectedRelationships: [],
+          selectedCategories: [],
         }),
 
       // ─── UI Actions ────────────────────────────────────────────────────────
@@ -224,6 +238,7 @@ export function useHasActiveFilters(): boolean {
     (state) =>
       state.searchQuery !== "" ||
       state.selectedTags.length > 0 ||
-      state.selectedRelationships.length > 0,
+      state.selectedRelationships.length > 0 ||
+      state.selectedCategories.length > 0,
   );
 }

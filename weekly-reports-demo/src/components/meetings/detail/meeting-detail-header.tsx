@@ -54,7 +54,10 @@ export function MeetingDetailHeader({
       {/* Badges */}
       <div className="flex items-center gap-2 mb-3">
         <VisibilityBadge visibility={meeting.visibility} />
-        <PlatformIndicator platform={meeting.platform} />
+        <PlatformIndicator
+          platform={meeting.platform}
+          location={meeting.location}
+        />
       </div>
 
       {/* Title */}

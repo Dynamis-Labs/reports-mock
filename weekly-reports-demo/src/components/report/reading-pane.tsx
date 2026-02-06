@@ -11,9 +11,10 @@ import type { WeeklyReport } from "../../data/mock-reports";
 
 interface ReadingPaneProps {
   report: WeeklyReport | null;
+  onViewHistory?: () => void;
 }
 
-export function ReadingPane({ report }: ReadingPaneProps) {
+export function ReadingPane({ report, onViewHistory }: ReadingPaneProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const positioningRef = useRef<HTMLDivElement>(null);
@@ -127,7 +128,7 @@ export function ReadingPane({ report }: ReadingPaneProps) {
             animate="visible"
             key={report.id}
           >
-            <ReportHeader report={report} />
+            <ReportHeader report={report} onViewHistory={onViewHistory} />
 
             {/* All content wrapped in HighlightedContent for universal commenting */}
             <HighlightedContent reportId={report.id} contentRef={contentRef}>

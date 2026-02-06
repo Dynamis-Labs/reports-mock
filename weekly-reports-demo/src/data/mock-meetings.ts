@@ -133,6 +133,7 @@ export const mockMeetings: Meeting[] = [
     startTime: "9:00 AM",
     duration: 120,
     platform: "in-person",
+    location: "HQ — Boardroom 3A",
     hasRecording: false,
     visibility: "private",
     attendees: [
@@ -367,6 +368,7 @@ export const mockMeetings: Meeting[] = [
     startTime: "4:00 PM",
     duration: 45,
     platform: "in-person",
+    location: "Design Lab — 4th Floor",
     hasRecording: false,
     visibility: "shared",
     agenda: `## Design Review Agenda
@@ -454,6 +456,7 @@ export const mockMeetings: Meeting[] = [
     startTime: "12:30 PM",
     duration: 90,
     platform: "in-person",
+    location: "Nobu — Downtown",
     hasRecording: false,
     visibility: "shared",
     attendees: [
@@ -479,6 +482,7 @@ export const mockMeetings: Meeting[] = [
     startTime: "9:00 AM",
     duration: 180,
     platform: "in-person",
+    location: "HQ — All Hands Room",
     hasRecording: false,
     visibility: "shared",
     agenda: `## Q2 Planning Workshop
@@ -662,6 +666,7 @@ export const mockMeetings: Meeting[] = [
     startTime: "9:00 AM",
     duration: 120,
     platform: "in-person",
+    location: "Executive Suite — 12th Floor",
     hasRecording: false,
     visibility: "private",
     attendees: [

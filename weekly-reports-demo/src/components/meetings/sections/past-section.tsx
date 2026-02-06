@@ -2,19 +2,24 @@ import { motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { MeetingListItem } from "../cards";
 import { staggerContainer, staggerItem } from "../../../lib/motion";
-import type { Meeting } from "../../../types/meeting";
+import type { Meeting, MeetingAttendee } from "../../../types/meeting";
 
 interface PastSectionProps {
   meetings: Meeting[];
   onSelectMeeting: (meeting: Meeting) => void;
+  onAttendeeClick?: (attendee: MeetingAttendee) => void;
 }
 
 /**
- * Section showing past meetings from today
- * Includes "Scroll for history" indicator
- * Meetings are displayed as compact list items
+ * Section showing past meetings as distinct card blocks.
+ * "Needs attention" style — each meeting is a bordered card.
+ * Includes "Scroll for history" indicator.
  */
-export function PastSection({ meetings, onSelectMeeting }: PastSectionProps) {
+export function PastSection({
+  meetings,
+  onSelectMeeting,
+  onAttendeeClick,
+}: PastSectionProps) {
   if (meetings.length === 0) {
     return null;
   }
@@ -34,18 +39,24 @@ export function PastSection({ meetings, onSelectMeeting }: PastSectionProps) {
         </span>
       </motion.div>
 
-      {/* Meeting list */}
+      {/* Section label */}
+      <h3 className="text-micro uppercase tracking-wider text-muted-foreground mb-3">
+        Needs Attention
+      </h3>
+
+      {/* Meeting cards */}
       <motion.div
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
-        className="space-y-1"
+        className="space-y-2.5"
       >
         {meetings.map((meeting) => (
           <motion.div key={meeting.id} variants={staggerItem}>
             <MeetingListItem
               meeting={meeting}
               onViewRecap={() => onSelectMeeting(meeting)}
+              onAttendeeClick={onAttendeeClick}
             />
           </motion.div>
         ))}

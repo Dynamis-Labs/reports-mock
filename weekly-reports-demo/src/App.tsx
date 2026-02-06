@@ -2,22 +2,23 @@ import { useState } from "react";
 import { ThemeProvider } from "./components/theme/theme-provider";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { AppLayout } from "./components/layout/app-layout";
-import { ArchiveSidebar } from "./components/layout/archive-sidebar";
-import { ReportsRadarToggle } from "./components/layout/reports-radar-toggle";
+import { ReportsSidebar } from "./components/layout/reports-sidebar";
 import { CommentPanel } from "./components/comments";
 import { SourcesSidebar } from "./components/sources";
 import { ReadingPane } from "./components/report/reading-pane";
 import { SettingsPane } from "./components/settings";
 import { ReviewActionsModal } from "./components/review-actions";
+import { HomePage } from "./components/home";
 import { CrmPage } from "./components/crm";
-import { TodosPage } from "./components/todos";
 import { ArchivePage } from "./components/archive";
 import { MemoryPage } from "./components/memory";
 import { MeetingsPage } from "./components/meetings";
-import { RadarSidebar, RadarReadingPane } from "./components/radar";
+import { RadarReadingPane } from "./components/radar";
 import { AskSentraChatbox } from "./components/chat/ask-sentra-chatbox";
 import { useSettingsStore } from "./stores/settings-store";
 import { useReportsStore } from "./stores/reports-store";
+import { useMemoryStore } from "./stores/memory-store";
+import { useArchiveStore } from "./stores/archive-store";
 import { mockReports } from "./data/mock-reports";
 import { mockRadarItems } from "./data/mock-radar";
 
@@ -34,7 +35,7 @@ function App() {
   const [selectedRadarId, setSelectedRadarId] = useState<string | null>(
     mockRadarItems[0]?.id ?? null,
   );
-  const [activeSection, setActiveSection] = useState("reports");
+  const [activeSection, setActiveSection] = useState("home");
 
   const isSettingsOpen = useSettingsStore((state) => state.isOpen);
   const viewMode = useReportsStore((state) => state.viewMode);
@@ -47,23 +48,14 @@ function App() {
 
   // Determine if we're in a reports-style section (reports or radar via toggle)
   const isReportsSection = activeSection === "reports";
-  const showReportsRadarToggle = isReportsSection;
-
-  // Render the Reports/Radar toggle header - h-14 matching all other page headers
-  // Toggle is centered in the header for visual balance
-  const reportsRadarHeader = showReportsRadarToggle ? (
-    <div className="h-14 px-6 flex items-center justify-center border-b border-border-subtle bg-background shrink-0">
-      <ReportsRadarToggle value={viewMode} onChange={setViewMode} />
-    </div>
-  ) : null;
 
   // Determine left sidebar based on section and view mode
   const getLeftSidebar = () => {
     // Full-width sections with no sidebar (Memory has its own integrated sidebar)
     if (
+      activeSection === "home" ||
       activeSection === "crm" ||
       activeSection === "meetings" ||
-      activeSection === "todos" ||
       activeSection === "archive" ||
       activeSection === "memory"
     ) {
@@ -71,19 +63,15 @@ function App() {
     }
 
     if (isReportsSection) {
-      if (viewMode === "radar") {
-        return (
-          <RadarSidebar
-            selectedItemId={selectedRadarId}
-            onSelectItem={setSelectedRadarId}
-          />
-        );
-      }
       return (
-        <ArchiveSidebar
+        <ReportsSidebar
           reports={mockReports}
           selectedReportId={selectedReportId}
           onSelectReport={setSelectedReportId}
+          selectedRadarId={selectedRadarId}
+          onSelectRadarItem={setSelectedRadarId}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
       );
     }
@@ -91,8 +79,45 @@ function App() {
     return null;
   };
 
+  // Navigation handlers for Home page
+  const selectInitiative = useMemoryStore((state) => state.selectInitiative);
+
+  const handleNavigateToMemory = (initiativeId?: string) => {
+    if (initiativeId) {
+      selectInitiative(initiativeId);
+    }
+    setActiveSection("memory");
+  };
+
+  const handleNavigateToRadar = (radarId?: string) => {
+    if (radarId) {
+      setSelectedRadarId(radarId);
+    }
+    setViewMode("radar");
+    setActiveSection("reports");
+  };
+
+  // Imperatively update archive store before navigation (Zustand getState pattern)
+  const handleViewReportHistory = (reportTitle: string) => {
+    const archiveStore = useArchiveStore.getState();
+    archiveStore.setActiveTab("reports");
+    archiveStore.setSearchQuery(reportTitle);
+    archiveStore.selectArchivedReport(null);
+    setActiveSection("archive");
+  };
+
   // Determine main content based on section and view mode
   const getMainContent = () => {
+    // Home section (default)
+    if (activeSection === "home") {
+      return (
+        <HomePage
+          onNavigateToMemory={handleNavigateToMemory}
+          onNavigateToRadar={handleNavigateToRadar}
+        />
+      );
+    }
+
     // Memory section
     if (activeSection === "memory") {
       return <MemoryPage />;
@@ -101,11 +126,6 @@ function App() {
     // CRM section
     if (activeSection === "crm") {
       return <CrmPage />;
-    }
-
-    // TODOs section
-    if (activeSection === "todos") {
-      return <TodosPage />;
     }
 
     // Meetings section
@@ -118,21 +138,23 @@ function App() {
       return <ArchivePage />;
     }
 
-    // Reports section (with radar toggle)
+    // Reports section
     if (isReportsSection) {
       if (isSettingsOpen) {
         return <SettingsPane />;
       }
 
-      return (
-        <div className="flex flex-col h-full">
-          {reportsRadarHeader}
-          {viewMode === "radar" ? (
-            <RadarReadingPane item={selectedRadarItem} />
-          ) : (
-            <ReadingPane report={selectedReport} />
-          )}
-        </div>
+      return viewMode === "radar" ? (
+        <RadarReadingPane item={selectedRadarItem} />
+      ) : (
+        <ReadingPane
+          report={selectedReport}
+          onViewHistory={
+            selectedReport
+              ? () => handleViewReportHistory(selectedReport.title)
+              : undefined
+          }
+        />
       );
     }
 

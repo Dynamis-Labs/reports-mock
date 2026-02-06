@@ -1,9 +1,9 @@
 import { motion } from "motion/react";
 import {
+  Home,
   Brain,
   Users,
   Calendar,
-  CheckSquare,
   FileText,
   Archive,
   type LucideIcon,
@@ -27,10 +27,10 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+  { id: "home", icon: Home, label: "Home" },
   { id: "memory", icon: Brain, label: "Memory" },
   { id: "crm", icon: Users, label: "CRM" },
   { id: "meetings", icon: Calendar, label: "Meetings" },
-  { id: "todos", icon: CheckSquare, label: "TODOs" },
   { id: "reports", icon: FileText, label: "Reports" },
   { id: "archive", icon: Archive, label: "Archive" },
 ];

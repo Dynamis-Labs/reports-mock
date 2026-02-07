@@ -1,423 +1,108 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  X,
-  Mail,
-  Phone,
-  MapPin,
-  Linkedin,
-  ChevronDown,
-  Pencil,
-  Check,
-  Heart,
-  ArrowUpRight,
-  ArrowRight,
-  ExternalLink,
-  Building2,
-  Calendar,
-} from "lucide-react";
-import { cn } from "../../../../lib/utils";
-import { Button } from "../../../ui/button";
-import { ContactAvatar } from "../../shared/contact-avatar";
-import { ActivityTimeline } from "../../shared/activity-timeline";
-import { TagEditor } from "../../shared/tag-editor";
-import { springs, staggerContainer, staggerItem } from "../../../../lib/motion";
-import { useCrmStore } from "../../../../stores/crm-store";
-import { useMeetingsStore } from "../../../../stores/meetings-store";
-import { findMostRecentMeeting } from "../../../../lib/contact-meeting-utils";
-import { mockMeetings } from "../../../../data/mock-meetings";
-import type { Contact } from "../../../../types/contact";
+  Cancel01Icon,
+  Mail01Icon,
+  Calendar01Icon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import { Button } from "@components/ui/button";
+import type { Contact } from "@types/contact";
+import {
+  DrawerProfileHeader,
+  DrawerTags,
+  DrawerContactInfo,
+  DrawerRelationshipStatus,
+  DrawerLastInteraction,
+  DrawerPersonalNotes,
+  DrawerInterestingFacts,
+  DrawerTalkingPoints,
+  DrawerRecentActivity,
+} from "./drawer";
 
 /**
  * Contact Drawer
  *
- * Redesigned with relationship-centric hierarchy:
- * 1. Profile Header
- * 2. Tags (compact, less prominent)
- * 3. Relationship Status (renamed from AI Insight)
- * 4. Personal Notes
- * 5. What They've Been Up To (with source links)
- * 6. Contact Info (compact, at bottom)
+ * Slim shell that composes all drawer section components.
+ * Handles portal rendering, backdrop, keyboard dismiss, and scroll.
+ *
+ * Section order (continuous flow, no dividers):
+ * 1. Profile Header (avatar, name, title, company-as-LinkedIn-link)
+ * 2. Quick Actions (pill-shaped centered buttons: Email, Schedule)
+ * 3. Tags (pill-shaped input + pills, inset)
+ * 4. Relationship Status
+ * 5. Last Interaction (branded icons: Gmail, Calendar, Zoom, Phone, In-Person)
+ * 6. Personal Notes (inline editable, pencil inside box)
+ * 7. Interesting Facts
+ * 8. Recent Activity (accordion)
+ * 9. Recent Company News (accordion)
+ * 10. Contact Info (bottom)
  */
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Compact Contact Info Row
-// ─────────────────────────────────────────────────────────────────────────────
-
-function CompactContactInfo({ contact }: { contact: Contact }) {
-  const items = [
-    { icon: Mail, value: contact.email, href: `mailto:${contact.email}` },
-    contact.phone && {
-      icon: Phone,
-      value: contact.phone,
-      href: `tel:${contact.phone}`,
-    },
-    contact.location && { icon: MapPin, value: contact.location },
-    contact.linkedIn && {
-      icon: Linkedin,
-      value: "LinkedIn",
-      href: `https://${contact.linkedIn}`,
-      external: true,
-    },
-  ].filter(Boolean) as Array<{
-    icon: typeof Mail;
-    value: string;
-    href?: string;
-    external?: boolean;
-  }>;
-
-  return (
-    <div className="flex flex-wrap gap-3">
-      {items.map((item, i) => {
-        const Icon = item.icon;
-        const content = (
-          <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors">
-            <Icon className="size-3.5 opacity-60" strokeWidth={1.5} />
-            <span className="truncate max-w-[140px]">{item.value}</span>
-            {item.external && <ExternalLink className="size-2.5 opacity-40" />}
-          </span>
-        );
-
-        return item.href ? (
-          <a
-            key={i}
-            href={item.href}
-            target={item.external ? "_blank" : undefined}
-            rel={item.external ? "noopener noreferrer" : undefined}
-            className="hover:underline underline-offset-2"
-          >
-            {content}
-          </a>
-        ) : (
-          <span key={i}>{content}</span>
-        );
-      })}
-    </div>
-  );
+interface DrawerContentProps {
+  contact: Contact;
+  onViewAllMeetings?: () => void;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Last Meeting Button
-// ─────────────────────────────────────────────────────────────────────────────
+function DrawerContent({ contact, onViewAllMeetings }: DrawerContentProps) {
+  const expandTimelineRef = useRef<(() => void) | null>(null);
 
-function LastMeetingButton({ contact }: { contact: Contact }) {
-  const { selectMeeting } = useMeetingsStore();
-  const lastMeeting = findMostRecentMeeting(contact, mockMeetings);
+  const handleRegisterExpand = useCallback((expand: () => void) => {
+    expandTimelineRef.current = expand;
+  }, []);
 
-  if (!lastMeeting) return null;
-
-  const isPast = lastMeeting.date < new Date();
-
-  return (
-    <button
-      onClick={() => selectMeeting(lastMeeting.id, isPast ? "recap" : "brief")}
-      className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-    >
-      <Calendar className="size-3.5" strokeWidth={1.5} />
-      <span>Last meeting</span>
-      <ArrowRight className="size-3" strokeWidth={1.5} />
-    </button>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Drawer Content
-// ─────────────────────────────────────────────────────────────────────────────
-
-function DrawerContent({ contact }: { contact: Contact }) {
-  const fullName = `${contact.firstName} ${contact.lastName}`;
-  const [isTimelineExpanded, setIsTimelineExpanded] = useState(false);
-  const [notes, setNotes] = useState(contact.notes.customSummary || "");
-  const [isEditingNotes, setIsEditingNotes] = useState(false);
-
-  const { updateContactTags, getAllUniqueTags } = useCrmStore();
-  const allTags = getAllUniqueTags();
-
-  // Reset state when contact changes
-  useEffect(() => {
-    setNotes(contact.notes.customSummary || "");
-    setIsEditingNotes(false);
-    setIsTimelineExpanded(false);
-  }, [contact.id, contact.notes.customSummary]);
+  const handleExpandTimeline = useCallback(() => {
+    expandTimelineRef.current?.();
+  }, []);
 
   return (
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      animate="visible"
-      className="space-y-6"
-    >
-      {/* ═══════════════════════════════════════════════════════════════════════
-          1. Profile Header
-          ═══════════════════════════════════════════════════════════════════════ */}
-      <motion.header
-        variants={staggerItem}
-        className="text-center pb-6 border-b border-border/40"
-      >
-        <div className="flex justify-center mb-4">
-          <ContactAvatar contact={contact} size="2xl" />
-        </div>
+    <div className="space-y-6">
+      <DrawerProfileHeader contact={contact} />
 
-        <h2 className="font-medium text-2xl text-foreground tracking-tight mb-1">
-          {fullName}
-        </h2>
-        <p className="text-base text-muted-foreground">{contact.title}</p>
-        <p className="text-sm text-muted-foreground/60">{contact.company}</p>
-
-        {/* Last Meeting Link */}
-        <LastMeetingButton contact={contact} />
-      </motion.header>
-
-      {/* ═══════════════════════════════════════════════════════════════════════
-          2. Tags (compact, less prominent)
-          ═══════════════════════════════════════════════════════════════════════ */}
-      <motion.section variants={staggerItem}>
-        <TagEditor
-          tags={contact.tags}
-          allTags={allTags}
-          onTagsChange={(tags) => updateContactTags(contact.id, tags)}
-          compact
-        />
-      </motion.section>
-
-      {/* ═══════════════════════════════════════════════════════════════════════
-          3. Relationship Status (formerly AI Insight)
-          ═══════════════════════════════════════════════════════════════════════ */}
-      <motion.section variants={staggerItem}>
-        <div className="flex items-center gap-2 mb-2">
-          <Heart
-            className="size-3.5 text-muted-foreground/60"
-            strokeWidth={1.5}
-          />
-          <h4 className="font-medium text-xs text-muted-foreground/60 uppercase tracking-wider">
-            Relationship Status
-          </h4>
-        </div>
-        <p className="text-sm text-foreground/80 leading-relaxed">
-          {contact.insights.aiSummary}
-        </p>
-      </motion.section>
-
-      {/* ═══════════════════════════════════════════════════════════════════════
-          4. Personal Notes (editable)
-          ═══════════════════════════════════════════════════════════════════════ */}
-      <motion.section variants={staggerItem}>
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="font-medium text-xs text-muted-foreground/60 uppercase tracking-wider">
-            Personal Notes
-          </h4>
-          {!isEditingNotes && (
-            <button
-              onClick={() => setIsEditingNotes(true)}
-              className="text-muted-foreground/50 hover:text-foreground transition-colors"
-            >
-              <Pencil className="size-3.5" strokeWidth={1.5} />
-            </button>
-          )}
-        </div>
-
-        {isEditingNotes ? (
-          <div className="space-y-3">
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Add your personal notes..."
-              className={cn(
-                "w-full min-h-[100px] p-3 rounded-lg resize-none",
-                "bg-background border border-border/60",
-                "text-sm placeholder:text-muted-foreground/40",
-                "focus:outline-none focus:border-border",
-                "transition-colors duration-200",
-              )}
-              autoFocus
-            />
-            <div className="flex gap-2 justify-end">
-              <Button
-                size="sm"
-                variant="ghost"
-                onClick={() => {
-                  setNotes(contact.notes.customSummary || "");
-                  setIsEditingNotes(false);
-                }}
-                className="text-xs h-7"
-              >
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => setIsEditingNotes(false)}
-                className="text-xs h-7"
-              >
-                <Check className="size-3 mr-1" strokeWidth={1.5} />
-                Save
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div
-            onClick={() => setIsEditingNotes(true)}
-            className={cn(
-              "cursor-pointer rounded-lg p-3 min-h-[60px]",
-              "border border-dashed border-border/40",
-              "hover:border-border/60 hover:bg-muted/10",
-              "transition-colors duration-200",
-            )}
-          >
-            <p className="text-sm text-muted-foreground/70">
-              {notes || "Click to add notes..."}
-            </p>
-          </div>
-        )}
-      </motion.section>
-
-      {/* ═══════════════════════════════════════════════════════════════════════
-          5. What They've Been Up To (with source links)
-          ═══════════════════════════════════════════════════════════════════════ */}
-      {contact.insights.talkingPoints &&
-        contact.insights.talkingPoints.length > 0 && (
-          <motion.section variants={staggerItem}>
-            <h4 className="font-medium text-xs text-muted-foreground/60 uppercase tracking-wider mb-2">
-              What They've Been Up To
-            </h4>
-            <ul className="space-y-2">
-              {contact.insights.talkingPoints.slice(0, 4).map((point, i) => {
-                // Try to find a related interaction with sourceUrl
-                const relatedInteraction = contact.interactions.find(
-                  (int) =>
-                    int.keyTopics?.some((topic) =>
-                      point.toLowerCase().includes(topic.toLowerCase()),
-                    ) ||
-                    int.summary
-                      ?.toLowerCase()
-                      .includes(point.toLowerCase().slice(0, 20)),
-                );
-                const sourceUrl = relatedInteraction?.sourceUrl;
-
-                return (
-                  <li
-                    key={i}
-                    className="group flex items-start gap-2 text-sm text-foreground/80"
-                  >
-                    <span className="size-1 rounded-full bg-foreground/30 mt-2 shrink-0" />
-                    <span className="flex-1">{point}</span>
-                    {(sourceUrl || relatedInteraction) && (
-                      <a
-                        href={sourceUrl || "#"}
-                        target={sourceUrl ? "_blank" : undefined}
-                        rel={sourceUrl ? "noopener noreferrer" : undefined}
-                        onClick={(e) => {
-                          if (!sourceUrl) {
-                            e.preventDefault();
-                            setIsTimelineExpanded(true);
-                          }
-                        }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
-                        title={sourceUrl ? "View source" : "View in activity"}
-                      >
-                        <ArrowUpRight className="size-3.5" strokeWidth={1.5} />
-                      </a>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          </motion.section>
-        )}
-
-      {/* ═══════════════════════════════════════════════════════════════════════
-          6. Recent Activity (collapsible)
-          ═══════════════════════════════════════════════════════════════════════ */}
-      <motion.section variants={staggerItem}>
-        <button
-          onClick={() => setIsTimelineExpanded(!isTimelineExpanded)}
-          className="flex items-center justify-between w-full group"
+      {/* Quick action buttons — pill-shaped, centered */}
+      <div className="flex gap-2 justify-center">
+        <Button
+          variant="outline"
+          size="sm"
+          className="rounded-full px-5 gap-2"
+          onClick={() => window.open(`mailto:${contact.email}`, "_blank")}
         >
-          <h4 className="font-medium text-xs text-muted-foreground/60 uppercase tracking-wider">
-            Recent Activity
-          </h4>
-          <motion.div
-            animate={{ rotate: isTimelineExpanded ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-            className="text-muted-foreground/40 group-hover:text-muted-foreground transition-colors"
-          >
-            <ChevronDown className="size-4" strokeWidth={1.5} />
-          </motion.div>
-        </button>
+          <HugeiconsIcon icon={Mail01Icon} size={14} strokeWidth={1.5} />
+          Email
+        </Button>
+        <Button variant="outline" size="sm" className="rounded-full px-5 gap-2">
+          <HugeiconsIcon icon={Calendar01Icon} size={14} strokeWidth={1.5} />
+          Schedule
+        </Button>
+      </div>
 
-        <AnimatePresence>
-          {isTimelineExpanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="overflow-hidden"
-            >
-              <div className="pt-3">
-                <ActivityTimeline
-                  interactions={contact.interactions}
-                  limit={5}
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.section>
+      <DrawerTags contact={contact} />
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          7. Company Activity
-          ═══════════════════════════════════════════════════════════════════════ */}
-      {contact.insights.companyNews &&
-        contact.insights.companyNews.length > 0 && (
-          <motion.section variants={staggerItem}>
-            <div className="flex items-center gap-2 mb-2">
-              <Building2
-                className="size-3.5 text-muted-foreground/60"
-                strokeWidth={1.5}
-              />
-              <h4 className="font-medium text-xs text-muted-foreground/60 uppercase tracking-wider">
-                {contact.company} Activity
-              </h4>
-            </div>
-            <ul className="space-y-2">
-              {contact.insights.companyNews.slice(0, 4).map((news) => (
-                <li
-                  key={news.id}
-                  className="group flex items-start gap-2 text-sm text-foreground/80"
-                >
-                  <span className="size-1 rounded-full bg-foreground/30 mt-2 shrink-0" />
-                  <span className="flex-1">{news.headline}</span>
-                  {news.sourceUrl && (
-                    <a
-                      href={news.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
-                      title="View source"
-                    >
-                      <ArrowUpRight className="size-3.5" strokeWidth={1.5} />
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </motion.section>
-        )}
+      {/* AI-powered sections — continuous flow, no divider */}
+      <div className="space-y-6">
+        <DrawerRelationshipStatus contact={contact} />
+        <DrawerLastInteraction
+          contact={contact}
+          onViewAllMeetings={onViewAllMeetings}
+        />
+        <DrawerPersonalNotes contact={contact} />
+        <DrawerInterestingFacts contact={contact} />
+        <DrawerTalkingPoints
+          contact={contact}
+          onExpandTimeline={handleExpandTimeline}
+        />
+        <DrawerRecentActivity
+          contact={contact}
+          onRegisterExpand={handleRegisterExpand}
+        />
+      </div>
 
-      {/* ═══════════════════════════════════════════════════════════════════════
-          8. Contact Info (compact, at bottom)
-          ═══════════════════════════════════════════════════════════════════════ */}
-      <motion.section
-        variants={staggerItem}
-        className="pt-4 border-t border-border/40"
-      >
-        <h4 className="font-medium text-xs text-muted-foreground/60 uppercase tracking-wider mb-3">
-          Contact
-        </h4>
-        <CompactContactInfo contact={contact} />
-      </motion.section>
-    </motion.div>
+      {/* Contact info — bottom of drawer */}
+      <DrawerContactInfo contact={contact} />
+    </div>
   );
 }
 
@@ -429,12 +114,14 @@ interface ContactDrawerProps {
   contact: Contact | null;
   isOpen: boolean;
   onClose: () => void;
+  onViewAllMeetings?: (contact: Contact) => void;
 }
 
 export function ContactDrawer({
   contact,
   isOpen,
   onClose,
+  onViewAllMeetings,
 }: ContactDrawerProps) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -478,25 +165,29 @@ export function ContactDrawer({
             className={cn(
               "fixed right-0 top-0 bottom-0 w-[480px] max-w-[calc(100vw-2rem)]",
               "bg-background",
-              "border-l border-border/60 shadow-2xl z-50",
+              "border-l border-border/40 shadow-2xl z-50",
               "flex flex-col",
             )}
           >
             {/* Header */}
-            <header className="shrink-0 px-6 py-4 border-b border-border/40 flex items-center justify-between">
-              <h3 className="font-medium text-sm text-muted-foreground">
+            <header className="shrink-0 px-5 py-4 border-b border-border/40 flex items-center justify-between">
+              <h3 className="font-medium text-ui text-muted-foreground">
                 Contact Details
               </h3>
               <button
                 onClick={onClose}
-                className="p-2 -mr-2 text-muted-foreground/50 hover:text-foreground rounded-lg hover:bg-muted/50 hover:text-white transition-colors"
+                className="p-2 -mr-2 text-muted-foreground/50 hover:text-foreground rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors"
               >
-                <X className="size-4" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={Cancel01Icon}
+                  size={16}
+                  strokeWidth={1.5}
+                />
               </button>
             </header>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto px-6 py-6">
+            <div className="flex-1 overflow-y-auto px-5 py-6">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={contact.id}
@@ -505,7 +196,14 @@ export function ContactDrawer({
                   exit={{ opacity: 0, y: -8 }}
                   transition={springs.quick}
                 >
-                  <DrawerContent contact={contact} />
+                  <DrawerContent
+                    contact={contact}
+                    onViewAllMeetings={
+                      onViewAllMeetings
+                        ? () => onViewAllMeetings(contact)
+                        : undefined
+                    }
+                  />
                 </motion.div>
               </AnimatePresence>
             </div>

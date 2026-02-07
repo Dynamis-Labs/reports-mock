@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { X } from "lucide-react";
-import { useSourcesStore } from "../../stores/sources-store";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Cancel01Icon } from "@hugeicons/core-free-icons";
+import { useSourcesStore } from "@stores/sources-store";
 import { SourcesAccordion } from "./sources-accordion";
-import { springs } from "../../lib/motion";
-import { cn } from "../../lib/utils";
+import { springs } from "@lib/motion";
+import { cn } from "@lib/utils";
 
 export function SourcesSidebar() {
   const { isOpen, sectionTitle, sources, close } = useSourcesStore();
@@ -88,13 +89,17 @@ export function SourcesSidebar() {
               <button
                 onClick={close}
                 className={cn(
-                  "size-8 rounded-lg flex items-center justify-center",
+                  "size-8 rounded-[var(--radius-lg)] flex items-center justify-center",
                   "text-muted-foreground hover:text-foreground",
                   "hover:bg-muted transition-colors duration-150",
                 )}
                 aria-label="Close sources sidebar"
               >
-                <X className="size-4" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={Cancel01Icon}
+                  size={16}
+                  strokeWidth={1.5}
+                />
               </button>
             </div>
 

@@ -1,14 +1,15 @@
 import { motion, AnimatePresence } from "motion/react";
-import { Search, ChevronDown } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { formatRelativeTime } from "../../lib/date-utils";
-import { Input } from "../ui/input";
-import { eventTypeConfig, type MemoryEvent } from "../../types/memory";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Search01Icon, ArrowDown01Icon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { formatRelativeTime } from "@lib/date-utils";
+import { Input } from "@components/ui/input";
+import { eventTypeConfig, type MemoryEvent } from "@types/memory";
 import {
   useMemoryStore,
   useIsWeekExpanded,
   useIsEventSelected,
-} from "../../stores/memory-store";
+} from "@stores/memory-store";
 
 /**
  * Memory Sidebar
@@ -41,11 +42,11 @@ function SidebarEventItem({ event }: SidebarEventItemProps) {
       type="button"
       onClick={handleClick}
       className={cn(
-        "w-full text-left px-3 py-2 rounded-md",
+        "w-full text-left px-3 py-2 rounded-[var(--radius-md)]",
         "transition-colors duration-150",
         isSelected
           ? "bg-accent-muted text-foreground"
-          : "text-muted-foreground hover:bg-muted hover:text-white",
+          : "text-muted-foreground hover:bg-muted hover:text-foreground",
       )}
       whileHover={{ x: 2 }}
       whileTap={{ scale: 0.98 }}
@@ -100,7 +101,12 @@ function WeekSection({ weekLabel, events }: WeekSectionProps) {
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronDown className="size-3.5 opacity-50" strokeWidth={1.5} />
+            <HugeiconsIcon
+              icon={ArrowDown01Icon}
+              size={14}
+              strokeWidth={1.5}
+              className="opacity-50"
+            />
           </motion.div>
         </div>
       </button>
@@ -143,9 +149,11 @@ export function MemorySidebar() {
       {/* Search */}
       <div className="p-3 border-b border-border">
         <div className="relative">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/50"
+          <HugeiconsIcon
+            icon={Search01Icon}
+            size={16}
             strokeWidth={1.5}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50"
           />
           <Input
             type="text"

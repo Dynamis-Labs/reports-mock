@@ -2,96 +2,82 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type {
   Contact,
-  ContactCategory,
   ContactSortField,
+  CrmTagMeta,
   SortDirection,
-} from "../types/contact";
-import { mockContacts } from "../data/mock-contacts";
+} from "@types/contact";
+import { mockContacts } from "@data/contacts";
+import { getUnifiedTagList, ALL_KNOWN_TAGS } from "@lib/crm-tag-utils";
 
 /**
  * CRM Store
  *
  * Manages state for the CRM page with card-grid layout:
  * - Tracks selected contact and drawer open state
- * - Manages filtering and sorting
+ * - Unified tag filtering (auto-derived + custom tags)
+ * - Recency-based filtering
+ * - Pinned contacts and pinned tag groups
  *
  * View preferences are persisted to localStorage.
  */
 
 interface CrmState {
   // ─── Contact Data ────────────────────────────────────────────────────────
-  /** All contacts (mutable copy of mock data) */
   contacts: Contact[];
 
   // ─── View Configuration ──────────────────────────────────────────────────
-  /** Sort field */
   sortField: ContactSortField;
-
-  /** Sort direction */
   sortDirection: SortDirection;
 
   // ─── Selection State ─────────────────────────────────────────────────────
-  /** Currently selected contact ID */
   selectedContactId: string | null;
-
-  /** Whether the detail drawer is open */
   isDrawerOpen: boolean;
 
   // ─── Filtering ───────────────────────────────────────────────────────────
-  /** Search query */
   searchQuery: string;
-
-  /** Selected filter tags */
+  /** Selected tags (unified — matches auto-derived and custom tags) */
   selectedTags: string[];
-
-  /** Selected relationship types filter */
-  selectedRelationships: string[];
-
-  /** Selected category filters (investor, client, other) */
-  selectedCategories: ContactCategory[];
+  /** Recency filter bucket (e.g., "This week", "This month") */
+  selectedRecencyFilter: string | null;
 
   // ─── UI State ────────────────────────────────────────────────────────────
-  /** Whether filters panel is expanded */
   isFiltersPanelOpen: boolean;
-
-  /** Pinned contact IDs (float to top) */
+  /** Individually pinned contact IDs */
   pinnedContactIds: string[];
+  /** Tag groups pinned to float to top of grid */
+  pinnedTagGroups: string[];
+  /** User-created custom global tags */
+  customGlobalTags: string[];
 
   // ─── Actions ─────────────────────────────────────────────────────────────
-  // View actions
   setSortField: (field: ContactSortField) => void;
   setSortDirection: (direction: SortDirection) => void;
   toggleSortDirection: () => void;
 
-  // Selection actions
   selectContact: (id: string | null) => void;
-
-  // Drawer actions
   openDrawer: (contactId: string) => void;
   closeDrawer: () => void;
 
-  // Filter actions
   setSearchQuery: (query: string) => void;
   toggleTag: (tag: string) => void;
   setSelectedTags: (tags: string[]) => void;
-  toggleRelationship: (relationship: string) => void;
-  toggleCategory: (category: ContactCategory) => void;
+  setSelectedRecencyFilter: (filter: string | null) => void;
   clearFilters: () => void;
 
-  // UI actions
   toggleFiltersPanel: () => void;
   setFiltersPanelOpen: (open: boolean) => void;
 
-  // Contact data actions
   updateContactTags: (contactId: string, tags: string[]) => void;
+  updateContactNotes: (contactId: string, notes: string) => void;
 
-  // Pin actions
   togglePin: (contactId: string) => void;
+  togglePinTagGroup: (tag: string) => void;
 
-  // Derived data
-  getAllUniqueTags: () => string[];
+  addGlobalTag: (tag: string) => void;
+  removeGlobalTag: (tag: string) => void;
 
-  // Utility
+  getAllUniqueTags: () => CrmTagMeta[];
+
   reset: () => void;
 }
 
@@ -103,10 +89,11 @@ const initialState = {
   isDrawerOpen: false,
   searchQuery: "",
   selectedTags: [] as string[],
-  selectedRelationships: [] as string[],
-  selectedCategories: [] as ContactCategory[],
+  selectedRecencyFilter: null as string | null,
   isFiltersPanelOpen: false,
   pinnedContactIds: [] as string[],
+  pinnedTagGroups: [] as string[],
+  customGlobalTags: [] as string[],
 };
 
 export const useCrmStore = create<CrmState>()(
@@ -148,28 +135,14 @@ export const useCrmStore = create<CrmState>()(
 
       setSelectedTags: (tags) => set({ selectedTags: tags }),
 
-      toggleRelationship: (relationship) =>
-        set((state) => ({
-          selectedRelationships: state.selectedRelationships.includes(
-            relationship,
-          )
-            ? state.selectedRelationships.filter((r) => r !== relationship)
-            : [...state.selectedRelationships, relationship],
-        })),
-
-      toggleCategory: (category) =>
-        set((state) => ({
-          selectedCategories: state.selectedCategories.includes(category)
-            ? state.selectedCategories.filter((c) => c !== category)
-            : [...state.selectedCategories, category],
-        })),
+      setSelectedRecencyFilter: (filter) =>
+        set({ selectedRecencyFilter: filter }),
 
       clearFilters: () =>
         set({
           searchQuery: "",
           selectedTags: [],
-          selectedRelationships: [],
-          selectedCategories: [],
+          selectedRecencyFilter: null,
         }),
 
       // ─── UI Actions ────────────────────────────────────────────────────────
@@ -178,7 +151,7 @@ export const useCrmStore = create<CrmState>()(
 
       setFiltersPanelOpen: (open) => set({ isFiltersPanelOpen: open }),
 
-      // ─── Contact Data Actions ───────────────────────────────────────────────
+      // ─── Contact Data Actions ──────────────────────────────────────────────
       updateContactTags: (contactId, tags) =>
         set((state) => ({
           contacts: state.contacts.map((contact) =>
@@ -188,7 +161,24 @@ export const useCrmStore = create<CrmState>()(
           ),
         })),
 
-      // ─── Pin Actions ────────────────────────────────────────────────────────
+      updateContactNotes: (contactId, newNotes) =>
+        set((state) => ({
+          contacts: state.contacts.map((c) =>
+            c.id === contactId
+              ? {
+                  ...c,
+                  notes: {
+                    ...c.notes,
+                    customSummary: newNotes,
+                    notesUpdatedAt: new Date(),
+                  },
+                  updatedAt: new Date(),
+                }
+              : c,
+          ),
+        })),
+
+      // ─── Pin Actions ───────────────────────────────────────────────────────
       togglePin: (contactId) =>
         set((state) => ({
           pinnedContactIds: state.pinnedContactIds.includes(contactId)
@@ -196,28 +186,48 @@ export const useCrmStore = create<CrmState>()(
             : [...state.pinnedContactIds, contactId],
         })),
 
-      // ─── Derived Data ───────────────────────────────────────────────────────
+      togglePinTagGroup: (tag) =>
+        set((state) => ({
+          pinnedTagGroups: state.pinnedTagGroups.includes(tag)
+            ? state.pinnedTagGroups.filter((t) => t !== tag)
+            : [...state.pinnedTagGroups, tag],
+        })),
+
+      // ─── Custom Tag Actions ────────────────────────────────────────────────
+      addGlobalTag: (tag) =>
+        set((state) => {
+          const trimmed = tag.trim();
+          if (!trimmed) return state;
+          const existing = [...ALL_KNOWN_TAGS, ...state.customGlobalTags];
+          if (existing.some((t) => t.toLowerCase() === trimmed.toLowerCase())) {
+            return state;
+          }
+          return { customGlobalTags: [...state.customGlobalTags, trimmed] };
+        }),
+
+      removeGlobalTag: (tag) =>
+        set((state) => ({
+          customGlobalTags: state.customGlobalTags.filter((t) => t !== tag),
+        })),
+
+      // ─── Derived Data ──────────────────────────────────────────────────────
       getAllUniqueTags: () => {
         const state = useCrmStore.getState();
-        const tagSet = new Set<string>();
-        state.contacts.forEach((contact) => {
-          contact.tags.forEach((tag) => tagSet.add(tag));
-          contact.roleBadges.forEach((badge) => tagSet.add(badge));
-        });
-        return Array.from(tagSet).sort();
+        return getUnifiedTagList(state.contacts, state.customGlobalTags);
       },
 
-      // ─── Utility ───────────────────────────────────────────────────────────
+      // ─── Utility ──────────────────────────────────────────────────────────
       reset: () => set({ ...initialState }),
     }),
     {
       name: "crm-data",
-      version: 3, // Bump version to clear old localStorage data
-      // Persist only user preferences, not contact data
+      version: 6,
       partialize: (state) => ({
         sortField: state.sortField,
         sortDirection: state.sortDirection,
         pinnedContactIds: state.pinnedContactIds,
+        pinnedTagGroups: state.pinnedTagGroups,
+        customGlobalTags: state.customGlobalTags,
       }),
     },
   ),
@@ -227,18 +237,15 @@ export const useCrmStore = create<CrmState>()(
 // Selector Hooks (for optimized re-renders)
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Check if a contact is selected */
 export function useIsContactSelected(contactId: string): boolean {
   return useCrmStore((state) => state.selectedContactId === contactId);
 }
 
-/** Check if any filters are active */
 export function useHasActiveFilters(): boolean {
   return useCrmStore(
     (state) =>
       state.searchQuery !== "" ||
       state.selectedTags.length > 0 ||
-      state.selectedRelationships.length > 0 ||
-      state.selectedCategories.length > 0,
+      state.selectedRecencyFilter !== null,
   );
 }

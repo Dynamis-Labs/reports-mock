@@ -1,7 +1,12 @@
-import { Phone, MapPin } from "lucide-react";
-import { cn } from "../../../lib/utils";
-import { Tooltip, TooltipTrigger, TooltipContent } from "../../ui/tooltip";
-import type { MeetingPlatform } from "../../../types/meeting";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { CallIcon, MapPinIcon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@components/ui/tooltip";
+import type { MeetingPlatform } from "@types/meeting";
 
 interface PlatformIndicatorProps {
   platform: MeetingPlatform;
@@ -79,13 +84,17 @@ function TeamsIcon({ className }: { className?: string }) {
 
 function InPersonIcon({ className }: { className?: string }) {
   return (
-    <MapPin className={cn("text-orange-500", className)} strokeWidth={1.8} />
+    <span className={cn("text-orange-500", className)}>
+      <HugeiconsIcon icon={MapPinIcon} size={16} strokeWidth={1.8} />
+    </span>
   );
 }
 
 function PhoneIcon({ className }: { className?: string }) {
   return (
-    <Phone className={cn("text-slate-500", className)} strokeWidth={1.8} />
+    <span className={cn("text-slate-500", className)}>
+      <HugeiconsIcon icon={CallIcon} size={16} strokeWidth={1.8} />
+    </span>
   );
 }
 
@@ -147,7 +156,9 @@ export function PlatformIndicator({
           <div className="inline-flex cursor-default">{content}</div>
         </TooltipTrigger>
         <TooltipContent side="top" className="flex items-center gap-1.5">
-          <MapPin className="size-3 opacity-60" strokeWidth={1.5} />
+          <span className="opacity-60">
+            <HugeiconsIcon icon={MapPinIcon} size={12} strokeWidth={1.5} />
+          </span>
           <span>{location}</span>
         </TooltipContent>
       </Tooltip>

@@ -1,17 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type {
-  MemoryEvent,
-  MemoryEventType,
-  MemorySource,
-  Initiative,
-} from "../types/memory";
+import type { MemoryEvent, MemorySource, Initiative } from "@types/memory";
 import {
   mockMemoryEvents,
   getEventsByWeek,
   getOrderedWeekLabels,
-} from "../data/mock-memories";
-import { mockInitiatives } from "../data/mock-initiatives";
+} from "@data/memories";
+import { mockInitiatives } from "@data/mock-initiatives";
 
 /**
  * Memory Store
@@ -54,17 +49,14 @@ interface MemoryState {
   /** Sidebar sections that are expanded (ACTIVE, BLOCKED) */
   expandedSections: SidebarSection[];
 
-  // ─── Legacy State (for compatibility) ────────────────────────────────────
-  /** Search query */
+  // ─── Search & Filter State ──────────────────────────────────────────────
+  /** Search query for sidebar filtering */
   searchQuery: string;
 
-  /** Selected event types to filter by */
-  selectedTypes: MemoryEventType[];
-
-  /** Week labels that are expanded (legacy) */
+  /** Week labels that are expanded in sidebar */
   expandedWeeks: string[];
 
-  /** Whether the detail popup is open (legacy) */
+  /** Whether the detail popup is open */
   isPopupOpen: boolean;
 
   // ─── Focus Mode State ───────────────────────────────────────────────────
@@ -109,12 +101,10 @@ interface MemoryState {
   expandAllSections: () => void;
   collapseAllSections: () => void;
 
-  // ─── Legacy Actions (for compatibility) ──────────────────────────────────
+  // ─── Popup & Search Actions ─────────────────────────────────────────────
   openPopup: (eventId: string) => void;
   closePopup: () => void;
   setSearchQuery: (query: string) => void;
-  toggleEventType: (type: MemoryEventType) => void;
-  clearFilters: () => void;
   toggleWeekExpanded: (weekLabel: string) => void;
   expandAllWeeks: () => void;
   collapseAllWeeks: () => void;
@@ -154,7 +144,7 @@ interface MemoryState {
   /** Check if an event should be dimmed (not connected to focused event) */
   isEventDimmed: (eventId: string) => boolean;
 
-  // Legacy computed
+  // ─── Search Computed ────────────────────────────────────────────────────
   getFilteredEvents: () => MemoryEvent[];
   getEventsByWeekGrouped: () => Map<string, MemoryEvent[]>;
   getOrderedWeeks: () => string[];
@@ -171,9 +161,7 @@ const initialState = {
   isSourcesPanelOpen: false,
   sourcePanelSources: [] as MemorySource[],
   expandedSections: ["active"] as SidebarSection[], // ACTIVE expanded by default
-  // Legacy
   searchQuery: "",
-  selectedTypes: [] as MemoryEventType[],
   expandedWeeks: ["This Week", "Last Week"],
   isPopupOpen: false,
   // Focus Mode
@@ -282,7 +270,7 @@ export const useMemoryStore = create<MemoryState>()(
       collapseAllSections: () => set({ expandedSections: [] }),
 
       // ═══════════════════════════════════════════════════════════════════════
-      // Legacy Actions (for compatibility with existing components)
+      // Popup & Search Actions
       // ═══════════════════════════════════════════════════════════════════════
 
       openPopup: (eventId) =>
@@ -294,20 +282,6 @@ export const useMemoryStore = create<MemoryState>()(
       closePopup: () => set({ isPopupOpen: false }),
 
       setSearchQuery: (query) => set({ searchQuery: query }),
-
-      toggleEventType: (type) =>
-        set((state) => {
-          const types = state.selectedTypes.includes(type)
-            ? state.selectedTypes.filter((t) => t !== type)
-            : [...state.selectedTypes, type];
-          return { selectedTypes: types };
-        }),
-
-      clearFilters: () =>
-        set({
-          searchQuery: "",
-          selectedTypes: [],
-        }),
 
       toggleWeekExpanded: (weekLabel) =>
         set((state) => {
@@ -445,30 +419,27 @@ export const useMemoryStore = create<MemoryState>()(
         return !get().isEventConnectedToFocus(eventId);
       },
 
-      // Legacy computed
+      // ═══════════════════════════════════════════════════════════════════════
+      // Search Computed
+      // ═══════════════════════════════════════════════════════════════════════
+
       getFilteredEvents: () => {
-        const { events, searchQuery, selectedTypes } = get();
+        const { events, searchQuery } = get();
 
+        if (!searchQuery) return events;
+
+        const query = searchQuery.toLowerCase();
         return events.filter((event) => {
-          if (searchQuery) {
-            const query = searchQuery.toLowerCase();
-            const searchableText = [
-              event.title,
-              event.summary,
-              event.category,
-              ...event.tags,
-              ...event.participants.map((p) => p.name),
-            ]
-              .join(" ")
-              .toLowerCase();
-            if (!searchableText.includes(query)) return false;
-          }
-
-          if (selectedTypes.length > 0) {
-            if (!selectedTypes.includes(event.type)) return false;
-          }
-
-          return true;
+          const searchableText = [
+            event.title,
+            event.summary,
+            event.category,
+            ...event.tags,
+            ...event.participants.map((p) => p.name),
+          ]
+            .join(" ")
+            .toLowerCase();
+          return searchableText.includes(query);
         });
       },
 
@@ -519,12 +490,6 @@ export function useIsSectionExpanded(section: SidebarSection): boolean {
 
 export function useIsWeekExpanded(weekLabel: string): boolean {
   return useMemoryStore((state) => state.expandedWeeks.includes(weekLabel));
-}
-
-export function useHasActiveFilters(): boolean {
-  return useMemoryStore(
-    (state) => state.searchQuery !== "" || state.selectedTypes.length > 0,
-  );
 }
 
 // ═══════════════════════════════════════════════════════════════════════════

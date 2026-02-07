@@ -7,8 +7,8 @@ import {
 } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { CommentCard } from "./comment-card";
-import { useCommentStore } from "../../stores/comment-store";
-import type { CommentHighlight } from "../../stores/comment-store";
+import { useCommentStore } from "@stores/comment-store";
+import type { CommentHighlight } from "@stores/comment-store";
 
 interface CommentPosition {
   id: string;

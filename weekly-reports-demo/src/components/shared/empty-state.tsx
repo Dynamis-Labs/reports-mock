@@ -1,10 +1,11 @@
-import { Sparkles, type LucideIcon } from "lucide-react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
+import { SparklesIcon } from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
-import { springs, fadeVariants } from "../../lib/motion";
+import { cn } from "@lib/utils";
+import { springs, fadeVariants } from "@lib/motion";
 
 interface EmptyStateProps {
-  icon?: LucideIcon;
+  icon?: IconSvgElement;
   title?: string;
   description?: string;
   className?: string;
@@ -15,7 +16,7 @@ interface EmptyStateProps {
  * Shows a clean "Coming Soon" message
  */
 export function EmptyState({
-  icon: Icon = Sparkles,
+  icon = SparklesIcon,
   title = "Coming Soon",
   description = "This feature is in development",
   className,
@@ -33,7 +34,12 @@ export function EmptyState({
       )}
     >
       <div className="mb-4 p-4 rounded-2xl bg-muted/50">
-        <Icon className="size-8 text-muted-foreground" strokeWidth={1.2} />
+        <HugeiconsIcon
+          icon={icon}
+          size={32}
+          className="text-muted-foreground"
+          strokeWidth={1.2}
+        />
       </div>
       <h2 className="text-heading font-semibold text-foreground mb-2">
         {title}

@@ -8,20 +8,21 @@
  */
 
 import {
-  Rocket,
-  Users,
-  Code,
-  TrendingUp,
-  Settings,
-  DollarSign,
-} from "lucide-react";
+  Rocket01Icon,
+  UserGroupIcon,
+  SourceCodeIcon,
+  AnalyticsUpIcon,
+  Setting07Icon,
+  Dollar01Icon,
+} from "@hugeicons/core-free-icons";
 import type {
   PersonalTask,
   PersonalTaskCategory,
   InvolvementItem,
   MeetingBrief,
   CategoryConfig,
-} from "../types/home";
+} from "@types/home";
+import { daysAgo } from "@lib/mock-date-helpers";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Category Configuration
@@ -29,37 +30,37 @@ import type {
 
 export const categoryConfig: Record<PersonalTaskCategory, CategoryConfig> = {
   gtm: {
-    icon: Rocket,
+    icon: Rocket01Icon,
     label: "GTM",
     color: "text-violet-500",
     bgColor: "bg-violet-500/10",
   },
   product: {
-    icon: Settings,
+    icon: Setting07Icon,
     label: "Product",
     color: "text-blue-500",
     bgColor: "bg-blue-500/10",
   },
   engineering: {
-    icon: Code,
+    icon: SourceCodeIcon,
     label: "Engineering",
     color: "text-emerald-500",
     bgColor: "bg-emerald-500/10",
   },
   sales: {
-    icon: TrendingUp,
+    icon: AnalyticsUpIcon,
     label: "Sales",
     color: "text-orange-500",
     bgColor: "bg-orange-500/10",
   },
   operations: {
-    icon: Users,
+    icon: UserGroupIcon,
     label: "Operations",
     color: "text-slate-500",
     bgColor: "bg-slate-500/10",
   },
   fundraising: {
-    icon: DollarSign,
+    icon: Dollar01Icon,
     label: "Fundraising",
     color: "text-green-500",
     bgColor: "bg-green-500/10",
@@ -71,12 +72,6 @@ export const categoryConfig: Record<PersonalTaskCategory, CategoryConfig> = {
 // ═══════════════════════════════════════════════════════════════════════════
 
 const NOW = new Date();
-
-function daysAgo(days: number): Date {
-  const date = new Date(NOW);
-  date.setDate(date.getDate() - days);
-  return date;
-}
 
 function hoursAgo(hours: number): Date {
   const date = new Date(NOW);

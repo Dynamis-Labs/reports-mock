@@ -1,12 +1,12 @@
 import { motion, AnimatePresence } from "motion/react";
-import { springs, fadeVariants } from "../../../lib/motion";
+import { springs, fadeVariants } from "@lib/motion";
 import { MeetingDetailHeader } from "./meeting-detail-header";
 import { MeetingDetailTabs } from "./meeting-detail-tabs";
 import { MeetingSummaryTab } from "./meeting-summary-tab";
 import { MeetingTranscriptTab } from "./meeting-transcript-tab";
 import { MeetingAttendeesTab } from "./meeting-attendees-tab";
-import { useArchiveStore } from "../../../stores/archive-store";
-import type { Meeting } from "../../../types/meeting";
+import { useArchiveStore } from "@stores/archive-store";
+import type { Meeting } from "@types/meeting";
 
 interface MeetingDetailPaneProps {
   meeting: Meeting | null;

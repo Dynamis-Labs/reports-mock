@@ -1,9 +1,14 @@
 import { useRef, useCallback } from "react";
 import { motion } from "motion/react";
-import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "../ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Calendar03Icon,
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+} from "@hugeicons/core-free-icons";
+import { Button } from "@components/ui/button";
 import { MemoryTimelineCard } from "./memory-timeline-card";
-import { useMemoryStore } from "../../stores/memory-store";
+import { useMemoryStore } from "@stores/memory-store";
 
 /**
  * Memory Horizontal Timeline
@@ -54,8 +59,10 @@ export function MemoryHorizontalTimeline() {
     return (
       <div className="flex-1 flex items-center justify-center bg-surface/30">
         <div className="text-center">
-          <CalendarDays
-            className="size-12 mx-auto mb-4 text-muted-foreground/20"
+          <HugeiconsIcon
+            icon={Calendar03Icon}
+            size={48}
+            className="mx-auto mb-4 text-muted-foreground/20"
             strokeWidth={1}
           />
           <p className="text-muted-foreground font-medium">No events found</p>
@@ -80,16 +87,20 @@ export function MemoryHorizontalTimeline() {
           <button
             type="button"
             onClick={scrollLeft}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            className="p-1.5 rounded-[var(--radius-md)] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
           >
-            <ChevronLeft className="size-4" strokeWidth={1.5} />
+            <HugeiconsIcon icon={ArrowLeft01Icon} size={16} strokeWidth={1.5} />
           </button>
           <button
             type="button"
             onClick={scrollRight}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+            className="p-1.5 rounded-[var(--radius-md)] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
           >
-            <ChevronRight className="size-4" strokeWidth={1.5} />
+            <HugeiconsIcon
+              icon={ArrowRight01Icon}
+              size={16}
+              strokeWidth={1.5}
+            />
           </button>
         </div>
       </div>
@@ -134,7 +145,12 @@ export function MemoryHorizontalTimeline() {
           onClick={scrollToEnd}
           className="shadow-lg"
         >
-          <CalendarDays className="size-4 mr-2" strokeWidth={1.5} />
+          <HugeiconsIcon
+            icon={Calendar03Icon}
+            size={16}
+            strokeWidth={1.5}
+            className="mr-2"
+          />
           Today
         </Button>
       </motion.div>

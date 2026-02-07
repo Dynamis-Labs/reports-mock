@@ -1,8 +1,13 @@
-import { Calendar, Clock, ExternalLink } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Calendar01Icon,
+  Clock01Icon,
+  Link03Icon,
+} from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
 import { VisibilityBadge, PlatformIndicator, AttendeeChips } from "../shared";
-import { Button } from "../../ui/button";
-import type { Meeting } from "../../../types/meeting";
+import { Button } from "@components/ui/button";
+import type { Meeting } from "@types/meeting";
 
 interface MeetingDetailHeaderProps {
   meeting: Meeting;
@@ -68,14 +73,14 @@ export function MeetingDetailHeader({
       {/* Metadata row */}
       <div className="flex items-center gap-4 text-ui text-muted-foreground mb-4">
         <div className="flex items-center gap-1.5">
-          <Calendar className="size-4" strokeWidth={1.5} />
+          <HugeiconsIcon icon={Calendar01Icon} size={16} strokeWidth={1.5} />
           <span>{formatDate(meeting.date)}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Clock className="size-4" strokeWidth={1.5} />
+          <HugeiconsIcon icon={Clock01Icon} size={16} strokeWidth={1.5} />
           <span>{meeting.startTime}</span>
         </div>
-        <span className="text-border">·</span>
+        <span className="text-border">&middot;</span>
         <span>{formatDuration(meeting.duration)}</span>
       </div>
 
@@ -87,7 +92,7 @@ export function MeetingDetailHeader({
         <div className="mt-4">
           <Button variant="default" onClick={handleJoin}>
             Join Meeting
-            <ExternalLink className="size-4 ml-1.5" />
+            <HugeiconsIcon icon={Link03Icon} size={16} />
           </Button>
         </div>
       )}

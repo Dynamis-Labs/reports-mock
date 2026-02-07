@@ -1,14 +1,14 @@
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import {
-  BarChart3,
-  AlertTriangle,
-  FileText,
-  Sparkles,
-  ChevronRight,
-} from "lucide-react";
+  Alert01Icon,
+  File01Icon,
+  SparklesIcon,
+  ArrowRight01Icon,
+} from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { cn } from "../../../lib/utils";
-import { springs } from "../../../lib/motion";
-import { Badge } from "../../ui/badge";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import { Badge } from "@components/ui/badge";
 
 export type ArchivedReportType =
   | "weekly"
@@ -35,30 +35,30 @@ interface ReportCardProps {
 function getTypeConfig(type: ArchivedReportType) {
   const configs: Record<
     ArchivedReportType,
-    { icon: typeof BarChart3; label: string; badgeClass: string }
+    { icon: IconSvgElement; label: string; badgeClass: string }
   > = {
     weekly: {
-      icon: BarChart3,
+      icon: File01Icon,
       label: "Weekly",
       badgeClass: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
     },
     risk: {
-      icon: AlertTriangle,
+      icon: Alert01Icon,
       label: "Risk",
       badgeClass: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
     },
     daily: {
-      icon: FileText,
+      icon: File01Icon,
       label: "Daily",
       badgeClass: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
     },
     report: {
-      icon: Sparkles,
+      icon: SparklesIcon,
       label: "Report",
       badgeClass: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
     },
     standard: {
-      icon: FileText,
+      icon: File01Icon,
       label: "Report",
       badgeClass: "bg-slate-500/10 text-slate-600 dark:text-slate-400",
     },
@@ -86,7 +86,6 @@ function formatRelativeDate(date: Date): string {
  */
 export function ReportCard({ report, isSelected, onClick }: ReportCardProps) {
   const typeConfig = getTypeConfig(report.type);
-  const TypeIcon = typeConfig.icon;
 
   return (
     <motion.button
@@ -107,8 +106,10 @@ export function ReportCard({ report, isSelected, onClick }: ReportCardProps) {
         <div className="flex-1 min-w-0">
           {/* Title with icon and unread indicator */}
           <div className="flex items-center gap-2 mb-1.5">
-            <TypeIcon
-              className={cn("size-4 shrink-0", typeConfig.badgeClass)}
+            <HugeiconsIcon
+              icon={typeConfig.icon}
+              size={16}
+              className={cn("shrink-0", typeConfig.badgeClass)}
               strokeWidth={1.5}
             />
             <h3 className="text-body font-medium text-foreground truncate">
@@ -136,8 +137,10 @@ export function ReportCard({ report, isSelected, onClick }: ReportCardProps) {
         </div>
 
         {/* Chevron */}
-        <ChevronRight
-          className="size-5 text-muted-foreground/40 shrink-0 mt-1"
+        <HugeiconsIcon
+          icon={ArrowRight01Icon}
+          size={20}
+          className="text-muted-foreground/40 shrink-0 mt-1"
           strokeWidth={1.5}
         />
       </div>

@@ -1,8 +1,8 @@
 import { useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { CommentComposer } from "./comment-composer";
-import { useCommentStore } from "../../stores/comment-store";
-import { cn } from "../../lib/utils";
+import { useCommentStore } from "@stores/comment-store";
+import { cn } from "@lib/utils";
 
 interface CommentPanelProps {
   reportId: string;

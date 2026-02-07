@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { motion } from "motion/react";
-import { staggerContainer, staggerItem } from "../../../lib/motion";
+import { staggerContainer, staggerItem } from "@lib/motion";
+import { filterBySearch } from "@lib/search-utils";
 import { MeetingCard } from "./meeting-card";
-import type { Meeting } from "../../../types/meeting";
+import type { Meeting } from "@types/meeting";
 
 interface MeetingsListProps {
   meetings: Meeting[];
@@ -65,17 +66,17 @@ export function MeetingsList({
   searchQuery,
 }: MeetingsListProps) {
   // Filter meetings by search query
-  const filteredMeetings = useMemo(() => {
-    if (!searchQuery.trim()) return meetings;
-
-    const query = searchQuery.toLowerCase();
-    return meetings.filter(
-      (meeting) =>
-        meeting.title.toLowerCase().includes(query) ||
-        meeting.summary.toLowerCase().includes(query) ||
-        meeting.attendees.some((a) => a.name.toLowerCase().includes(query)),
-    );
-  }, [meetings, searchQuery]);
+  const filteredMeetings = useMemo(
+    () =>
+      filterBySearch(meetings, searchQuery, (meeting) =>
+        [
+          meeting.title,
+          meeting.summary,
+          ...meeting.attendees.map((a) => a.name),
+        ].join(" "),
+      ),
+    [meetings, searchQuery],
+  );
 
   // Group by date
   const dateGroups = useMemo(

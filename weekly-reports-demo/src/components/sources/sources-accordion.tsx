@@ -1,8 +1,9 @@
 import { useState, useMemo, type ComponentType, type SVGProps } from "react";
-import { ChevronDown } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { motion, AnimatePresence } from "motion/react";
 import { SourceCard } from "./source-card";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 import {
   SlackIcon,
   LinearIcon,
@@ -10,8 +11,8 @@ import {
   MonitorIcon,
   ExternalLinkIcon,
   FileTextIcon,
-} from "../icons/source-icons";
-import type { SourceItem, SourceCategory } from "../../types/sources";
+} from "@components/icons/source-icons";
+import type { SourceItem, SourceCategory } from "@types/sources";
 
 interface SourcesAccordionProps {
   sources: SourceItem[];
@@ -95,7 +96,7 @@ export function SourcesAccordion({ sources }: SourcesAccordionProps) {
         return (
           <div
             key={category}
-            className="border border-border rounded-lg overflow-hidden bg-surface"
+            className="border border-border rounded-[var(--radius-lg)] overflow-hidden bg-surface"
           >
             {/* Section Header */}
             <button
@@ -105,7 +106,7 @@ export function SourcesAccordion({ sources }: SourcesAccordionProps) {
               aria-controls={`sources-accordion-${category}`}
               className={cn(
                 "w-full px-4 py-3 flex items-center justify-between",
-                "hover:bg-muted hover:text-white transition-colors duration-150",
+                "hover:bg-muted hover:text-foreground transition-colors duration-150",
               )}
             >
               <div className="flex items-center gap-3">
@@ -127,9 +128,11 @@ export function SourcesAccordion({ sources }: SourcesAccordionProps) {
                 animate={{ rotate: isExpanded ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ChevronDown
-                  className="size-4 text-muted-foreground"
+                <HugeiconsIcon
+                  icon={ArrowDown01Icon}
+                  size={16}
                   strokeWidth={1.5}
+                  className="text-muted-foreground"
                 />
               </motion.div>
             </button>

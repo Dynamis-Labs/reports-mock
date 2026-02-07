@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { motion } from "motion/react";
-import { staggerContainer, staggerItem } from "../../../lib/motion";
+import { staggerContainer, staggerItem } from "@lib/motion";
+import { filterBySearch } from "@lib/search-utils";
 import { RadarCard } from "./radar-card";
-import type { RadarItem, RadarSeverity } from "../../../types/radar";
+import type { RadarItem, RadarSeverity } from "@types/radar";
 
 interface RadarsListProps {
   radars: RadarItem[];
@@ -63,17 +64,13 @@ export function RadarsList({
   searchQuery,
 }: RadarsListProps) {
   // Filter radars by search query
-  const filteredRadars = useMemo(() => {
-    if (!searchQuery.trim()) return radars;
-
-    const query = searchQuery.toLowerCase();
-    return radars.filter(
-      (radar) =>
-        radar.title.toLowerCase().includes(query) ||
-        radar.description.toLowerCase().includes(query) ||
-        radar.category.toLowerCase().includes(query),
-    );
-  }, [radars, searchQuery]);
+  const filteredRadars = useMemo(
+    () =>
+      filterBySearch(radars, searchQuery, (radar) =>
+        [radar.title, radar.description, radar.category].join(" "),
+      ),
+    [radars, searchQuery],
+  );
 
   // Group by severity
   const groupedRadars = useMemo(

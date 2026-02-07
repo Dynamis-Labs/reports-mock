@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
-import { chatboxChipVariants, springs } from "../../lib/motion";
-import { cn } from "../../lib/utils";
+import { chatboxChipVariants, springs } from "@lib/motion";
+import { cn } from "@lib/utils";
 
 export type ChipColor = "green" | "amber" | "blue" | "neutral";
 
@@ -85,7 +85,7 @@ export function AllActionsButton({
         "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full",
         "bg-surface border border-border-subtle",
         "text-caption text-foreground font-medium",
-        "hover:bg-muted hover:border-border hover:text-white transition-colors cursor-pointer",
+        "hover:bg-muted hover:border-border hover:text-foreground transition-colors cursor-pointer",
         className,
       )}
     >

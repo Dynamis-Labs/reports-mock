@@ -12,12 +12,17 @@
 import { useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Circle, Check } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { springs } from "../../lib/motion";
-import { categoryConfig } from "../../data/mock-home";
-import { useHomeStore } from "../../stores/home-store";
-import { mockPersonalTasks } from "../../data/mock-home";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Cancel01Icon,
+  Tick01Icon,
+  CircleIcon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import { categoryConfig } from "@data/mock-home";
+import { useHomeStore } from "@stores/home-store";
+import { mockPersonalTasks } from "@data/mock-home";
 
 export function PersonalTaskPopup() {
   const isOpen = useHomeStore((state) => state.isTaskPopupOpen);
@@ -50,7 +55,6 @@ export function PersonalTaskPopup() {
   if (!task) return null;
 
   const config = categoryConfig[task.category];
-  const CategoryIcon = config.icon;
   const completedCount = task.todos.filter((t) => t.isCompleted).length;
 
   return createPortal(
@@ -88,13 +92,15 @@ export function PersonalTaskPopup() {
                   <div className="flex items-center gap-2 mb-2">
                     <div
                       className={cn(
-                        "flex items-center gap-1.5 px-2 py-1 rounded-md",
+                        "flex items-center gap-1.5 px-2 py-1 rounded-[var(--radius-md)]",
                         config.bgColor,
                       )}
                     >
-                      <CategoryIcon
-                        className={cn("size-3.5", config.color)}
+                      <HugeiconsIcon
+                        icon={config.icon}
+                        size={14}
                         strokeWidth={1.5}
+                        className={config.color}
                       />
                       <span
                         className={cn(
@@ -116,9 +122,13 @@ export function PersonalTaskPopup() {
                 {/* Close button */}
                 <button
                   onClick={closePopup}
-                  className="p-2 -m-2 text-muted-foreground/50 hover:text-foreground rounded-lg hover:bg-muted/50 transition-colors"
+                  className="p-2 -m-2 text-muted-foreground/50 hover:text-foreground rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors"
                 >
-                  <X className="size-5" strokeWidth={1.5} />
+                  <HugeiconsIcon
+                    icon={Cancel01Icon}
+                    size={20}
+                    strokeWidth={1.5}
+                  />
                 </button>
               </div>
             </header>
@@ -141,7 +151,7 @@ export function PersonalTaskPopup() {
                   <li
                     key={todo.id}
                     className={cn(
-                      "flex items-start gap-3 p-2 rounded-lg",
+                      "flex items-start gap-3 p-2 rounded-[var(--radius-lg)]",
                       "transition-colors",
                     )}
                   >
@@ -155,9 +165,15 @@ export function PersonalTaskPopup() {
                       )}
                     >
                       {todo.isCompleted ? (
-                        <Check className="size-3" strokeWidth={2} />
+                        <HugeiconsIcon
+                          icon={Tick01Icon}
+                          size={12}
+                          strokeWidth={2}
+                        />
                       ) : (
-                        <Circle className="size-2 opacity-0" />
+                        <span className="size-2 opacity-0">
+                          <HugeiconsIcon icon={CircleIcon} size={8} />
+                        </span>
                       )}
                     </span>
 

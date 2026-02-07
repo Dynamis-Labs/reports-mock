@@ -1,5 +1,5 @@
 import { type HTMLAttributes } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?:
@@ -13,32 +13,52 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
     | "urgent"
     | "high"
     | "medium"
-    | "low";
+    | "low"
+    | "todo"
+    | "in-progress"
+    | "in-review"
+    | "completed"
+    | "teal"
+    | "green"
+    | "amber"
+    | "blue"
+    | "purple";
 }
 
-/**
- * Badge color variants only - sizing is consistent via base styles
- */
 const badgeVariants: Record<NonNullable<BadgeProps["variant"]>, string> = {
-  default: "bg-muted text-foreground/80",
-  active: "bg-accent text-accent-foreground",
+  default:
+    "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
+  active: "bg-primary text-primary-foreground",
   accent: "bg-accent-muted text-accent",
   outline: "border border-border text-muted-foreground bg-transparent",
   week: "bg-accent-muted text-accent font-semibold",
   source: "bg-surface text-muted-foreground border border-border-subtle",
   count:
-    "bg-accent text-accent-foreground size-[14px] !p-0 justify-center !rounded-full !text-[10px]",
-  // Priority/severity variants
-  urgent: "bg-red-500/15 text-red-600 dark:text-red-400",
-  high: "bg-orange-500/15 text-orange-600 dark:text-orange-400",
-  medium: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400",
-  low: "bg-slate-500/15 text-slate-600 dark:text-slate-400",
+    "bg-primary text-primary-foreground size-4 !p-0 justify-center !rounded-full !text-[10px] font-semibold",
+
+  // Priority variants
+  urgent: "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400",
+  high: "bg-orange-50 text-orange-700 dark:bg-orange-950 dark:text-orange-400",
+  medium: "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400",
+  low: "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400",
+
+  // Kanban status chips (Synchro style)
+  todo: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+  "in-progress":
+    "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400",
+  "in-review":
+    "bg-violet-50 text-violet-700 dark:bg-violet-950 dark:text-violet-400",
+  completed: "bg-teal-50 text-teal-700 dark:bg-teal-950 dark:text-teal-400",
+
+  // Colored name chips (Synchro assignee style)
+  teal: "bg-teal-50 text-teal-700 dark:bg-teal-900 dark:text-teal-300",
+  green: "bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-300",
+  amber: "bg-amber-50 text-amber-700 dark:bg-amber-900 dark:text-amber-300",
+  blue: "bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+  purple:
+    "bg-purple-50 text-purple-700 dark:bg-purple-900 dark:text-purple-300",
 };
 
-/**
- * Consistent badge component with unified sizing
- * All badges use text-[11px] (micro) with px-1.5 py-0.5 padding
- */
 export function Badge({
   className,
   variant = "default",
@@ -48,9 +68,8 @@ export function Badge({
   return (
     <span
       className={cn(
-        // Consistent base sizing for all badges
-        "inline-flex items-center font-medium",
-        "text-[11px] px-1.5 py-0.5 rounded",
+        "inline-flex items-center font-medium leading-none",
+        "text-[11px] px-2 py-0.5 rounded-full",
         badgeVariants[variant],
         className,
       )}

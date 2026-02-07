@@ -1,10 +1,15 @@
 import { motion } from "motion/react";
-import { ChevronRight, ExternalLink, Circle } from "lucide-react";
-import { cn } from "../../../lib/utils";
-import { getMinutesUntilMeeting } from "../../../lib/date-utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowRight01Icon,
+  Link03Icon,
+  CircleIcon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { getMinutesUntilMeeting } from "@lib/date-utils";
 import { PlatformIndicator, CountdownTimer, AttendeeChips } from "../shared";
-import { Button } from "../../ui/button";
-import type { Meeting, MeetingAttendee } from "../../../types/meeting";
+import { Button } from "@components/ui/button";
+import type { Meeting, MeetingAttendee } from "@types/meeting";
 
 interface UpNextCardProps {
   meeting: Meeting;
@@ -72,7 +77,9 @@ export function UpNextCard({
           <div className="flex items-center gap-2">
             {isStartingSoon || isStartingNow ? (
               <span className="inline-flex items-center gap-1.5 text-micro font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
-                <Circle className="size-1.5 fill-current animate-pulse" />
+                <span className="fill-current animate-pulse">
+                  <HugeiconsIcon icon={CircleIcon} size={6} />
+                </span>
                 {isStartingNow ? "In Progress" : "Starting Soon"}
               </span>
             ) : (
@@ -102,7 +109,7 @@ export function UpNextCard({
           onClick={onViewBrief}
           className="text-accent hover:text-accent/80 text-ui font-medium mb-3 flex items-center gap-0.5 hover:gap-1.5 transition-all rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-1"
         >
-          View Brief <ChevronRight className="size-3.5" />
+          View Brief <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
         </button>
 
         {/* Row 5: Attendees */}
@@ -125,7 +132,7 @@ export function UpNextCard({
               className="h-8 text-caption px-3"
             >
               Join Now
-              <ExternalLink className="size-3.5 ml-1.5" />
+              <HugeiconsIcon icon={Link03Icon} size={14} />
             </Button>
           )}
         </div>

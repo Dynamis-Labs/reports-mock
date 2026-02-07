@@ -1,30 +1,31 @@
 // Spring configurations for consistent animations throughout the app
+// Synchro-style: snappier springs, subtler interactions, no blur
 
 export const springs = {
-  // Quick, snappy interactions (buttons, toggles)
-  quick: { type: "spring" as const, stiffness: 400, damping: 30 },
+  // Micro-interactions: buttons, toggles, checkboxes
+  quick: { type: "spring" as const, stiffness: 500, damping: 35 },
 
-  // Snappy for content transitions (slightly slower than quick)
-  snappy: { type: "spring" as const, stiffness: 350, damping: 28 },
+  // Snappy content transitions
+  snappy: { type: "spring" as const, stiffness: 400, damping: 32 },
 
-  // Standard UI transitions (panels, modals)
-  default: { type: "spring" as const, stiffness: 300, damping: 30 },
+  // Standard UI transitions: panels, dropdowns, modals
+  default: { type: "spring" as const, stiffness: 350, damping: 32 },
 
-  // Slower, more deliberate reveals (page content)
-  gentle: { type: "spring" as const, stiffness: 200, damping: 25 },
+  // Content reveals: page sections, card grids
+  gentle: { type: "spring" as const, stiffness: 250, damping: 28 },
 
-  // Page-level transitions
-  page: { type: "spring" as const, stiffness: 150, damping: 20 },
+  // Page-level: route transitions, large panels
+  page: { type: "spring" as const, stiffness: 200, damping: 25 },
 };
 
-// Variants for staggered content reveals
+// Staggered content reveals — no blur, subtler movement
 export const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.1,
+      staggerChildren: 0.05,
+      delayChildren: 0.05,
     },
   },
 };
@@ -32,13 +33,11 @@ export const staggerContainer = {
 export const staggerItem = {
   hidden: {
     opacity: 0,
-    y: 20,
-    filter: "blur(4px)",
+    y: 8,
   },
   visible: {
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
     transition: springs.gentle,
   },
 };
@@ -52,23 +51,23 @@ export const fadeVariants = {
 
 // Slide up variants
 export const slideUpVariants = {
-  initial: { opacity: 0, y: 10 },
+  initial: { opacity: 0, y: 8 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
+  exit: { opacity: 0, y: -8 },
 };
 
 // Slide in from right variants
 export const slideInRightVariants = {
-  initial: { opacity: 0, x: 20 },
+  initial: { opacity: 0, x: 16 },
   animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: 10 },
+  exit: { opacity: 0, x: 8 },
 };
 
 // Scale fade for popovers
 export const popoverVariants = {
-  initial: { opacity: 0, scale: 0.95, y: 10 },
+  initial: { opacity: 0, scale: 0.97, y: 6 },
   animate: { opacity: 1, scale: 1, y: 0 },
-  exit: { opacity: 0, scale: 0.98, y: 5 },
+  exit: { opacity: 0, scale: 0.98, y: 3 },
 };
 
 // Modal overlay (full-screen backdrop)
@@ -80,21 +79,21 @@ export const modalOverlayVariants = {
 
 // Modal content (centered panel)
 export const modalContentVariants = {
-  initial: { opacity: 0, scale: 0.96 },
-  animate: { opacity: 1, scale: 1 },
-  exit: { opacity: 0, scale: 0.98 },
+  initial: { opacity: 0, scale: 0.97, y: 8 },
+  animate: { opacity: 1, scale: 1, y: 0 },
+  exit: { opacity: 0, scale: 0.98, y: 4 },
 };
 
 // Action slide animation for navigating between forms
 export const actionSlideVariants = {
   initial: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? 40 : -40,
+    x: direction > 0 ? 32 : -32,
   }),
   animate: { opacity: 1, x: 0 },
   exit: (direction: number) => ({
     opacity: 0,
-    x: direction > 0 ? -40 : 40,
+    x: direction > 0 ? -32 : 32,
   }),
 };
 
@@ -104,8 +103,8 @@ export const chatboxQuickActionsVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.05,
-      delayChildren: 0.1,
+      staggerChildren: 0.04,
+      delayChildren: 0.08,
     },
   },
   exit: { opacity: 0 },
@@ -113,19 +112,43 @@ export const chatboxQuickActionsVariants = {
 
 // Individual quick action chip
 export const chatboxChipVariants = {
-  hidden: { opacity: 0, y: 8, scale: 0.95 },
+  hidden: { opacity: 0, y: 6, scale: 0.97 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: springs.quick,
   },
-  exit: { opacity: 0, y: -4, scale: 0.98 },
+  exit: { opacity: 0, y: -3, scale: 0.98 },
+};
+
+// Card grid stagger — tuned for contact/CRM grids with wider cascade
+export const cardGridContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.04,
+      delayChildren: 0.06,
+    },
+  },
+};
+
+export const cardGridItem = {
+  hidden: {
+    opacity: 0,
+    y: 14,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: springs.gentle,
+  },
 };
 
 // Chat message entrance
 export const chatMessageVariants = {
-  hidden: { opacity: 0, y: 10, scale: 0.98 },
+  hidden: { opacity: 0, y: 8, scale: 0.98 },
   visible: {
     opacity: 1,
     y: 0,

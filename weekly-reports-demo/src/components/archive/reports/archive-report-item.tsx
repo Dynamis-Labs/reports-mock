@@ -1,7 +1,8 @@
-import { FileText, ChevronRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { File01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { cn } from "../../../lib/utils";
-import { springs } from "../../../lib/motion";
+import { cn, formatDate } from "@lib/utils";
+import { springs } from "@lib/motion";
 import type { ArchivedReportType } from "./report-card";
 
 interface ArchivedReportItem {
@@ -47,10 +48,6 @@ function getTypeConfig(type: ArchivedReportType) {
   return configs[type];
 }
 
-function formatShortDate(date: Date): string {
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
 /**
  * Compact report item for archive list (matches archive-sidebar style)
  */
@@ -66,7 +63,7 @@ export function ArchiveReportItem({
       type="button"
       onClick={onClick}
       className={cn(
-        "group w-full text-left px-3 py-3 rounded-md",
+        "group w-full text-left px-3 py-3 rounded-[var(--radius-md)]",
         "transition-colors duration-150 cursor-pointer",
         isSelected ? "bg-accent-muted" : "hover:bg-muted/70",
       )}
@@ -84,8 +81,10 @@ export function ArchiveReportItem({
                 : "bg-slate-300 dark:bg-slate-600",
             )}
           />
-          <FileText
-            className={cn("size-3.5 shrink-0", typeConfig.textClass)}
+          <HugeiconsIcon
+            icon={File01Icon}
+            size={14}
+            className={cn("shrink-0", typeConfig.textClass)}
             strokeWidth={1.5}
           />
         </div>
@@ -116,14 +115,16 @@ export function ArchiveReportItem({
             </span>
             <span className="text-[10px] text-muted-foreground/40">·</span>
             <span className="text-[11px] text-muted-foreground/50 tabular-nums">
-              {formatShortDate(report.date)}
+              {formatDate(report.date)}
             </span>
           </div>
         </div>
 
         {/* Chevron */}
-        <ChevronRight
-          className="size-4 text-muted-foreground/30 shrink-0 mt-0.5"
+        <HugeiconsIcon
+          icon={ArrowRight01Icon}
+          size={16}
+          className="text-muted-foreground/30 shrink-0 mt-0.5"
           strokeWidth={1.5}
         />
       </div>

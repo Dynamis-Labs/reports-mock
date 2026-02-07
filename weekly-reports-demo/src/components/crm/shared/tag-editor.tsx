@@ -124,7 +124,7 @@ export function TagEditor({
             <HugeiconsIcon
               icon={PlusSignIcon}
               size={compact ? 12 : 14}
-              strokeWidth={1.5}
+              strokeWidth={2}
               className={cn(
                 "absolute top-1/2 -translate-y-1/2 text-muted-foreground/50 pointer-events-none",
                 compact ? "left-2" : "left-3",
@@ -175,7 +175,7 @@ export function TagEditor({
                   onClick={() => addTag(suggestion)}
                   onMouseEnter={() => setHighlightedIndex(index)}
                   className={cn(
-                    "w-full px-3 py-1.5 text-left text-ui",
+                    "w-full px-3 py-1.5 text-left text-ui capitalize",
                     "transition-colors duration-100",
                     highlightedIndex === index
                       ? "bg-muted/50 text-foreground"
@@ -204,6 +204,7 @@ export function TagEditor({
                 "text-muted-foreground font-medium",
                 "transition-colors duration-200",
                 "hover:border-border hover:bg-muted/30",
+                "capitalize",
                 compact
                   ? "gap-1 px-2 py-0.5 text-micro rounded-full"
                   : "gap-1.5 px-2.5 py-1 text-caption rounded-full",
@@ -218,7 +219,7 @@ export function TagEditor({
                 <HugeiconsIcon
                   icon={Cancel01Icon}
                   size={compact ? 10 : 12}
-                  strokeWidth={1.5}
+                  strokeWidth={2}
                 />
               </button>
             </span>

@@ -43,9 +43,6 @@ export type CommunicationStyle =
   | "formal" // Professional, structured
   | "casual"; // Relaxed, conversational
 
-/** Contact warmth indicator */
-export type RelationshipWarmth = "hot" | "warm" | "cool" | "cold" | "new";
-
 /** Contact category for grouping */
 export type ContactCategory = "investor" | "client" | "other";
 
@@ -128,6 +125,16 @@ export interface ContactInsights {
   companyNews?: CompanyNewsItem[];
 }
 
+/** Auto-extracted personal tidbits from meetings/emails */
+export interface InterestingFact {
+  id: string;
+  content: string;
+  /** Attribution: e.g., "Meeting - Dec 2025", "Slack - Jan 2026" */
+  source: string;
+  extractedAt: Date;
+  category: "hobby" | "family" | "travel" | "preference" | "career" | "general";
+}
+
 /** User-written notes and observations */
 export interface ContactNotes {
   /** Main custom note (user-written description) */
@@ -170,7 +177,6 @@ export interface Contact {
   // ─── Relationship Classification ─────────────────────────────────────────
   relationship: RelationshipType;
   relationshipScore: number; // 0-100, used for visual indicators
-  warmth: RelationshipWarmth;
   communicationStyle?: CommunicationStyle;
 
   /** Category for accordion grouping: investor, client, or other */
@@ -189,6 +195,9 @@ export interface Contact {
 
   /** User-written notes */
   notes: ContactNotes;
+
+  /** Auto-extracted personal tidbits for relationship building */
+  interestingFacts: InterestingFact[];
 
   // ─── Conversation Context ────────────────────────────────────────────────
   /** Recent discussion topics (for quick reference) */
@@ -217,24 +226,16 @@ export type ContactSortField =
   | "name"
   | "company"
   | "lastContacted"
-  | "relationshipScore"
-  | "warmth";
+  | "relationshipScore";
 
 export type SortDirection = "asc" | "desc";
 
+/** Metadata for a unified CRM tag (role-based, company-based, or custom) */
+export interface CrmTagMeta {
+  label: string;
+  type: "role" | "company" | "custom";
+  count: number;
+}
+
 /** Card display style for CRM */
 export type CrmCardStyle = "polaroid" | "magazine" | "bubble";
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Helper Functions
-// ─────────────────────────────────────────────────────────────────────────────
-
-/** Get full name from contact */
-export function getFullName(contact: Contact): string {
-  return `${contact.firstName} ${contact.lastName}`;
-}
-
-/** Get initials for avatar fallback */
-export function getInitials(contact: Contact): string {
-  return `${contact.firstName[0]}${contact.lastName[0]}`.toUpperCase();
-}

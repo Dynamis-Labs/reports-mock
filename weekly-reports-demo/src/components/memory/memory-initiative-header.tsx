@@ -1,8 +1,9 @@
 import { motion, AnimatePresence } from "motion/react";
-import { Target, Calendar } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { springs } from "../../lib/motion";
-import { initiativeCategoryColors, type Initiative } from "../../types/memory";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Target01Icon, Calendar01Icon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import { initiativeCategoryColors, type Initiative } from "@types/memory";
 
 /**
  * Initiative Header
@@ -38,8 +39,13 @@ function EmptyState() {
   return (
     <div className="border-b border-border bg-surface-elevated/50 px-6 py-4">
       <div className="flex items-center gap-3 text-muted-foreground">
-        <div className="size-8 rounded-lg bg-muted/50 flex items-center justify-center">
-          <Target className="size-4 opacity-50" strokeWidth={1.5} />
+        <div className="size-8 rounded-[var(--radius-lg)] bg-muted/50 flex items-center justify-center">
+          <HugeiconsIcon
+            icon={Target01Icon}
+            size={16}
+            strokeWidth={1.5}
+            className="opacity-50"
+          />
         </div>
         <div>
           <p className="text-sm font-semibold text-foreground/70">
@@ -91,7 +97,11 @@ export function MemoryInitiativeHeader({
             {/* Date range + Category */}
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <div className="flex items-center gap-1">
-                <Calendar className="size-3" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={Calendar01Icon}
+                  size={12}
+                  strokeWidth={1.5}
+                />
                 <span>
                   {formatDateRange(initiative.startDate, initiative.targetDate)}
                 </span>

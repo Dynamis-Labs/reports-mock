@@ -1,6 +1,6 @@
-import { useSourcesStore } from "../../stores/sources-store";
-import { Button } from "../ui/button";
-import type { SourceItem } from "../../types/sources";
+import { useSourcesStore } from "@stores/sources-store";
+import { Button } from "@components/ui/button";
+import type { SourceItem } from "@types/sources";
 
 interface SourcesButtonProps {
   sectionId: string;

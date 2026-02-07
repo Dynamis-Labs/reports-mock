@@ -1,5 +1,10 @@
-import { Video, Play, Download } from "lucide-react";
-import { Button } from "../../ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Video01Icon,
+  PlayIcon,
+  Download01Icon,
+} from "@hugeicons/core-free-icons";
+import { Button } from "@components/ui/button";
 
 interface MeetingRecordingBannerProps {
   recordingUrl?: string;
@@ -26,9 +31,11 @@ export function MeetingRecordingBanner({
   return (
     <div className="flex items-center justify-between p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-800/30">
       <div className="flex items-center gap-3">
-        <div className="size-10 rounded-lg bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
-          <Video
-            className="size-5 text-amber-600 dark:text-amber-400"
+        <div className="size-10 rounded-[var(--radius-lg)] bg-amber-100 dark:bg-amber-900/50 flex items-center justify-center">
+          <HugeiconsIcon
+            icon={Video01Icon}
+            size={20}
+            className="text-amber-600 dark:text-amber-400"
             strokeWidth={1.5}
           />
         </div>
@@ -44,16 +51,23 @@ export function MeetingRecordingBanner({
 
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" onClick={handleWatch}>
-          <Play className="size-3.5 mr-1.5" strokeWidth={1.5} />
+          <HugeiconsIcon
+            icon={PlayIcon}
+            size={14}
+            strokeWidth={1.5}
+            className="mr-1.5"
+          />
           Watch
         </Button>
         <button
           type="button"
           onClick={onDownload}
-          className="size-8 flex items-center justify-center rounded-md hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors"
+          className="size-8 flex items-center justify-center rounded-[var(--radius-md)] hover:bg-amber-100 dark:hover:bg-amber-900/50 transition-colors"
         >
-          <Download
-            className="size-4 text-muted-foreground"
+          <HugeiconsIcon
+            icon={Download01Icon}
+            size={16}
+            className="text-muted-foreground"
             strokeWidth={1.5}
           />
         </button>

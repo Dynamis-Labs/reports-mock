@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { IconNav } from "./icon-nav";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 const SIDEBAR_WIDTH = 220;
 

@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Mail, Calendar, Plus, X, Check, AlertTriangle } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Mail01Icon,
+  Calendar01Icon,
+  PlusSignIcon,
+  Cancel01Icon,
+  Tick01Icon,
+  Alert01Icon,
+} from "@hugeicons/core-free-icons";
 import type { LayoutProps } from "./types";
-import { Input } from "../../ui/input";
-import { Textarea } from "../../ui/textarea";
-import { springs } from "../../../lib/motion";
-import type { Participant } from "../../../types/action";
+import { Input } from "@components/ui/input";
+import { Textarea } from "@components/ui/textarea";
+import { springs } from "@lib/motion";
+import type { Participant } from "@types/action";
 
 export function SplitPanelLayout({
   action,
@@ -20,7 +28,7 @@ export function SplitPanelLayout({
 
   const isEmail = action.type === "email";
   const participants = isEmail ? action.recipients : action.participants;
-  const Icon = isEmail ? Mail : Calendar;
+  const iconType = isEmail ? Mail01Icon : Calendar01Icon;
   const typeLabel = isEmail ? "Send Email" : "Schedule Meeting";
   const participantLabel = isEmail ? "Recipients" : "Participants";
 
@@ -56,7 +64,7 @@ export function SplitPanelLayout({
         {/* Action header */}
         <div className="space-y-1">
           <div className="flex items-center gap-1.5 text-modal-label text-muted-foreground">
-            <Icon className="size-3.5" strokeWidth={1.5} />
+            <HugeiconsIcon icon={iconType} size={14} strokeWidth={1.5} />
             <span>{typeLabel}</span>
           </div>
           <h3 className="font-semibold text-modal-title text-foreground leading-tight">
@@ -67,7 +75,7 @@ export function SplitPanelLayout({
         {/* Calendar warning for meetings */}
         {!isEmail && !action.calendarConnected && (
           <p className="text-modal-micro text-muted-foreground flex items-center gap-1.5">
-            <AlertTriangle className="size-3" strokeWidth={1.5} />
+            <HugeiconsIcon icon={Alert01Icon} size={12} strokeWidth={1.5} />
             <span>
               Calendar not connected —{" "}
               <button className="underline hover:text-foreground transition-colors">
@@ -85,14 +93,14 @@ export function SplitPanelLayout({
             </label>
             <button
               onClick={() => setIsAdding(true)}
-              className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-white"
+              className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
               aria-label={`Add ${participantLabel.toLowerCase()}`}
             >
-              <Plus className="size-3.5" strokeWidth={1.5} />
+              <HugeiconsIcon icon={PlusSignIcon} size={14} strokeWidth={1.5} />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto border border-border-subtle rounded-lg bg-muted/20">
+          <div className="flex-1 overflow-y-auto border border-border-subtle rounded-[var(--radius-lg)] bg-muted/20">
             <div className="p-2">
               <AnimatePresence mode="popLayout">
                 {participants.map((participant) => (
@@ -133,12 +141,14 @@ export function SplitPanelLayout({
 
                       <button
                         onClick={() => onRemoveParticipant(participant.id)}
-                        className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-muted hover:text-white transition-all"
+                        className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-muted hover:text-foreground transition-all"
                         aria-label={`Remove ${participant.name}`}
                       >
-                        <X
-                          className="size-3 text-muted-foreground"
+                        <HugeiconsIcon
+                          icon={Cancel01Icon}
+                          size={12}
                           strokeWidth={1.5}
+                          className="text-muted-foreground"
                         />
                       </button>
                     </div>
@@ -176,7 +186,11 @@ export function SplitPanelLayout({
                       disabled={!newName.trim()}
                       className="p-1 text-muted-foreground hover:text-foreground disabled:opacity-40 transition-colors"
                     >
-                      <Check className="size-4" strokeWidth={1.5} />
+                      <HugeiconsIcon
+                        icon={Tick01Icon}
+                        size={16}
+                        strokeWidth={1.5}
+                      />
                     </button>
                     <button
                       onClick={() => {
@@ -186,7 +200,11 @@ export function SplitPanelLayout({
                       }}
                       className="p-1 text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      <X className="size-4" strokeWidth={1.5} />
+                      <HugeiconsIcon
+                        icon={Cancel01Icon}
+                        size={16}
+                        strokeWidth={1.5}
+                      />
                     </button>
                   </div>
                 </motion.div>

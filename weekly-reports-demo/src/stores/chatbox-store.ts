@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { PRDSourceContext } from "../types/sources";
+import type { PRDSourceContext } from "@types/sources";
 
 export type ChatboxState = "collapsed" | "expanded" | "chat";
 
@@ -28,6 +28,7 @@ interface ChatboxStore {
   loadingPhase: LoadingPhase | null;
   loadingContext: string | null;
   thinkingStartTime: number | null;
+  contactContext: { contactId: string; contactName: string } | null;
 
   // Actions
   expand: () => void;
@@ -35,6 +36,10 @@ interface ChatboxStore {
   enterChatMode: () => void;
   setInputValue: (value: string) => void;
   sendMessage: (content: string) => void;
+  setContactContext: (
+    context: { contactId: string; contactName: string } | null,
+  ) => void;
+  clearContactContext: () => void;
   addAssistantMessage: (
     content: string,
     thinkingTime?: number,
@@ -56,6 +61,17 @@ const HARDCODED_RESPONSE = `**We just closed Softbank!** Thanks to Al and Andrey
 - Consider preparing a deck for the follow-up meeting
 
 Would you like me to draft an agenda for the next session?`;
+
+const CONTACT_HARDCODED_RESPONSE = (
+  name: string,
+) => `Here's what I know about **${name}**:
+
+- You've had 5 interactions over the past 3 months
+- Last met at the quarterly review on January 15th
+- Key topics discussed: product roadmap, Q1 targets, hiring plans
+- They mentioned interest in expanding the partnership scope
+
+Would you like me to draft a follow-up email or prep notes for your next meeting?`;
 
 const HARDCODED_PRD = `## Cross-Team Collaboration Tool
 
@@ -106,6 +122,7 @@ export const useChatboxStore = create<ChatboxStore>((set, get) => ({
   loadingPhase: null,
   loadingContext: null,
   thinkingStartTime: null,
+  contactContext: null,
 
   expand: () => set({ state: "expanded" }),
 
@@ -115,8 +132,13 @@ export const useChatboxStore = create<ChatboxStore>((set, get) => ({
 
   setInputValue: (value: string) => set({ inputValue: value }),
 
+  setContactContext: (context) => set({ contactContext: context }),
+  clearContactContext: () => set({ contactContext: null }),
+
   sendMessage: (content: string) => {
     if (!content.trim()) return;
+
+    const { contactContext } = get();
 
     const userMessage: Message = {
       id: `msg-${Date.now()}`,
@@ -141,14 +163,19 @@ export const useChatboxStore = create<ChatboxStore>((set, get) => ({
     setTimeout(() => {
       set({
         loadingPhase: "analyzing",
-        loadingContext: "product launch momentum",
+        loadingContext: contactContext
+          ? `${contactContext.contactName}'s history`
+          : "product launch momentum",
       });
     }, 800);
 
     // Phase 2: Complete and show response
     setTimeout(() => {
       const thinkingTime = Math.round((Date.now() - startTime) / 1000);
-      get().addAssistantMessage(HARDCODED_RESPONSE, thinkingTime);
+      const response = contactContext
+        ? CONTACT_HARDCODED_RESPONSE(contactContext.contactName)
+        : HARDCODED_RESPONSE;
+      get().addAssistantMessage(response, thinkingTime);
     }, 2500);
   },
 
@@ -187,6 +214,7 @@ export const useChatboxStore = create<ChatboxStore>((set, get) => ({
       loadingPhase: null,
       loadingContext: null,
       thinkingStartTime: null,
+      contactContext: null,
     }),
 
   triggerPRDGeneration: (sourceContext: PRDSourceContext, prompt: string) => {

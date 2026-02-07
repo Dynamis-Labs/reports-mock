@@ -11,10 +11,10 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 import { PersonalTaskCard } from "./personal-task-card";
-import { useHomeStore } from "../../stores/home-store";
-import { mockPersonalTasks } from "../../data/mock-home";
+import { useHomeStore } from "@stores/home-store";
+import { mockPersonalTasks } from "@data/mock-home";
 
 export function PersonalSwimlane() {
   const scrollRef = useRef<HTMLDivElement>(null);

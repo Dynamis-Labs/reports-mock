@@ -1,8 +1,8 @@
 import { motion } from "motion/react";
-import { staggerContainer, staggerItem } from "../../lib/motion";
-import { SourcesButton } from "../sources";
+import { staggerContainer, staggerItem } from "@lib/motion";
+import { SourcesButton } from "@components/sources";
 import { ActionItems } from "./action-items";
-import type { WeeklyReport } from "../../data/mock-reports";
+import type { WeeklyReport } from "@data/mock-reports";
 
 interface LeadershipDigestProps {
   report: WeeklyReport;

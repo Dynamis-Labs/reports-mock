@@ -3,7 +3,7 @@ import { MemoryInitiativeHeader } from "./memory-initiative-header";
 import { MemoryTimeline } from "./memory-timeline";
 import { MemoryEventDetail } from "./memory-event-detail";
 import { MemorySourcesPanel } from "./memory-sources-panel";
-import { useMemoryStore } from "../../stores/memory-store";
+import { useMemoryStore } from "@stores/memory-store";
 
 /**
  * Memory Page

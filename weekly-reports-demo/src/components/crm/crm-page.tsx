@@ -1,26 +1,26 @@
 import { useMemo } from "react";
-import { Users } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { UserGroupIcon } from "@hugeicons/core-free-icons";
 import { CrmHeader } from "./crm-header";
 import { CardGridLayout } from "./layouts";
-import { useCrmStore } from "../../stores/crm-store";
+import { useCrmStore } from "@stores/crm-store";
+import { contactMatchesTags, contactMatchesRecency } from "@lib/crm-tag-utils";
 
 /**
  * CRM Page
  *
  * Clean, full-width contact management page with card grid layout.
- * Editorial design aesthetic - generous spacing, refined typography.
+ * Unified filtering via tags (auto + custom) and recency buckets.
  */
 
-export function CrmPage() {
-  const {
-    contacts,
-    searchQuery,
-    selectedTags,
-    selectedRelationships,
-    selectedCategories,
-  } = useCrmStore();
+interface CrmPageProps {
+  onViewAllMeetings?: (contact: import("@types/contact").Contact) => void;
+}
 
-  // Filter contacts based on search and filters
+export function CrmPage({ onViewAllMeetings }: CrmPageProps) {
+  const { contacts, searchQuery, selectedTags, selectedRecencyFilter } =
+    useCrmStore();
+
   const filteredContacts = useMemo(() => {
     return contacts.filter((contact) => {
       // Search filter
@@ -39,37 +39,22 @@ export function CrmPage() {
         if (!searchableText.includes(query)) return false;
       }
 
-      // Tag filter
-      if (selectedTags.length > 0) {
-        const contactTags = [...contact.tags, ...contact.roleBadges];
-        if (!selectedTags.some((tag) => contactTags.includes(tag))) {
-          return false;
-        }
+      // Unified tag filter (auto + custom)
+      if (
+        selectedTags.length > 0 &&
+        !contactMatchesTags(contact, selectedTags)
+      ) {
+        return false;
       }
 
-      // Relationship filter
-      if (selectedRelationships.length > 0) {
-        if (!selectedRelationships.includes(contact.relationship)) {
-          return false;
-        }
-      }
-
-      // Category filter
-      if (selectedCategories.length > 0) {
-        if (!selectedCategories.includes(contact.category)) {
-          return false;
-        }
+      // Recency filter
+      if (!contactMatchesRecency(contact, selectedRecencyFilter)) {
+        return false;
       }
 
       return true;
     });
-  }, [
-    contacts,
-    searchQuery,
-    selectedTags,
-    selectedRelationships,
-    selectedCategories,
-  ]);
+  }, [contacts, searchQuery, selectedTags, selectedRecencyFilter]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-background">
@@ -79,20 +64,25 @@ export function CrmPage() {
         {filteredContacts.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
-              <Users
-                className="size-12 mx-auto mb-4 text-muted-foreground/20"
+              <HugeiconsIcon
+                icon={UserGroupIcon}
+                size={48}
                 strokeWidth={1}
+                className="mx-auto mb-4 text-muted-foreground/20"
               />
               <p className="text-muted-foreground font-medium">
                 No contacts found
               </p>
-              <p className="text-sm text-muted-foreground/50 mt-1">
+              <p className="text-caption text-muted-foreground/50 mt-1">
                 Try adjusting your search or filters
               </p>
             </div>
           </div>
         ) : (
-          <CardGridLayout contacts={filteredContacts} />
+          <CardGridLayout
+            contacts={filteredContacts}
+            onViewAllMeetings={onViewAllMeetings}
+          />
         )}
       </div>
     </div>

@@ -1,6 +1,6 @@
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import type { ComponentProps } from "react";
-import { cn, getInitials } from "../../lib/utils";
+import { cn, getInitials } from "@lib/utils";
 
 interface AvatarProps extends ComponentProps<typeof AvatarPrimitive.Root> {
   name?: string;
@@ -38,7 +38,7 @@ export function Avatar({
         />
       )}
       <AvatarPrimitive.Fallback
-        className="flex h-full w-full items-center justify-center bg-muted font-medium text-white"
+        className="flex h-full w-full items-center justify-center bg-neutral-200 font-medium text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300"
         delayMs={src ? 600 : 0}
       >
         {name ? getInitials(name) : "?"}

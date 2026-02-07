@@ -40,7 +40,7 @@ export function formatRelativeTimeShort(date: Date): string {
 // Meeting-specific utilities
 // ─────────────────────────────────────────────────────────────────────────────
 
-import type { Meeting } from "../types/meeting";
+import type { Meeting } from "@types/meeting";
 
 /**
  * Parses a time string (e.g., "2:00 PM") and combines it with a date

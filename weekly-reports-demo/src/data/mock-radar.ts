@@ -1,4 +1,4 @@
-import type { RadarItem } from "../types/radar";
+import type { RadarItem } from "@types/radar";
 
 export const mockRadarItems: RadarItem[] = [
   {

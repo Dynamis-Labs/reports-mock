@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ViewMode } from "../components/layout/reports-radar-toggle";
+import type { ViewMode } from "@components/layout/reports-radar-toggle";
 
 interface ReportsState {
   // View toggle

@@ -1,7 +1,8 @@
-import { Clock } from "lucide-react";
-import { cn } from "../../../lib/utils";
-import { useCountdownWithTime } from "./use-countdown";
-import type { Meeting } from "../../../types/meeting";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Clock01Icon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { useCountdownWithTime } from "@hooks/use-countdown";
+import type { Meeting } from "@types/meeting";
 
 interface CountdownTimerProps {
   meeting: Meeting;
@@ -28,7 +29,7 @@ export function CountdownTimer({
         className,
       )}
     >
-      {showIcon && <Clock className="size-3.5" />}
+      {showIcon && <HugeiconsIcon icon={Clock01Icon} size={14} />}
       <span>{countdown}</span>
     </div>
   );

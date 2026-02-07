@@ -1,12 +1,17 @@
-import { FileText, MessageSquare, Users } from "lucide-react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
+import {
+  File01Icon,
+  Message01Icon,
+  UserGroupIcon,
+} from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { cn } from "../../../lib/utils";
-import { springs } from "../../../lib/motion";
-import type { MeetingDetailTab } from "../../../stores/archive-store";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import type { MeetingDetailTab } from "@stores/archive-store";
 
 interface TabConfig {
   id: MeetingDetailTab;
-  icon: typeof FileText;
+  icon: IconSvgElement;
   label: string;
 }
 
@@ -28,9 +33,9 @@ export function MeetingDetailTabs({
   className,
 }: MeetingDetailTabsProps) {
   const tabs: TabConfig[] = [
-    { id: "summary", icon: FileText, label: "Summary" },
-    { id: "transcript", icon: MessageSquare, label: "Transcript" },
-    { id: "attendees", icon: Users, label: `Attendees` },
+    { id: "summary", icon: File01Icon, label: "Summary" },
+    { id: "transcript", icon: Message01Icon, label: "Transcript" },
+    { id: "attendees", icon: UserGroupIcon, label: `Attendees` },
   ];
 
   return (
@@ -40,7 +45,7 @@ export function MeetingDetailTabs({
         className,
       )}
     >
-      {tabs.map(({ id, icon: Icon, label }) => {
+      {tabs.map(({ id, icon, label }) => {
         const isActive = activeTab === id;
 
         return (
@@ -56,7 +61,7 @@ export function MeetingDetailTabs({
                 : "text-muted-foreground hover:text-foreground/70",
             )}
           >
-            <Icon className="size-3" strokeWidth={1.5} />
+            <HugeiconsIcon icon={icon} size={12} strokeWidth={1.5} />
             <span>{label}</span>
             {id === "attendees" && (
               <span className="text-[10px] text-muted-foreground/60 tabular-nums ml-0.5">

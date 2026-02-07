@@ -1,10 +1,7 @@
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
-import type { Initiative } from "../../types/memory";
-import {
-  useMemoryStore,
-  useIsInitiativeSelected,
-} from "../../stores/memory-store";
+import { cn } from "@lib/utils";
+import type { Initiative } from "@types/memory";
+import { useMemoryStore, useIsInitiativeSelected } from "@stores/memory-store";
 
 /**
  * Initiative Sidebar
@@ -26,7 +23,7 @@ function InitiativeItem({ initiative }: InitiativeItemProps) {
       type="button"
       onClick={() => selectInitiative(initiative.id)}
       className={cn(
-        "w-full text-left px-3 py-2.5 rounded-md",
+        "w-full text-left px-3 py-2.5 rounded-[var(--radius-md)]",
         "transition-colors duration-150",
         isSelected
           ? "bg-accent-muted text-foreground"

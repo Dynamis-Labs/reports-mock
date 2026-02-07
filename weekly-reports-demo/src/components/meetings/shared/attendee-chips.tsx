@@ -1,5 +1,5 @@
-import { cn } from "../../../lib/utils";
-import type { MeetingAttendee } from "../../../types/meeting";
+import { cn } from "@lib/utils";
+import type { MeetingAttendee } from "@types/meeting";
 
 interface AttendeeChipsProps {
   attendees: MeetingAttendee[];

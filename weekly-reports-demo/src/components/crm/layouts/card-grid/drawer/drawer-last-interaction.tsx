@@ -41,7 +41,7 @@ function ZoomIcon({ className }: { className?: string }) {
 function InPersonIcon({ className }: { className?: string }) {
   return (
     <span className={cn("text-orange-500", className)}>
-      <HugeiconsIcon icon={MapPinIcon} size={16} strokeWidth={1.8} />
+      <HugeiconsIcon icon={MapPinIcon} size={16} strokeWidth={2.2} />
     </span>
   );
 }
@@ -49,7 +49,7 @@ function InPersonIcon({ className }: { className?: string }) {
 function PhoneCallIcon({ className }: { className?: string }) {
   return (
     <span className={cn("text-slate-500", className)}>
-      <HugeiconsIcon icon={CallIcon} size={16} strokeWidth={1.8} />
+      <HugeiconsIcon icon={CallIcon} size={16} strokeWidth={2.2} />
     </span>
   );
 }
@@ -177,7 +177,7 @@ export function DrawerLastInteraction({
         className="inline-flex items-center gap-1 text-caption text-accent hover:text-accent/80 transition-colors mt-2"
       >
         View more
-        <HugeiconsIcon icon={ArrowUpRight01Icon} size={12} strokeWidth={1.5} />
+        <HugeiconsIcon icon={ArrowUpRight01Icon} size={12} strokeWidth={2} />
       </button>
     </section>
   );

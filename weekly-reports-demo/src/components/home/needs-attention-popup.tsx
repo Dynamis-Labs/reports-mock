@@ -11,13 +11,14 @@
 import { useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { X } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { springs } from "../../lib/motion";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Cancel01Icon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
 import { InvolvementTabItem } from "./involvement-tab-item";
-import { useHomeStore } from "../../stores/home-store";
-import { mockInvolvementItems } from "../../data/mock-home";
-import type { InvolvementItem } from "../../types/home";
+import { useHomeStore } from "@stores/home-store";
+import { mockInvolvementItems } from "@data/mock-home";
+import type { InvolvementItem } from "@types/home";
 
 interface NeedsAttentionPopupProps {
   onNavigateToMemory: (initiativeId: string) => void;
@@ -136,9 +137,13 @@ export function NeedsAttentionPopup({
                 {/* Close button */}
                 <button
                   onClick={closePopup}
-                  className="p-2 -m-2 text-muted-foreground/50 hover:text-foreground rounded-lg hover:bg-muted/50 transition-colors"
+                  className="p-2 -m-2 text-muted-foreground/50 hover:text-foreground rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors"
                 >
-                  <X className="size-5" strokeWidth={1.5} />
+                  <HugeiconsIcon
+                    icon={Cancel01Icon}
+                    size={20}
+                    strokeWidth={1.5}
+                  />
                 </button>
               </div>
             </header>

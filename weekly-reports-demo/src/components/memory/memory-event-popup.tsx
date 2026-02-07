@@ -1,22 +1,23 @@
 import { useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  X,
-  Mail,
-  FileText,
-  Calendar,
-  MessageSquare,
-  Video,
-  ExternalLink,
-  Check,
-  Circle,
-} from "lucide-react";
-import { cn } from "../../lib/utils";
-import { Avatar } from "../ui/avatar";
-import { springs } from "../../lib/motion";
-import { eventTypeConfig, type MemorySource } from "../../types/memory";
-import { useMemoryStore } from "../../stores/memory-store";
+  Cancel01Icon,
+  Mail01Icon,
+  File01Icon,
+  Calendar01Icon,
+  Message01Icon,
+  Video01Icon,
+  Link03Icon,
+  Tick01Icon,
+  CircleIcon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { Avatar } from "@components/ui/avatar";
+import { springs } from "@lib/motion";
+import { eventTypeConfig, type MemorySource } from "@types/memory";
+import { useMemoryStore } from "@stores/memory-store";
 
 /**
  * Memory Event Popup
@@ -37,12 +38,12 @@ function formatFullDate(date: Date): string {
   });
 }
 
-const sourceIcons: Record<MemorySource["type"], typeof Mail> = {
-  email: Mail,
-  document: FileText,
-  meeting: Video,
-  slack: MessageSquare,
-  calendar: Calendar,
+const sourceIcons: Record<MemorySource["type"], typeof Mail01Icon> = {
+  email: Mail01Icon,
+  document: File01Icon,
+  meeting: Video01Icon,
+  slack: Message01Icon,
+  calendar: Calendar01Icon,
 };
 
 const sourceLabels: Record<MemorySource["type"], string> = {
@@ -147,12 +148,11 @@ export function MemoryEventPopup() {
                       <>
                         <span>·</span>
                         <span className="flex items-center gap-1">
-                          {(() => {
-                            const Icon = sourceIcons[event.sources[0].type];
-                            return (
-                              <Icon className="size-3.5" strokeWidth={1.5} />
-                            );
-                          })()}
+                          <HugeiconsIcon
+                            icon={sourceIcons[event.sources[0].type]}
+                            size={14}
+                            strokeWidth={1.5}
+                          />
                           {sourceLabels[event.sources[0].type]}
                         </span>
                       </>
@@ -163,9 +163,13 @@ export function MemoryEventPopup() {
                 {/* Close button */}
                 <button
                   onClick={closePopup}
-                  className="p-2 -m-2 text-muted-foreground/50 hover:text-foreground rounded-lg hover:bg-muted/50 transition-colors"
+                  className="p-2 -m-2 text-muted-foreground/50 hover:text-foreground rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors"
                 >
-                  <X className="size-5" strokeWidth={1.5} />
+                  <HugeiconsIcon
+                    icon={Cancel01Icon}
+                    size={20}
+                    strokeWidth={1.5}
+                  />
                 </button>
               </div>
             </header>
@@ -224,7 +228,7 @@ export function MemoryEventPopup() {
                           type="button"
                           onClick={() => toggleActionItem(event.id, item.id)}
                           className={cn(
-                            "w-full flex items-start gap-3 p-2 rounded-lg",
+                            "w-full flex items-start gap-3 p-2 rounded-[var(--radius-lg)]",
                             "text-left transition-colors hover:bg-muted/50",
                           )}
                         >
@@ -239,9 +243,18 @@ export function MemoryEventPopup() {
                             )}
                           >
                             {item.isCompleted ? (
-                              <Check className="size-3" strokeWidth={2} />
+                              <HugeiconsIcon
+                                icon={Tick01Icon}
+                                size={12}
+                                strokeWidth={2}
+                              />
                             ) : (
-                              <Circle className="size-2 opacity-0" />
+                              <HugeiconsIcon
+                                icon={CircleIcon}
+                                size={8}
+                                strokeWidth={1.5}
+                                className="opacity-0"
+                              />
                             )}
                           </span>
 
@@ -281,7 +294,7 @@ export function MemoryEventPopup() {
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {event.sources.map((source) => {
-                      const Icon = sourceIcons[source.type];
+                      const sourceIcon = sourceIcons[source.type];
                       return (
                         <a
                           key={source.id}
@@ -289,18 +302,24 @@ export function MemoryEventPopup() {
                           target={source.url ? "_blank" : undefined}
                           rel={source.url ? "noopener noreferrer" : undefined}
                           className={cn(
-                            "flex items-center gap-2 px-3 py-2 rounded-lg",
+                            "flex items-center gap-2 px-3 py-2 rounded-[var(--radius-lg)]",
                             "bg-muted/30 border border-border/40",
                             "text-caption text-muted-foreground",
-                            "hover:bg-muted/50 hover:text-white transition-colors",
+                            "hover:bg-muted/50 hover:text-foreground transition-colors",
                           )}
                         >
-                          <Icon className="size-4" strokeWidth={1.5} />
+                          <HugeiconsIcon
+                            icon={sourceIcon}
+                            size={16}
+                            strokeWidth={1.5}
+                          />
                           <span>{source.title}</span>
                           {source.url && (
-                            <ExternalLink
-                              className="size-3 opacity-50"
+                            <HugeiconsIcon
+                              icon={Link03Icon}
+                              size={12}
                               strokeWidth={1.5}
+                              className="opacity-50"
                             />
                           )}
                         </a>
@@ -315,14 +334,14 @@ export function MemoryEventPopup() {
                 <section className="pt-4 border-t border-border/40">
                   <div className="flex flex-wrap gap-2">
                     {event.category && (
-                      <span className="px-2.5 py-1 rounded-md bg-accent-muted text-caption text-accent font-medium">
+                      <span className="px-2.5 py-1 rounded-[var(--radius-md)] bg-accent-muted text-caption text-accent font-medium">
                         {event.category}
                       </span>
                     )}
                     {event.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="px-2 py-1 rounded-md bg-muted text-caption text-white"
+                        className="px-2 py-1 rounded-[var(--radius-md)] bg-muted text-caption text-foreground"
                       >
                         {tag}
                       </span>

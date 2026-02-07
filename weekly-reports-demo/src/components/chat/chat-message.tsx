@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { ChevronRight } from "lucide-react";
-import { chatMessageVariants } from "../../lib/motion";
-import { cn } from "../../lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import { chatMessageVariants } from "@lib/motion";
+import { cn } from "@lib/utils";
 import { TypingText } from "./typing-text";
 import { PRDMessage } from "./prd-message";
-import type { Message } from "../../stores/chatbox-store";
+import type { Message } from "@stores/chatbox-store";
 
 interface ChatMessageProps {
   message: Message;
@@ -109,9 +110,11 @@ export function ChatMessage({
               )}
             >
               <span>Thought for {message.thinkingTime}s</span>
-              <ChevronRight
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                size={12}
                 className={cn(
-                  "size-3 transition-transform",
+                  "transition-transform",
                   isExpanded && "rotate-90",
                 )}
               />
@@ -152,11 +155,10 @@ export function ChatMessage({
             )}
           >
             <span>Thought for {message.thinkingTime}s</span>
-            <ChevronRight
-              className={cn(
-                "size-3 transition-transform",
-                isExpanded && "rotate-90",
-              )}
+            <HugeiconsIcon
+              icon={ArrowRight01Icon}
+              size={12}
+              className={cn("transition-transform", isExpanded && "rotate-90")}
             />
           </button>
         )}

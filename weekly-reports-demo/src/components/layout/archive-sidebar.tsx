@@ -1,16 +1,18 @@
 import { useState, useMemo } from "react";
 import { motion } from "motion/react";
-import { Settings, Search } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { springs, staggerContainer, staggerItem } from "../../lib/motion";
-import { Button } from "../ui/button";
-import { useSettingsStore } from "../../stores/settings-store";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Setting07Icon, Search01Icon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { springs, staggerContainer, staggerItem } from "@lib/motion";
+import { filterBySearch } from "@lib/search-utils";
+import { Button } from "@components/ui/button";
+import { useSettingsStore } from "@stores/settings-store";
 import {
   CATEGORY_CONFIG,
   CATEGORY_ORDER,
   type CategoryConfig,
-} from "../../lib/report-categories";
-import type { WeeklyReport, ReportCategory } from "../../data/mock-reports";
+} from "@lib/report-categories";
+import type { WeeklyReport, ReportCategory } from "@data/mock-reports";
 
 interface ArchiveSidebarProps {
   reports: WeeklyReport[];
@@ -41,7 +43,6 @@ function formatRelativeDate(date: Date): string {
  * Returns groups in the order defined by CATEGORY_ORDER.
  */
 function getLatestByCategory(reports: WeeklyReport[]): CategoryGroup[] {
-  // Two-level grouping: category → title → reports
   const byCategoryAndTitle = new Map<
     ReportCategory,
     Map<string, WeeklyReport[]>
@@ -58,7 +59,6 @@ function getLatestByCategory(reports: WeeklyReport[]): CategoryGroup[] {
     titleMap.get(report.title)!.push(report);
   }
 
-  // For each category, pick the latest report per title
   return CATEGORY_ORDER.filter((cat) => byCategoryAndTitle.has(cat)).map(
     (category) => {
       const titleMap = byCategoryAndTitle.get(category)!;
@@ -71,7 +71,6 @@ function getLatestByCategory(reports: WeeklyReport[]): CategoryGroup[] {
         latestReports.push(latest);
       }
 
-      // Sort within category by generatedAt (most recent first)
       latestReports.sort(
         (a, b) => b.generatedAt.getTime() - a.generatedAt.getTime(),
       );
@@ -95,14 +94,10 @@ export function ArchiveSidebar({
   const openSettings = useSettingsStore((state) => state.openSettings);
   const closeSettings = useSettingsStore((state) => state.closeSettings);
 
-  // Filter reports by search query
-  const filteredReports = useMemo(() => {
-    if (!searchQuery.trim()) return reports;
-    const query = searchQuery.toLowerCase();
-    return reports.filter((report) =>
-      report.title.toLowerCase().includes(query),
-    );
-  }, [reports, searchQuery]);
+  const filteredReports = useMemo(
+    () => filterBySearch(reports, searchQuery, (report) => report.title),
+    [reports, searchQuery],
+  );
 
   const categoryGroups = useMemo(
     () => getLatestByCategory(filteredReports),
@@ -123,23 +118,28 @@ export function ArchiveSidebar({
             className="size-7"
             onClick={openSettings}
           >
-            <Settings className="size-3.5" />
+            <HugeiconsIcon icon={Setting07Icon} size={14} strokeWidth={1.5} />
           </Button>
         </div>
 
         {/* Search input */}
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+          <HugeiconsIcon
+            icon={Search01Icon}
+            size={14}
+            strokeWidth={1.5}
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search..."
             className={cn(
-              "w-full h-8 pl-8 pr-3 text-xs rounded-md",
+              "w-full h-8 pl-8 pr-3 text-xs rounded-[var(--radius-md)]",
               "bg-muted/50 border-0",
               "placeholder:text-muted-foreground/60",
-              "focus:outline-none focus:ring-1 focus:ring-accent",
+              "focus:outline-none focus:ring-1 focus:ring-neutral-300 dark:focus:ring-neutral-600",
             )}
           />
         </div>
@@ -147,67 +147,66 @@ export function ArchiveSidebar({
 
       {/* Report List - grouped by category */}
       <div className="flex-1 overflow-y-auto -mx-1.5 space-y-4">
-        {categoryGroups.map((group) => {
-          const Icon = group.config.icon;
-          return (
-            <motion.div
-              key={group.key}
-              variants={staggerContainer}
-              initial="hidden"
-              animate="visible"
-            >
-              {/* Category header */}
-              <div className="flex items-center gap-2 px-2 mb-2">
-                <Icon
-                  className={cn("size-3.5", group.config.color)}
-                  strokeWidth={1.5}
-                />
-                <span className="font-semibold text-[11px] uppercase tracking-wide text-muted-foreground/60">
-                  {group.config.label}
-                </span>
-                <div className="h-px flex-1 bg-border-subtle/50" />
-              </div>
+        {categoryGroups.map((group) => (
+          <motion.div
+            key={group.key}
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+          >
+            {/* Category header */}
+            <div className="flex items-center gap-2 px-2 mb-2">
+              <HugeiconsIcon
+                icon={group.config.icon}
+                size={14}
+                strokeWidth={1.5}
+                className={group.config.color}
+              />
+              <span className="font-semibold text-[11px] uppercase tracking-wide text-muted-foreground/60">
+                {group.config.label}
+              </span>
+              <div className="h-px flex-1 bg-border-subtle/50" />
+            </div>
 
-              {/* Reports in this category */}
-              <div className="space-y-1">
-                {group.reports.map((report) => {
-                  const isSelected = selectedReportId === report.id;
-                  return (
-                    <motion.button
-                      key={report.id}
-                      variants={staggerItem}
-                      onClick={() => {
-                        onSelectReport(report.id);
-                        closeSettings();
-                      }}
+            {/* Reports in this category */}
+            <div className="space-y-1">
+              {group.reports.map((report) => {
+                const isSelected = selectedReportId === report.id;
+                return (
+                  <motion.button
+                    key={report.id}
+                    variants={staggerItem}
+                    onClick={() => {
+                      onSelectReport(report.id);
+                      closeSettings();
+                    }}
+                    className={cn(
+                      "group w-full text-left px-3 py-2.5 rounded-[var(--radius-md)]",
+                      "transition-colors duration-150 cursor-pointer",
+                      isSelected ? "bg-accent-muted" : "hover:bg-muted/70",
+                    )}
+                    whileHover={{ x: 1 }}
+                    transition={springs.quick}
+                  >
+                    <h3
                       className={cn(
-                        "group w-full text-left px-3 py-2.5 rounded-md",
-                        "transition-colors duration-150 cursor-pointer",
-                        isSelected ? "bg-accent-muted" : "hover:bg-muted/70",
+                        "font-medium text-[13px] leading-tight transition-colors",
+                        isSelected
+                          ? "text-foreground"
+                          : "text-muted-foreground group-hover:text-foreground",
                       )}
-                      whileHover={{ x: 1 }}
-                      transition={springs.quick}
                     >
-                      <h3
-                        className={cn(
-                          "font-medium text-[13px] leading-tight transition-colors",
-                          isSelected
-                            ? "text-foreground"
-                            : "text-muted-foreground group-hover:text-foreground",
-                        )}
-                      >
-                        {report.title}
-                      </h3>
-                      <span className="text-[11px] text-muted-foreground/50 mt-1 block">
-                        {formatRelativeDate(report.generatedAt)}
-                      </span>
-                    </motion.button>
-                  );
-                })}
-              </div>
-            </motion.div>
-          );
-        })}
+                      {report.title}
+                    </h3>
+                    <span className="text-[11px] text-muted-foreground/50 mt-1 block">
+                      {formatRelativeDate(report.generatedAt)}
+                    </span>
+                  </motion.button>
+                );
+              })}
+            </div>
+          </motion.div>
+        ))}
 
         {/* Empty state */}
         {categoryGroups.length === 0 && (

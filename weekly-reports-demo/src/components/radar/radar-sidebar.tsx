@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Search, Filter } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { staggerContainer, staggerItem } from "../../lib/motion";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Search01Icon, FilterIcon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { staggerContainer, staggerItem } from "@lib/motion";
 import { RadarItemCard } from "./radar-item-card";
-import { mockRadarItems } from "../../data/mock-radar";
-import type { RadarItem, RadarSeverity } from "../../types/radar";
+import { mockRadarItems } from "@data/mock-radar";
+import type { RadarItem, RadarSeverity } from "@types/radar";
 
 interface RadarSidebarProps {
   selectedItemId: string | null;
@@ -66,10 +67,9 @@ export function RadarSidebar({
 
         {/* Search */}
         <div className="relative mb-2">
-          <Search
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground"
-            strokeWidth={1.5}
-          />
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+            <HugeiconsIcon icon={Search01Icon} size={14} strokeWidth={1.5} />
+          </span>
           <input
             type="text"
             placeholder="Search..."
@@ -77,7 +77,7 @@ export function RadarSidebar({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className={cn(
-              "w-full h-7 pl-8 pr-3 text-xs rounded-md",
+              "w-full h-7 pl-8 pr-3 text-xs rounded-[var(--radius-md)]",
               "bg-muted/50 border-0",
               "placeholder:text-muted-foreground/60",
               "focus:outline-none focus:ring-1 focus:ring-accent",
@@ -97,13 +97,11 @@ export function RadarSidebar({
             "hover:text-foreground transition-colors",
           )}
         >
-          <Filter
-            className={cn(
-              "size-3 transition-transform",
-              showFilters && "rotate-90",
-            )}
-            strokeWidth={1.5}
-          />
+          <span
+            className={cn("transition-transform", showFilters && "rotate-90")}
+          >
+            <HugeiconsIcon icon={FilterIcon} size={12} strokeWidth={1.5} />
+          </span>
           <span>Filters</span>
         </button>
       </header>

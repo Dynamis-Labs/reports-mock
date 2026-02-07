@@ -1,12 +1,20 @@
 import { forwardRef } from "react";
 import { motion } from "motion/react";
-import { Users, Mail, Target, Flag, Scale, AlertTriangle } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
+import {
+  UserGroupIcon,
+  Mail01Icon,
+  Target01Icon,
+  Flag01Icon,
+  JusticeScale01Icon,
+  Alert01Icon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
 import {
   eventTypeConfig,
   type MemoryEvent,
   type MemoryEventType,
-} from "../../types/memory";
+} from "@types/memory";
 import {
   useIsEventSelected,
   useIsEventFocused,
@@ -14,7 +22,7 @@ import {
   useIsEventDimmed,
   useIsFocusMode,
   useMemoryStore,
-} from "../../stores/memory-store";
+} from "@stores/memory-store";
 
 /**
  * Memory Timeline Card - Large Square Design
@@ -68,16 +76,14 @@ function formatCardDate(date: Date): string {
   });
 }
 
-// Type-specific icons (using LucideIcon type which accepts style)
-import type { LucideIcon } from "lucide-react";
-
-const typeIcons: Record<MemoryEventType, LucideIcon> = {
-  meeting: Users,
-  email: Mail,
-  commitment: Target,
-  milestone: Flag,
-  decision: Scale,
-  alert: AlertTriangle,
+// Type-specific icons
+const typeIcons: Record<MemoryEventType, IconSvgElement> = {
+  meeting: UserGroupIcon,
+  email: Mail01Icon,
+  commitment: Target01Icon,
+  milestone: Flag01Icon,
+  decision: JusticeScale01Icon,
+  alert: Alert01Icon,
 };
 
 export const MemoryTimelineCard = forwardRef<
@@ -93,7 +99,7 @@ export const MemoryTimelineCard = forwardRef<
   const selectEvent = useMemoryStore((state) => state.selectEvent);
 
   const typeConfig = eventTypeConfig[event.type];
-  const TypeIcon = typeIcons[event.type];
+  const typeIcon = typeIcons[event.type];
 
   const handleClick = () => {
     if (isDimmed) return; // Don't interact with dimmed cards
@@ -171,8 +177,9 @@ export const MemoryTimelineCard = forwardRef<
       >
         {/* Type badge with icon */}
         <div className="flex items-center" style={{ gap: gap * 0.75 }}>
-          <TypeIcon
-            style={{ width: iconSize, height: iconSize }}
+          <HugeiconsIcon
+            icon={typeIcon}
+            size={iconSize}
             className="text-muted-foreground"
             strokeWidth={1.5}
           />

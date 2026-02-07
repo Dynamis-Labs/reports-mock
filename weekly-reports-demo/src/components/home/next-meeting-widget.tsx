@@ -2,20 +2,25 @@
  * Next Meeting Widget
  *
  * Compact square card matching the Up Next design from the meetings page.
- * Layout: "UP NEXT" + countdown → title → description → View Brief →
- * attendee chips → platform + Join Now footer.
+ * Layout: "UP NEXT" + countdown -> title -> description -> View Brief ->
+ * attendee chips -> platform + Join Now footer.
  */
 
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "motion/react";
-import { ChevronRight, ExternalLink, Clock } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { Button } from "../ui/button";
-import { PlatformIndicator } from "../meetings/shared/platform-indicator";
-import { AttendeeChips } from "../meetings/shared/attendee-chips";
-import { useHomeStore } from "../../stores/home-store";
-import { mockMeetings } from "../../data/mock-meetings";
-import type { Meeting } from "../../types/meeting";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowRight01Icon,
+  Link03Icon,
+  Clock01Icon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { Button } from "@components/ui/button";
+import { PlatformIndicator } from "@components/meetings/shared/platform-indicator";
+import { AttendeeChips } from "@components/meetings/shared/attendee-chips";
+import { useHomeStore } from "@stores/home-store";
+import { mockMeetings } from "@data/mock-meetings";
+import type { Meeting } from "@types/meeting";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Meeting time utilities
@@ -111,10 +116,9 @@ export function NextMeetingWidget() {
       <div className="h-full flex flex-col bg-surface rounded-xl border border-border overflow-hidden">
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="text-center">
-            <Clock
-              className="size-8 text-muted-foreground/30 mx-auto mb-2"
-              strokeWidth={1}
-            />
+            <span className="text-muted-foreground/30 mx-auto mb-2 block">
+              <HugeiconsIcon icon={Clock01Icon} size={32} strokeWidth={1} />
+            </span>
             <p className="text-caption text-muted-foreground">
               No upcoming meetings
             </p>
@@ -142,7 +146,7 @@ export function NextMeetingWidget() {
               isImminent ? "text-accent" : "text-muted-foreground",
             )}
           >
-            <Clock className="size-4" strokeWidth={1.5} />
+            <HugeiconsIcon icon={Clock01Icon} size={16} strokeWidth={1.5} />
             <span>{timeUntil}</span>
           </div>
         </div>
@@ -165,7 +169,7 @@ export function NextMeetingWidget() {
           onClick={handleViewBrief}
           className="text-accent hover:text-accent/80 text-sm font-medium mb-3 flex items-center gap-1 hover:gap-2 transition-all rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:ring-offset-1"
         >
-          View Brief <ChevronRight className="size-4" />
+          View Brief <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
         </button>
 
         {/* Row 5: Attendees */}
@@ -174,7 +178,7 @@ export function NextMeetingWidget() {
         {/* Spacer */}
         <div className="flex-1" />
 
-        {/* Row 6: Footer — platform + Join Now */}
+        {/* Row 6: Footer -- platform + Join Now */}
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-border-subtle">
           <PlatformIndicator
             platform={meeting.platform}
@@ -189,10 +193,12 @@ export function NextMeetingWidget() {
               <Button
                 variant="default"
                 onClick={handleJoin}
-                className="h-8 text-sm px-4 rounded-md"
+                className="h-8 text-sm px-4 rounded-[var(--radius-md)]"
               >
                 Join Now
-                <ExternalLink className="size-3.5 ml-1.5" />
+                <span className="ml-1.5">
+                  <HugeiconsIcon icon={Link03Icon} size={14} />
+                </span>
               </Button>
             </motion.div>
           )}

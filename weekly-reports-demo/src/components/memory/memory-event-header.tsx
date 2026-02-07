@@ -1,14 +1,20 @@
 import { motion, AnimatePresence } from "motion/react";
-import { FileText, Plus, MoreHorizontal, AlertTriangle } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { Avatar } from "../ui/avatar";
-import { Badge } from "../ui/badge";
-import { springs } from "../../lib/motion";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  File01Icon,
+  PlusSignIcon,
+  MoreHorizontalIcon,
+  Alert01Icon,
+} from "@hugeicons/core-free-icons";
+import { cn, formatDate } from "@lib/utils";
+import { Avatar } from "@components/ui/avatar";
+import { Badge } from "@components/ui/badge";
+import { springs } from "@lib/motion";
 import {
   eventTypeConfig,
   type MemoryEvent,
   type MemoryActionItem,
-} from "../../types/memory";
+} from "@types/memory";
 
 /**
  * Memory Event Header
@@ -27,15 +33,8 @@ interface MemoryEventHeaderProps {
   event: MemoryEvent | null;
 }
 
-function formatShortDate(date: Date): string {
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-  });
-}
-
 function getOverdueItems(actionItems: MemoryActionItem[]): MemoryActionItem[] {
-  const now = new Date(2026, 1, 3); // Match mock data base date
+  const now = new Date();
   return actionItems.filter((item) => {
     if (item.isCompleted || !item.dueDate) return false;
     return item.dueDate < now;
@@ -84,8 +83,13 @@ function EmptyState() {
   return (
     <div className="border-b border-border bg-surface-elevated/50 px-6 py-8">
       <div className="flex items-center gap-3 text-muted-foreground">
-        <div className="size-10 rounded-lg bg-muted/50 flex items-center justify-center">
-          <FileText className="size-5 opacity-50" strokeWidth={1.5} />
+        <div className="size-10 rounded-[var(--radius-lg)] bg-muted/50 flex items-center justify-center">
+          <HugeiconsIcon
+            icon={File01Icon}
+            size={20}
+            strokeWidth={1.5}
+            className="opacity-50"
+          />
         </div>
         <div>
           <p className="font-medium text-foreground/70">No event selected</p>
@@ -130,13 +134,15 @@ export function MemoryEventHeader({ event }: MemoryEventHeaderProps) {
               {/* Icon */}
               <div
                 className={cn(
-                  "size-10 rounded-lg flex items-center justify-center shrink-0",
+                  "size-10 rounded-[var(--radius-lg)] flex items-center justify-center shrink-0",
                   typeConfig.bg,
                   typeConfig.darkBg,
                 )}
               >
-                <FileText
-                  className={cn("size-5", typeConfig.text, typeConfig.darkText)}
+                <HugeiconsIcon
+                  icon={File01Icon}
+                  size={20}
+                  className={cn(typeConfig.text, typeConfig.darkText)}
                   strokeWidth={1.5}
                 />
               </div>
@@ -151,15 +157,23 @@ export function MemoryEventHeader({ event }: MemoryEventHeaderProps) {
             <div className="flex items-center gap-1 shrink-0">
               <button
                 type="button"
-                className="p-2 rounded-lg text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 transition-colors"
+                className="p-2 rounded-[var(--radius-lg)] text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 transition-colors"
               >
-                <Plus className="size-5" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={PlusSignIcon}
+                  size={20}
+                  strokeWidth={1.5}
+                />
               </button>
               <button
                 type="button"
-                className="p-2 rounded-lg text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 transition-colors"
+                className="p-2 rounded-[var(--radius-lg)] text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 transition-colors"
               >
-                <MoreHorizontal className="size-5" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={MoreHorizontalIcon}
+                  size={20}
+                  strokeWidth={1.5}
+                />
               </button>
             </div>
           </div>
@@ -219,14 +233,18 @@ export function MemoryEventHeader({ event }: MemoryEventHeaderProps) {
               animate={{ opacity: 1, height: "auto" }}
               className="mt-4"
             >
-              <div className="flex items-center justify-between px-4 py-3 rounded-lg bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900">
+              <div className="flex items-center justify-between px-4 py-3 rounded-[var(--radius-lg)] bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-900">
                 <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
-                  <AlertTriangle className="size-4" strokeWidth={1.5} />
+                  <HugeiconsIcon
+                    icon={Alert01Icon}
+                    size={16}
+                    strokeWidth={1.5}
+                  />
                   <span className="text-sm font-medium">
                     {overdueItems[0].title} overdue —{" "}
                     {overdueParticipant.name.split(" ")[0]} waiting since{" "}
                     {overdueItems[0].dueDate
-                      ? formatShortDate(overdueItems[0].dueDate)
+                      ? formatDate(overdueItems[0].dueDate)
                       : "earlier"}
                   </span>
                 </div>
@@ -318,7 +336,7 @@ function CommitmentRow({
   avatarName,
 }: CommitmentRowProps) {
   return (
-    <div className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-muted/30 transition-colors">
+    <div className="flex items-center justify-between py-2 px-3 rounded-[var(--radius-lg)] hover:bg-muted/30 transition-colors">
       <div className="flex items-center gap-3">
         {showAvatar ? (
           <Avatar name={avatarName || participantName} size="sm" />
@@ -342,7 +360,7 @@ function CommitmentRow({
           variant="outline"
           className="text-muted-foreground border-border bg-surface text-xs tabular-nums"
         >
-          {formatShortDate(item.dueDate)}
+          {formatDate(item.dueDate)}
         </Badge>
       )}
     </div>

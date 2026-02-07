@@ -1,115 +1,31 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, Settings, FileText, AlertTriangle } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { springs, staggerContainer, staggerItem } from "../../lib/motion";
-import { Button } from "../ui/button";
-import { useSettingsStore } from "../../stores/settings-store";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import {
-  CATEGORY_CONFIG,
-  CATEGORY_ORDER,
-  type CategoryConfig,
-} from "../../lib/report-categories";
-import { RadarItemCard } from "../radar/radar-item-card";
-import { mockRadarItems } from "../../data/mock-radar";
-import type { WeeklyReport, ReportCategory } from "../../data/mock-reports";
-import type { RadarItem, RadarSeverity } from "../../types/radar";
+  Search01Icon,
+  Setting07Icon,
+  File02Icon,
+  AlertDiamondIcon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { Button } from "@components/ui/button";
+import { useSettingsStore } from "@stores/settings-store";
+import { ReportsList } from "./sidebar-reports-list";
+import { RadarList } from "./sidebar-radar-list";
+import type { WeeklyReport } from "@data/mock-reports";
 import type { ViewMode } from "./reports-radar-toggle";
-
-// ─── Reports helpers ────────────────────────────────────────────────────────
-
-interface CategoryGroup {
-  key: ReportCategory;
-  config: CategoryConfig;
-  reports: WeeklyReport[];
-}
-
-function formatRelativeDate(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 0) return "Updated today";
-  if (diffDays === 1) return "Updated 1d ago";
-  if (diffDays < 7) return `Updated ${diffDays}d ago`;
-  if (diffDays < 14) return "Updated 1w ago";
-  return `Updated ${Math.floor(diffDays / 7)}w ago`;
-}
-
-function getLatestByCategory(reports: WeeklyReport[]): CategoryGroup[] {
-  const byCategoryAndTitle = new Map<
-    ReportCategory,
-    Map<string, WeeklyReport[]>
-  >();
-
-  for (const report of reports) {
-    if (!byCategoryAndTitle.has(report.category)) {
-      byCategoryAndTitle.set(report.category, new Map());
-    }
-    const titleMap = byCategoryAndTitle.get(report.category)!;
-    if (!titleMap.has(report.title)) {
-      titleMap.set(report.title, []);
-    }
-    titleMap.get(report.title)!.push(report);
-  }
-
-  return CATEGORY_ORDER.filter((cat) => byCategoryAndTitle.has(cat)).map(
-    (category) => {
-      const titleMap = byCategoryAndTitle.get(category)!;
-      const latestReports: WeeklyReport[] = [];
-
-      for (const titleReports of titleMap.values()) {
-        const latest = titleReports.reduce((best, current) =>
-          current.generatedAt > best.generatedAt ? current : best,
-        );
-        latestReports.push(latest);
-      }
-
-      latestReports.sort(
-        (a, b) => b.generatedAt.getTime() - a.generatedAt.getTime(),
-      );
-
-      return {
-        key: category,
-        config: CATEGORY_CONFIG[category],
-        reports: latestReports,
-      };
-    },
-  );
-}
-
-// ─── Radar helpers ──────────────────────────────────────────────────────────
-
-function groupBySeverity(
-  items: RadarItem[],
-): Record<RadarSeverity, RadarItem[]> {
-  return items.reduce(
-    (acc, item) => ({
-      ...acc,
-      [item.severity]: [...acc[item.severity], item],
-    }),
-    {
-      critical: [] as RadarItem[],
-      high: [] as RadarItem[],
-      medium: [] as RadarItem[],
-      low: [] as RadarItem[],
-    },
-  );
-}
-
-const severityOrder: RadarSeverity[] = ["critical", "high", "medium", "low"];
 
 // ─── Section Nav Item ───────────────────────────────────────────────────────
 
 interface SectionNavItemProps {
-  icon: typeof FileText;
+  icon: IconSvgElement;
   label: string;
   isActive: boolean;
   onClick: () => void;
 }
 
 function SectionNavItem({
-  icon: Icon,
+  icon,
   label,
   isActive,
   onClick,
@@ -119,193 +35,21 @@ function SectionNavItem({
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full flex items-center gap-2 px-2 py-1.5 rounded-md",
+        "w-full flex items-center gap-2 px-2 py-1.5 rounded-[var(--radius-md)]",
         "text-xs font-medium transition-colors",
         isActive
           ? "text-foreground bg-accent-muted"
           : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
       )}
     >
-      <Icon className="size-3.5 shrink-0" strokeWidth={1.5} />
+      <HugeiconsIcon
+        icon={icon}
+        size={14}
+        strokeWidth={1.5}
+        className="shrink-0"
+      />
       <span>{label}</span>
     </button>
-  );
-}
-
-// ─── Reports List ───────────────────────────────────────────────────────────
-
-interface ReportsListProps {
-  reports: WeeklyReport[];
-  selectedReportId: string | null;
-  onSelectReport: (id: string) => void;
-  searchQuery: string;
-}
-
-function ReportsList({
-  reports,
-  selectedReportId,
-  onSelectReport,
-  searchQuery,
-}: ReportsListProps) {
-  const closeSettings = useSettingsStore((state) => state.closeSettings);
-
-  const filteredReports = useMemo(() => {
-    if (!searchQuery.trim()) return reports;
-    const query = searchQuery.toLowerCase();
-    return reports.filter((report) =>
-      report.title.toLowerCase().includes(query),
-    );
-  }, [reports, searchQuery]);
-
-  const categoryGroups = useMemo(
-    () => getLatestByCategory(filteredReports),
-    [filteredReports],
-  );
-
-  return (
-    <div className="space-y-4">
-      {categoryGroups.map((group) => {
-        const Icon = group.config.icon;
-        return (
-          <motion.div
-            key={group.key}
-            variants={staggerContainer}
-            initial="hidden"
-            animate="visible"
-          >
-            {/* Category header */}
-            <div className="flex items-center gap-2 px-2 mb-2">
-              <Icon
-                className={cn("size-3.5", group.config.color)}
-                strokeWidth={1.5}
-              />
-              <span className="font-semibold text-[11px] uppercase tracking-wide text-muted-foreground/60">
-                {group.config.label}
-              </span>
-              <div className="h-px flex-1 bg-border-subtle/50" />
-            </div>
-
-            {/* Reports in this category */}
-            <div className="space-y-1">
-              {group.reports.map((report) => {
-                const isSelected = selectedReportId === report.id;
-                return (
-                  <motion.button
-                    key={report.id}
-                    variants={staggerItem}
-                    onClick={() => {
-                      onSelectReport(report.id);
-                      closeSettings();
-                    }}
-                    className={cn(
-                      "group w-full text-left px-3 py-2.5 rounded-md",
-                      "transition-colors duration-150 cursor-pointer",
-                      isSelected ? "bg-accent-muted" : "hover:bg-muted/70",
-                    )}
-                    whileHover={{ x: 1 }}
-                    transition={springs.quick}
-                  >
-                    <h3
-                      className={cn(
-                        "font-medium text-[13px] leading-tight transition-colors",
-                        isSelected
-                          ? "text-foreground"
-                          : "text-muted-foreground group-hover:text-foreground",
-                      )}
-                    >
-                      {report.title}
-                    </h3>
-                    <span className="text-[11px] text-muted-foreground/50 mt-1 block">
-                      {formatRelativeDate(report.generatedAt)}
-                    </span>
-                  </motion.button>
-                );
-              })}
-            </div>
-          </motion.div>
-        );
-      })}
-
-      {categoryGroups.length === 0 && (
-        <div className="px-3 py-8 text-center">
-          <p className="text-xs text-muted-foreground">No reports found</p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Radar List ─────────────────────────────────────────────────────────────
-
-interface RadarListProps {
-  selectedItemId: string | null;
-  onSelectItem: (id: string) => void;
-  searchQuery: string;
-}
-
-function RadarList({
-  selectedItemId,
-  onSelectItem,
-  searchQuery,
-}: RadarListProps) {
-  const filteredItems = useMemo(() => {
-    if (!searchQuery) return mockRadarItems;
-    const query = searchQuery.toLowerCase();
-    return mockRadarItems.filter(
-      (item) =>
-        item.title.toLowerCase().includes(query) ||
-        item.category.toLowerCase().includes(query),
-    );
-  }, [searchQuery]);
-
-  const groupedItems = useMemo(
-    () => groupBySeverity(filteredItems),
-    [filteredItems],
-  );
-
-  return (
-    <motion.div
-      variants={staggerContainer}
-      initial="hidden"
-      animate="visible"
-      className="space-y-3"
-    >
-      {severityOrder.map((severity) => {
-        const items = groupedItems[severity];
-        if (items.length === 0) return null;
-
-        return (
-          <motion.div key={severity} variants={staggerItem}>
-            {/* Severity header */}
-            <div className="flex items-center gap-2 px-2 mb-1.5">
-              <span className="font-semibold text-[10px] uppercase tracking-wide text-muted-foreground/60">
-                {severity}
-              </span>
-              <div className="h-px flex-1 bg-border-subtle/50" />
-              <span className="text-[10px] text-muted-foreground/50 tabular-nums">
-                {items.length}
-              </span>
-            </div>
-            <div className="space-y-0.5">
-              {items.map((item) => (
-                <RadarItemCard
-                  key={item.id}
-                  item={item}
-                  isSelected={selectedItemId === item.id}
-                  onClick={() => onSelectItem(item.id)}
-                />
-              ))}
-            </div>
-          </motion.div>
-        );
-      })}
-
-      {filteredItems.length === 0 && (
-        <div className="text-center py-8 text-[11px] text-muted-foreground/60">
-          No alerts found
-        </div>
-      )}
-    </motion.div>
   );
 }
 
@@ -347,20 +91,20 @@ export function ReportsSidebar({
             className="size-7"
             onClick={openSettings}
           >
-            <Settings className="size-3.5" />
+            <HugeiconsIcon icon={Setting07Icon} size={14} strokeWidth={1.5} />
           </Button>
         </div>
 
         {/* Section Navigation */}
         <div className="flex flex-col gap-0.5 mb-2.5">
           <SectionNavItem
-            icon={FileText}
+            icon={File02Icon}
             label="Reports"
             isActive={viewMode === "reports"}
             onClick={() => onViewModeChange("reports")}
           />
           <SectionNavItem
-            icon={AlertTriangle}
+            icon={AlertDiamondIcon}
             label="Radar"
             isActive={viewMode === "radar"}
             onClick={() => onViewModeChange("radar")}
@@ -369,7 +113,12 @@ export function ReportsSidebar({
 
         {/* Search input */}
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+          <HugeiconsIcon
+            icon={Search01Icon}
+            size={14}
+            strokeWidth={1.5}
+            className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
           <input
             type="text"
             value={searchQuery}
@@ -378,10 +127,10 @@ export function ReportsSidebar({
               viewMode === "reports" ? "Search reports..." : "Search alerts..."
             }
             className={cn(
-              "w-full h-8 pl-8 pr-3 text-xs rounded-md",
+              "w-full h-8 pl-8 pr-3 text-xs rounded-[var(--radius-md)]",
               "bg-muted/50 border-0",
               "placeholder:text-muted-foreground/60",
-              "focus:outline-none focus:ring-1 focus:ring-accent",
+              "focus:outline-none focus:ring-1 focus:ring-neutral-300 dark:focus:ring-neutral-600",
             )}
           />
         </div>

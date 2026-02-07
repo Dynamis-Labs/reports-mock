@@ -1,9 +1,14 @@
-import { Mail, Check, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Mail01Icon,
+  Tick01Icon,
+  Cancel01Icon,
+} from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { cn } from "../../../lib/utils";
-import { staggerContainer, staggerItem } from "../../../lib/motion";
-import { Avatar } from "../../ui/avatar";
-import type { Meeting } from "../../../types/meeting";
+import { cn } from "@lib/utils";
+import { staggerContainer, staggerItem } from "@lib/motion";
+import { Avatar } from "@components/ui/avatar";
+import type { Meeting } from "@types/meeting";
 
 interface MeetingAttendeesTabProps {
   meeting: Meeting;
@@ -52,7 +57,11 @@ export function MeetingAttendeesTab({ meeting }: MeetingAttendeesTabProps) {
                     {attendee.name}
                   </p>
                   <div className="flex items-center gap-1.5 text-caption text-muted-foreground">
-                    <Mail className="size-3" strokeWidth={1.5} />
+                    <HugeiconsIcon
+                      icon={Mail01Icon}
+                      size={12}
+                      strokeWidth={1.5}
+                    />
                     <span>{attendee.email}</span>
                   </div>
                 </div>
@@ -69,12 +78,20 @@ export function MeetingAttendeesTab({ meeting }: MeetingAttendeesTabProps) {
               >
                 {attendee.attended ? (
                   <>
-                    <Check className="size-4" strokeWidth={2} />
+                    <HugeiconsIcon
+                      icon={Tick01Icon}
+                      size={16}
+                      strokeWidth={2}
+                    />
                     <span>Attended</span>
                   </>
                 ) : (
                   <>
-                    <X className="size-4" strokeWidth={2} />
+                    <HugeiconsIcon
+                      icon={Cancel01Icon}
+                      size={16}
+                      strokeWidth={2}
+                    />
                     <span>No-show</span>
                   </>
                 )}

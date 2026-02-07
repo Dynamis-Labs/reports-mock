@@ -1,19 +1,25 @@
-import { Lightbulb, Mail, Calendar } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  BulbIcon,
+  Mail01Icon,
+  Calendar01Icon,
+} from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { useChatboxStore } from "../../stores/chatbox-store";
-import { springs, staggerContainer, staggerItem } from "../../lib/motion";
-import { cn } from "../../lib/utils";
-import { isPRDGenerationAction } from "../../types/action";
-import type { Action } from "../../types/action";
+import { useChatboxStore } from "@stores/chatbox-store";
+import { springs, staggerContainer, staggerItem } from "@lib/motion";
+import { cn } from "@lib/utils";
+import { isPRDGenerationAction } from "@types/action";
+import type { Action } from "@types/action";
+import type { IconSvgElement } from "@hugeicons/react";
 
 interface ActionItemsProps {
   actions: Action[];
 }
 
-const actionIcons: Record<string, typeof Lightbulb> = {
-  "prd-generation": Lightbulb,
-  email: Mail,
-  meeting: Calendar,
+const actionIcons: Record<string, IconSvgElement> = {
+  "prd-generation": BulbIcon,
+  email: Mail01Icon,
+  meeting: Calendar01Icon,
 };
 
 export function ActionItems({ actions }: ActionItemsProps) {
@@ -42,7 +48,7 @@ export function ActionItems({ actions }: ActionItemsProps) {
 
       <div className="space-y-3">
         {actions.map((action) => {
-          const Icon = actionIcons[action.type] ?? Lightbulb;
+          const iconDef = actionIcons[action.type] ?? BulbIcon;
           const isPRD = isPRDGenerationAction(action);
 
           return (
@@ -50,11 +56,11 @@ export function ActionItems({ actions }: ActionItemsProps) {
               key={action.id}
               variants={staggerItem}
               onClick={() => handleActionClick(action)}
-              whileHover={{ scale: 1.01, y: -1 }}
+              whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
               transition={springs.quick}
               className={cn(
-                "w-full p-4 rounded-lg text-left",
+                "w-full p-4 rounded-[var(--radius-lg)] text-left",
                 "bg-surface border border-border",
                 "hover:border-accent hover:bg-accent-muted",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
@@ -64,11 +70,16 @@ export function ActionItems({ actions }: ActionItemsProps) {
             >
               <div
                 className={cn(
-                  "shrink-0 size-10 rounded-lg flex items-center justify-center",
+                  "shrink-0 size-10 rounded-[var(--radius-lg)] flex items-center justify-center",
                   "bg-accent-muted",
                 )}
               >
-                <Icon className="size-5 text-accent" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={iconDef}
+                  size={20}
+                  className="text-accent"
+                  strokeWidth={1.5}
+                />
               </div>
 
               <div className="flex-1 min-w-0">

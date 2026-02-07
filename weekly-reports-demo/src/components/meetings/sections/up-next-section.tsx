@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { UpNextCard } from "../cards";
-import type { Meeting, MeetingAttendee } from "../../../types/meeting";
+import type { Meeting, MeetingAttendee } from "@types/meeting";
 
 interface UpNextSectionProps {
   meeting: Meeting | null;

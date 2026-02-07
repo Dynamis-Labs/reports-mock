@@ -1,10 +1,9 @@
-import { motion } from "motion/react";
-import { Pin } from "lucide-react";
-import { cn } from "../../../../lib/utils";
-import { formatRelativeTime } from "../../../../lib/date-utils";
-import { staggerItem } from "../../../../lib/motion";
-import { useCrmStore } from "../../../../stores/crm-store";
-import type { Contact } from "../../../../types/contact";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { PinIcon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { formatRelativeTime } from "@lib/date-utils";
+import { useCrmStore } from "@stores/crm-store";
+import type { Contact } from "@types/contact";
 
 /**
  * Contact Card
@@ -31,11 +30,7 @@ export function ContactCard({
   const { pinnedContactIds, togglePin } = useCrmStore();
   const isPinned = pinnedContactIds?.includes(contact.id) ?? false;
 
-  // Get display tags (filter out section tags)
-  const displayTags = contact.tags.filter(
-    (tag) =>
-      !tag.startsWith("@") && !tag.startsWith("#") && !tag.startsWith("["),
-  );
+  const displayTags = contact.tags;
 
   const handlePinClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -43,11 +38,10 @@ export function ContactCard({
   };
 
   return (
-    <motion.button
-      variants={staggerItem}
+    <button
       onClick={onClick}
       className={cn(
-        "group relative text-left w-full rounded-lg overflow-hidden",
+        "group relative text-left w-full rounded-[var(--radius-lg)] overflow-hidden",
         "bg-surface-elevated",
         "border transition-all duration-200",
         "focus:outline-none",
@@ -66,11 +60,7 @@ export function ContactCard({
             : "opacity-0 group-hover:opacity-100 text-muted-foreground/40 hover:text-amber-500",
         )}
       >
-        <Pin
-          className="size-3.5"
-          strokeWidth={1.5}
-          fill={isPinned ? "currentColor" : "none"}
-        />
+        <HugeiconsIcon icon={PinIcon} size={14} strokeWidth={1.5} />
       </button>
 
       <div className="flex">
@@ -84,7 +74,7 @@ export function ContactCard({
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center">
-              <span className="text-xl font-medium text-muted-foreground/60 uppercase">
+              <span className="text-heading font-medium text-muted-foreground/60 uppercase">
                 {initials}
               </span>
             </div>
@@ -95,13 +85,13 @@ export function ContactCard({
         <div className="flex-1 p-4 flex flex-col justify-between min-h-[120px]">
           {/* Top: Name and role */}
           <div>
-            <h3 className="font-medium text-sm text-foreground truncate leading-tight">
+            <h3 className="font-medium text-ui text-foreground truncate leading-tight">
               {fullName}
             </h3>
-            <p className="text-xs text-muted-foreground truncate mt-0.5">
+            <p className="text-caption text-muted-foreground truncate mt-0.5">
               {contact.title}
             </p>
-            <p className="text-xs text-muted-foreground/60 truncate">
+            <p className="text-caption text-muted-foreground/60 truncate">
               {contact.company}
             </p>
           </div>
@@ -112,13 +102,13 @@ export function ContactCard({
               {displayTags.slice(0, 3).map((tag) => (
                 <span
                   key={tag}
-                  className="px-1.5 py-0.5 text-[9px] rounded bg-muted/50 text-muted-foreground truncate max-w-[70px]"
+                  className="px-1.5 py-0.5 text-micro rounded bg-muted/50 text-muted-foreground truncate max-w-[70px] capitalize"
                 >
                   {tag}
                 </span>
               ))}
               {displayTags.length > 3 && (
-                <span className="text-[9px] text-muted-foreground/50">
+                <span className="text-micro text-muted-foreground/50">
                   +{displayTags.length - 3}
                 </span>
               )}
@@ -127,12 +117,12 @@ export function ContactCard({
 
           {/* Bottom: Time in corner */}
           <div className="flex items-center justify-end mt-2 pt-2 border-t border-border/30">
-            <span className="text-[10px] text-muted-foreground/60 tabular-nums">
+            <span className="text-micro text-muted-foreground/60 tabular-nums">
               {formatRelativeTime(contact.lastContacted)}
             </span>
           </div>
         </div>
       </div>
-    </motion.button>
+    </button>
   );
 }

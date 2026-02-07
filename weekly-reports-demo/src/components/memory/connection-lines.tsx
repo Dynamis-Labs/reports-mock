@@ -5,8 +5,8 @@ import {
   useIsFocusMode,
   useFocusedEventId,
   useConnectionVisualizationMode,
-} from "../../stores/memory-store";
-import { calculateBezierPath, type Point } from "../../lib/bezier-paths";
+} from "@stores/memory-store";
+import { calculateBezierPath, type Point } from "@lib/bezier-paths";
 
 /**
  * Connection Lines - SVG Bezier Curves

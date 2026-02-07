@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { Badge } from "../ui/badge";
+import { Badge } from "@components/ui/badge";
 import { PRDSources } from "./prd-sources";
 import { PRDActions } from "./prd-actions";
-import { springs } from "../../lib/motion";
-import type { PRDMetadata } from "../../stores/chatbox-store";
+import { springs } from "@lib/motion";
+import type { PRDMetadata } from "@stores/chatbox-store";
 
 interface PRDMessageProps {
   content: string;
@@ -50,7 +50,7 @@ function parseMarkdown(text: string): React.ReactNode[] {
       elements.push(
         <div
           key={`table-${elements.length}`}
-          className="my-4 overflow-x-auto rounded-lg border border-border"
+          className="my-4 overflow-x-auto rounded-[var(--radius-lg)] border border-border"
         >
           <table className="w-full text-caption">
             <thead>
@@ -240,7 +240,7 @@ export function PRDMessage({
       </Badge>
 
       {/* PRD Content */}
-      <div className="bg-surface rounded-lg border border-border p-4 relative">
+      <div className="bg-surface rounded-[var(--radius-lg)] border border-border p-4 relative">
         {parseMarkdown(displayedText)}
         {!isComplete && (
           <motion.span

@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
-import { cn } from "../../../lib/utils";
+import { cn } from "@lib/utils";
 import { AttendeeChips, PlatformIndicator } from "../shared";
-import type { Meeting, MeetingAttendee } from "../../../types/meeting";
+import type { Meeting, MeetingAttendee } from "@types/meeting";
 
 interface LaterMeetingCardProps {
   meeting: Meeting;

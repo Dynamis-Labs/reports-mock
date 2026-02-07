@@ -10,10 +10,11 @@
  * - Click anywhere opens popup
  */
 
+import { HugeiconsIcon } from "@hugeicons/react";
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
-import { categoryConfig } from "../../data/mock-home";
-import type { PersonalTask } from "../../types/home";
+import { cn } from "@lib/utils";
+import { categoryConfig } from "@data/mock-home";
+import type { PersonalTask } from "@types/home";
 
 interface PersonalTaskCardProps {
   task: PersonalTask;
@@ -22,7 +23,6 @@ interface PersonalTaskCardProps {
 
 export function PersonalTaskCard({ task, onClick }: PersonalTaskCardProps) {
   const config = categoryConfig[task.category];
-  const CategoryIcon = config.icon;
 
   return (
     <motion.button
@@ -44,13 +44,15 @@ export function PersonalTaskCard({ task, onClick }: PersonalTaskCardProps) {
       <div className="flex items-center justify-between mb-3">
         <div
           className={cn(
-            "flex items-center gap-1.5 px-2 py-1 rounded-md",
+            "flex items-center gap-1.5 px-2 py-1 rounded-[var(--radius-md)]",
             config.bgColor,
           )}
         >
-          <CategoryIcon
-            className={cn("size-3.5", config.color)}
+          <HugeiconsIcon
+            icon={config.icon}
+            size={14}
             strokeWidth={1.5}
+            className={cn("size-3.5", config.color)}
           />
           <span
             className={cn(

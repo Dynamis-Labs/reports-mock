@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
-import {
-  getCountdownString,
-  getCountdownWithTime,
-} from "../../../lib/date-utils";
-import type { Meeting } from "../../../types/meeting";
+import { getCountdownString, getCountdownWithTime } from "@lib/date-utils";
+import type { Meeting } from "@types/meeting";
 
 /**
  * Hook for real-time countdown updates

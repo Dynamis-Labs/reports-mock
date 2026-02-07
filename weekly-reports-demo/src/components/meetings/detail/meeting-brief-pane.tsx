@@ -1,9 +1,14 @@
 import { motion } from "motion/react";
-import { FileText, Users, Link2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  File01Icon,
+  UserGroupIcon,
+  Link03Icon,
+} from "@hugeicons/core-free-icons";
 import ReactMarkdown from "react-markdown";
 import { MeetingDetailHeader } from "./meeting-detail-header";
-import { staggerContainer, staggerItem } from "../../../lib/motion";
-import type { Meeting } from "../../../types/meeting";
+import { staggerContainer, staggerItem } from "@lib/motion";
+import type { Meeting } from "@types/meeting";
 
 interface MeetingBriefPaneProps {
   meeting: Meeting;
@@ -34,7 +39,9 @@ export function MeetingBriefPane({
         {meeting.agenda && (
           <motion.section variants={staggerItem}>
             <div className="flex items-center gap-2 mb-3">
-              <FileText className="size-4 text-muted-foreground" />
+              <span className="text-muted-foreground">
+                <HugeiconsIcon icon={File01Icon} size={16} />
+              </span>
               <h2 className="text-micro font-medium text-muted-foreground uppercase tracking-wider">
                 Agenda
               </h2>
@@ -49,7 +56,9 @@ export function MeetingBriefPane({
         {!meeting.agenda && meeting.description && (
           <motion.section variants={staggerItem}>
             <div className="flex items-center gap-2 mb-3">
-              <FileText className="size-4 text-muted-foreground" />
+              <span className="text-muted-foreground">
+                <HugeiconsIcon icon={File01Icon} size={16} />
+              </span>
               <h2 className="text-micro font-medium text-muted-foreground uppercase tracking-wider">
                 Description
               </h2>
@@ -63,7 +72,9 @@ export function MeetingBriefPane({
         {/* Attendees section */}
         <motion.section variants={staggerItem}>
           <div className="flex items-center gap-2 mb-3">
-            <Users className="size-4 text-muted-foreground" />
+            <span className="text-muted-foreground">
+              <HugeiconsIcon icon={UserGroupIcon} size={16} />
+            </span>
             <h2 className="text-micro font-medium text-muted-foreground uppercase tracking-wider">
               Attendees ({meeting.attendees.length})
             </h2>
@@ -72,7 +83,7 @@ export function MeetingBriefPane({
             {meeting.attendees.map((attendee) => (
               <div
                 key={attendee.id}
-                className="flex items-center gap-3 p-3 rounded-lg bg-muted/30"
+                className="flex items-center gap-3 p-3 rounded-[var(--radius-lg)] bg-muted/30"
               >
                 <span className="size-8 rounded-full bg-accent/20 text-accent flex items-center justify-center text-ui font-medium">
                   {attendee.initials}
@@ -92,7 +103,9 @@ export function MeetingBriefPane({
         {meeting.meetingUrl && (
           <motion.section variants={staggerItem}>
             <div className="flex items-center gap-2 mb-3">
-              <Link2 className="size-4 text-muted-foreground" />
+              <span className="text-muted-foreground">
+                <HugeiconsIcon icon={Link03Icon} size={16} />
+              </span>
               <h2 className="text-micro font-medium text-muted-foreground uppercase tracking-wider">
                 Meeting Link
               </h2>

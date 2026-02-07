@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
-import { springs } from "../../lib/motion";
-import type { RadarItem, RadarSeverity } from "../../types/radar";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import type { RadarItem, RadarSeverity } from "@types/radar";
 
 interface RadarItemCardProps {
   item: RadarItem;
@@ -43,7 +43,7 @@ export function RadarItemCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "group w-full text-left rounded-md px-3 py-2 transition-colors",
+        "group w-full text-left rounded-[var(--radius-md)] px-3 py-2 transition-colors",
         isSelected ? "bg-accent-muted" : "hover:bg-muted/70",
       )}
       whileHover={{ x: 1 }}

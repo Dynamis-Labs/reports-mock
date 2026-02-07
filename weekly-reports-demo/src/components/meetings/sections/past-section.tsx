@@ -1,8 +1,9 @@
 import { motion } from "motion/react";
-import { ChevronDown } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowDown01Icon } from "@hugeicons/core-free-icons";
 import { MeetingListItem } from "../cards";
-import { staggerContainer, staggerItem } from "../../../lib/motion";
-import type { Meeting, MeetingAttendee } from "../../../types/meeting";
+import { staggerContainer, staggerItem } from "@lib/motion";
+import type { Meeting, MeetingAttendee } from "@types/meeting";
 
 interface PastSectionProps {
   meetings: Meeting[];
@@ -33,7 +34,9 @@ export function PastSection({
         transition={{ delay: 0.2 }}
         className="flex items-center justify-center gap-2 py-3 text-muted-foreground"
       >
-        <ChevronDown className="size-4 animate-bounce" />
+        <span className="animate-bounce">
+          <HugeiconsIcon icon={ArrowDown01Icon} size={16} />
+        </span>
         <span className="text-micro uppercase tracking-wider">
           Scroll for history
         </span>

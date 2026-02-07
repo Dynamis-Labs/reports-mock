@@ -1,8 +1,8 @@
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
-import { Avatar } from "../ui/avatar";
-import { eventTypeConfig, type MemoryEvent } from "../../types/memory";
-import { useIsEventSelected, useMemoryStore } from "../../stores/memory-store";
+import { cn } from "@lib/utils";
+import { Avatar } from "@components/ui/avatar";
+import { eventTypeConfig, type MemoryEvent } from "@types/memory";
+import { useIsEventSelected, useMemoryStore } from "@stores/memory-store";
 
 /**
  * Memory Event Card
@@ -68,7 +68,7 @@ export function MemoryEventCard({ event }: MemoryEventCardProps) {
       type="button"
       onClick={handleClick}
       className={cn(
-        "w-full text-left rounded-lg p-4",
+        "w-full text-left rounded-[var(--radius-lg)] p-4",
         "bg-surface-elevated border transition-all duration-200",
         isSelected
           ? "border-accent/30 shadow-md"

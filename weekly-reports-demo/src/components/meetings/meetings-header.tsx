@@ -1,5 +1,6 @@
-import { Mic, CalendarPlus } from "lucide-react";
-import { Button } from "../ui/button";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Mic01Icon, CalendarAdd01Icon } from "@hugeicons/core-free-icons";
+import { Button } from "@components/ui/button";
 
 /**
  * Header action buttons for the meetings page
@@ -13,11 +14,11 @@ export function MeetingsHeaderActions() {
         size="sm"
         className="bg-destructive hover:bg-destructive/90 text-white"
       >
-        <Mic className="size-4 mr-1.5" />
+        <HugeiconsIcon icon={Mic01Icon} size={16} />
         Start
       </Button>
       <Button variant="secondary" size="sm">
-        <CalendarPlus className="size-4 mr-1.5" />
+        <HugeiconsIcon icon={CalendarAdd01Icon} size={16} />
         Schedule
       </Button>
     </div>

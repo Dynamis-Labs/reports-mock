@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   WEEKLY REPORTS — CLEAN PROFESSIONAL DESIGN SYSTEM
-   Light mode • Single font family (Figtree) • Slate accents
-   Inspired by Linear, Vercel, Notion — professional SaaS aesthetic
+   WEEKLY REPORTS — SYNCHRO-STYLE DESIGN SYSTEM
+   Warm neutrals • Triple font (DM Sans + Inter + Manrope) • Custom radii (3/5/7px)
+   Inspired by Synchro, Linear, Notion — clean minimal SaaS aesthetic
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* Tailwind CSS v4 */
@@ -13,35 +13,33 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 @theme {
-  /* Typography - Single font family */
-  --font-sans: "Figtree", system-ui, sans-serif;
+  /* Typography — Triple font system */
+  --font-heading: "DM Sans", system-ui, -apple-system, sans-serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+  --font-label: "Manrope", system-ui, -apple-system, sans-serif;
 
-  /* Type Scale (14px base, 8px grid aligned) */
-  --text-display: 2rem; /* 32px - Report title */
-  --text-title: 1.5rem; /* 24px - Section headings */
-  --text-heading: 1.125rem; /* 18px - Panel titles */
-  --text-body: 0.9375rem; /* 15px - Report content */
-  --text-ui: 0.875rem; /* 14px - UI labels (BASE) */
-  --text-caption: 0.75rem; /* 12px - Metadata, dates */
-  --text-micro: 0.6875rem; /* 11px - Badges, counters */
+  /* Type Scale */
+  --text-display: 1.75rem; /* 28px - Page titles (DM Sans 600) */
+  --text-title: 1.375rem; /* 22px - Section headings (DM Sans 600) */
+  --text-heading: 1.125rem; /* 18px - Panel titles (DM Sans 600) */
+  --text-body: 0.9375rem; /* 15px - Report content (Inter 400) */
+  --text-ui: 0.875rem; /* 14px - UI labels (Inter 500, BASE) */
+  --text-caption: 0.75rem; /* 12px - Metadata, dates (Inter 400) */
+  --text-micro: 0.6875rem; /* 11px - Badges, counters (Inter 600) */
 
-  /* Compact Type Scale (for modal/review UI) */
-  --text-compact-heading: 1.3125rem; /* 21px */
-  --text-compact-body: 1.125rem; /* 18px */
-  --text-compact-ui: 1.05rem; /* ~17px */
-  --text-compact-caption: 0.875rem; /* 14px */
-  --text-compact-micro: 0.8rem; /* ~13px */
-
-  /* Modal Type Scale (refined, smaller for better density) */
-  --text-modal-title: 1rem; /* 16px - action titles */
-  --text-modal-ui: 0.875rem; /* 14px - input text, names */
-  --text-modal-label: 0.75rem; /* 12px - labels, secondary */
-  --text-modal-micro: 0.6875rem; /* 11px - badges, counts */
+  /* Modal Type Scale */
+  --text-modal-title: 1rem; /* 16px */
+  --text-modal-ui: 0.875rem; /* 14px */
+  --text-modal-label: 0.75rem; /* 12px */
+  --text-modal-micro: 0.6875rem; /* 11px */
 
   /* Icon Sizes (16px base) */
+  --icon-xs: 0.75rem; /* 12px */
   --icon-sm: 0.875rem; /* 14px */
   --icon-base: 1rem; /* 16px - default */
+  --icon-md: 1.125rem; /* 18px */
   --icon-lg: 1.25rem; /* 20px */
+  --icon-xl: 1.5rem; /* 24px */
 
   /* Icon Stroke Widths */
   --stroke-thin: 1;
@@ -49,78 +47,90 @@
   --stroke-thick: 1.5;
 
   /* ═══════════════════════════════════════════════════════════════════════
-     SLATE/GRAY COLOR PALETTE (shadcn/ui inspired)
+     BORDER RADIUS — Custom System (3/5/7px)
      ═══════════════════════════════════════════════════════════════════════ */
 
-  /* Slate palette - for UI elements */
-  --color-slate-50: hsl(210 40% 98%);
-  --color-slate-100: hsl(210 40% 96%);
-  --color-slate-200: hsl(214 32% 91%);
-  --color-slate-300: hsl(213 27% 84%);
-  --color-slate-400: hsl(215 20% 65%);
-  --color-slate-500: hsl(215 16% 47%);
-  --color-slate-600: hsl(215 19% 35%);
-  --color-slate-700: hsl(215 25% 27%);
-  --color-slate-800: hsl(217 33% 17%);
-  --color-slate-900: hsl(222 47% 11%);
-  --color-slate-950: hsl(229 84% 5%);
+  --radius-sm: 3px; /* badges, small inline elements */
+  --radius-md: 5px; /* inputs, list items, dropdown items */
+  --radius-lg: 7px; /* cards, buttons, modals, panels */
+  --radius-full: 9999px; /* pills, avatars, full-round elements */
 
-  /* Gray palette - for text/backgrounds */
-  --color-gray-50: hsl(0 0% 98%);
-  --color-gray-100: hsl(0 0% 96%);
-  --color-gray-200: hsl(0 0% 90%);
-  --color-gray-300: hsl(0 0% 83%);
-  --color-gray-400: hsl(0 0% 64%);
-  --color-gray-500: hsl(0 0% 45%);
-  --color-gray-600: hsl(0 0% 32%);
-  --color-gray-700: hsl(0 0% 25%);
+  /* ═══════════════════════════════════════════════════════════════════════
+     WARM NEUTRAL COLOR PALETTE
+     ═══════════════════════════════════════════════════════════════════════ */
 
-  /* Semantic Color Mappings - Light Mode */
-  --color-background: var(--color-slate-50);
-  --color-foreground: var(--color-slate-900);
-  --color-surface: var(--color-slate-100);
-  --color-surface-elevated: hsl(0 0% 100%); /* Pure white */
-  --color-muted: var(--color-slate-100);
-  --color-muted-foreground: var(--color-slate-500);
-  --color-border: var(--color-slate-200);
-  --color-border-subtle: var(--color-slate-100);
+  /* Neutral scale (warm) */
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #171717;
+  --color-neutral-950: #0a0a0a;
 
-  /* Accent - Vibrant Cyan Blue (#00a6f5) */
+  /* Semantic Color Mappings — Light Mode */
+  --color-background: var(--color-neutral-50);
+  --color-foreground: var(--color-neutral-900);
+  --color-surface: var(--color-neutral-100);
+  --color-surface-elevated: #ffffff;
+  --color-muted: var(--color-neutral-100);
+  --color-muted-foreground: var(--color-neutral-600);
+  --color-border: var(--color-neutral-300);
+  --color-border-subtle: var(--color-neutral-200);
+
+  /* Accent — Vibrant Cyan (retained for links, focus, active nav) */
   --color-accent: #00a6f5;
-  --color-accent-foreground: hsl(
-    0 0% 0%
-  ); /* Black text on accent backgrounds */
-  --color-accent-muted: hsl(199 100% 48% / 12%);
+  --color-accent-foreground: #ffffff;
+  --color-accent-muted: hsl(199 100% 48% / 10%);
 
-  /* Highlight - Cyan blue for text selection */
-  --color-highlight: hsl(199 100% 48% / 20%);
-  --color-highlight-active: hsl(199 100% 48% / 35%);
+  /* Primary — Black (Synchro-style filled buttons) */
+  --color-primary: var(--color-neutral-900);
+  --color-primary-foreground: #ffffff;
+
+  /* Highlight — Subtle neutral for text selection */
+  --color-highlight: rgba(23, 23, 23, 0.06);
+  --color-highlight-active: rgba(23, 23, 23, 0.12);
 
   /* Semantic Colors */
-  --color-success: hsl(142 71% 45%); /* Green */
-  --color-warning: hsl(38 92% 50%); /* Amber/Orange */
-  --color-error: hsl(0 84% 60%); /* Red */
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-error: #dc2626;
 
   /* Radar Severity Colors */
-  --color-severity-critical: hsl(0 84% 60%); /* Red */
-  --color-severity-high: hsl(25 95% 53%); /* Orange */
-  --color-severity-medium: hsl(45 93% 47%); /* Yellow */
-  --color-severity-low: var(--color-slate-400); /* Gray */
+  --color-severity-critical: #dc2626;
+  --color-severity-high: #ea580c;
+  --color-severity-medium: #ca8a04;
+  --color-severity-low: var(--color-neutral-500);
 
-  /* Sources accent (matches main accent) */
-  --color-sources: #00a6f5;
-  --color-sources-foreground: hsl(0 0% 0%);
-  --color-sources-muted: hsl(199 100% 48% / 12%);
+  /* Status Chip Colors (Synchro Kanban style) */
+  --color-status-todo: #6b7280;
+  --color-status-todo-bg: rgba(107, 114, 128, 0.1);
+  --color-status-progress: #16a34a;
+  --color-status-progress-bg: rgba(22, 163, 74, 0.1);
+  --color-status-review: #8b5cf6;
+  --color-status-review-bg: rgba(139, 92, 246, 0.1);
+  --color-status-done: #0d9488;
+  --color-status-done-bg: rgba(13, 148, 136, 0.1);
 
-  /* Sidebar backgrounds */
-  --color-sidebar: var(--color-slate-50);
+  /* Sources accent (indigo) */
+  --color-sources: #6366f1;
+  --color-sources-foreground: #ffffff;
+  --color-sources-muted: rgba(99, 102, 241, 0.1);
 
-  /* Shadows - Softer for light mode */
-  --shadow-sm: 0 1px 2px hsl(0 0% 0% / 3%);
-  --shadow-md: 0 2px 8px hsl(0 0% 0% / 5%);
-  --shadow-lg: 0 4px 16px hsl(0 0% 0% / 8%);
-  --shadow-xl: 0 8px 24px hsl(0 0% 0% / 10%);
-  --shadow-float: 0 12px 32px hsl(0 0% 0% / 12%);
+  /* Sidebar */
+  --color-sidebar: var(--color-neutral-50);
+
+  /* Shadows — Minimal (Synchro flat style) */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.1);
+  --shadow-float: 0 16px 48px rgba(0, 0, 0, 0.12);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -128,36 +138,41 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .dark {
-  --color-background: var(--color-slate-950);
-  --color-foreground: var(--color-slate-50);
-  --color-surface: var(--color-slate-900);
-  --color-surface-elevated: var(--color-slate-800);
-  --color-muted: var(--color-slate-800);
-  --color-muted-foreground: var(--color-slate-400);
-  --color-border: var(--color-slate-700);
-  --color-border-subtle: var(--color-slate-800);
+  --color-background: var(--color-neutral-950);
+  --color-foreground: var(--color-neutral-50);
+  --color-surface: var(--color-neutral-900);
+  --color-surface-elevated: #1f1f1f;
+  --color-muted: var(--color-neutral-800);
+  --color-muted-foreground: var(--color-neutral-400);
+  --color-border: var(--color-neutral-800);
+  --color-border-subtle: #1f1f1f;
 
-  /* Accent - Vibrant Cyan Blue (#00a6f5) with black text */
+  /* Accent stays cyan in dark mode */
   --color-accent: #00a6f5;
-  --color-accent-foreground: hsl(0 0% 0%);
-  --color-accent-muted: hsl(199 100% 48% / 18%);
+  --color-accent-foreground: #ffffff;
+  --color-accent-muted: hsl(199 100% 48% / 15%);
 
-  /* Highlight - Cyan blue in dark mode */
-  --color-highlight: hsl(199 100% 48% / 25%);
-  --color-highlight-active: hsl(199 100% 48% / 40%);
+  /* Primary flips to white in dark mode */
+  --color-primary: var(--color-neutral-50);
+  --color-primary-foreground: var(--color-neutral-950);
 
-  --color-sidebar: var(--color-slate-900);
+  /* Highlight */
+  --color-highlight: rgba(250, 250, 250, 0.06);
+  --color-highlight-active: rgba(250, 250, 250, 0.12);
 
-  /* Sources - matches accent in dark mode */
-  --color-sources: #00a6f5;
-  --color-sources-foreground: hsl(0 0% 0%);
-  --color-sources-muted: hsl(199 100% 48% / 18%);
+  --color-sidebar: var(--color-neutral-950);
 
-  --shadow-sm: 0 1px 2px hsl(0 0% 0% / 20%);
-  --shadow-md: 0 2px 8px hsl(0 0% 0% / 30%);
-  --shadow-lg: 0 4px 16px hsl(0 0% 0% / 40%);
-  --shadow-xl: 0 8px 24px hsl(0 0% 0% / 50%);
-  --shadow-float: 0 12px 32px hsl(0 0% 0% / 60%);
+  /* Sources — lighter indigo in dark */
+  --color-sources: #818cf8;
+  --color-sources-foreground: var(--color-neutral-950);
+  --color-sources-muted: rgba(129, 140, 248, 0.12);
+
+  /* Shadows — heavier in dark mode */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --shadow-float: 0 12px 32px rgba(0, 0, 0, 0.7);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -190,8 +205,18 @@ body {
   min-height: 100vh;
 }
 
+/* Heading elements use DM Sans */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
-   PROSE STYLES (Editorial Typography) — AIRY SPACING
+   PROSE STYLES (Editorial Typography) — Clean spacing
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .prose-editorial {
@@ -211,44 +236,44 @@ body {
 }
 
 .prose-editorial h2 {
-  font-family: var(--font-sans);
+  font-family: var(--font-heading);
   font-size: var(--text-title);
   font-weight: 600;
-  margin-top: 4rem; /* Increased from 3rem for airy feel */
-  margin-bottom: 1.5rem; /* Increased from 1rem */
-  padding-bottom: 0.75rem; /* Increased from 0.5rem */
+  margin-top: 3.5rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--color-border-subtle);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
 }
 
 .prose-editorial h3 {
-  font-family: var(--font-sans);
+  font-family: var(--font-heading);
   font-weight: 600;
   font-size: var(--text-ui);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--color-muted-foreground);
-  margin-top: 2.5rem; /* Increased from 2rem */
-  margin-bottom: 1rem; /* Increased from 0.75rem */
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
 }
 
 .prose-editorial p {
   font-family: var(--font-sans);
   font-size: var(--text-body);
   font-weight: 400;
-  line-height: 1.8; /* Increased from 1.75 for better readability */
-  margin-bottom: 1.5rem; /* Increased from 1rem for airy spacing */
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
 }
 
 .prose-editorial ul,
 .prose-editorial ol {
   margin-left: 1.5rem;
-  margin-bottom: 1.5rem; /* Increased from 1rem */
+  margin-bottom: 1.25rem;
 }
 
 .prose-editorial li {
-  margin-bottom: 0.75rem; /* Increased from 0.5rem */
-  line-height: 1.75; /* Increased from 1.7 */
+  margin-bottom: 0.625rem;
+  line-height: 1.7;
 }
 
 .prose-editorial li::marker {
@@ -261,9 +286,9 @@ body {
 
 .prose-editorial blockquote {
   border-left: 2px solid var(--color-accent);
-  padding-left: 1.5rem; /* Increased from 1rem */
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
+  padding-left: 1.25rem;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
   font-style: italic;
   color: var(--color-muted-foreground);
 }
@@ -273,7 +298,7 @@ body {
   font-size: 0.875em;
   background: var(--color-muted);
   padding: 0.125rem 0.375rem;
-  border-radius: 0.25rem;
+  border-radius: var(--radius-sm);
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -305,8 +330,8 @@ body {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -315,7 +340,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
-  border-radius: 4px;
+  border-radius: var(--radius-full);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -335,7 +360,6 @@ body {
    FOCUS STYLES
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Global focus outline removed - use component-specific focus styles instead */
 :focus-visible {
   outline: none;
 }
@@ -356,7 +380,7 @@ body {
 @keyframes slide-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -367,7 +391,7 @@ body {
 @keyframes slide-in-right {
   from {
     opacity: 0;
-    transform: translateX(10px);
+    transform: translateX(8px);
   }
   to {
     opacity: 1;
@@ -386,15 +410,15 @@ body {
 }
 
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out forwards;
+  animation: fade-in 0.25s ease-out forwards;
 }
 
 .animate-slide-up {
-  animation: slide-up 0.4s ease-out forwards;
+  animation: slide-up 0.3s ease-out forwards;
 }
 
 .animate-slide-in-right {
-  animation: slide-in-right 0.3s ease-out forwards;
+  animation: slide-in-right 0.25s ease-out forwards;
 }
 
 .animate-pulse-glow {
@@ -405,7 +429,6 @@ body {
    MEMORY TIMELINE — FOCUS MODE ANIMATIONS
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Focus ring pulse for source card in focus mode */
 @keyframes focus-ring-pulse {
   0%,
   100% {
@@ -416,7 +439,7 @@ body {
   50% {
     box-shadow:
       0 0 0 2px var(--color-accent),
-      0 0 20px rgba(0, 166, 245, 0.35);
+      0 0 16px rgba(0, 166, 245, 0.25);
   }
 }
 
@@ -424,27 +447,24 @@ body {
   animation: focus-ring-pulse 2s ease-in-out infinite;
 }
 
-/* Connected card glow effect */
 .card-connected {
   box-shadow:
-    0 0 0 2px rgba(0, 166, 245, 0.6),
-    0 0 15px rgba(0, 166, 245, 0.2);
+    0 0 0 2px rgba(0, 166, 245, 0.5),
+    0 0 12px rgba(0, 166, 245, 0.15);
 }
 
-/* Dimmed card state */
 .card-dimmed {
-  opacity: 0.4;
-  filter: grayscale(20%);
+  opacity: 0.35;
+  filter: grayscale(15%);
   pointer-events: none;
   transition:
-    opacity 0.25s ease,
-    filter 0.25s ease,
-    transform 0.25s ease;
+    opacity 0.2s ease,
+    filter 0.2s ease,
+    transform 0.2s ease;
 }
 
-/* Connection line glow filter (for SVG) */
 .connection-line-glow {
-  filter: drop-shadow(0 0 4px rgba(0, 166, 245, 0.5));
+  filter: drop-shadow(0 0 3px rgba(0, 166, 245, 0.4));
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -463,7 +483,6 @@ body {
    LAYOUT MODE TRANSITIONS
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* Smooth transitions when switching layout modes */
 .layout-transition {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }

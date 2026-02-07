@@ -1,8 +1,9 @@
-import { Github } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { GithubIcon } from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { springs } from "../../lib/motion";
-import { cn, isValidExternalUrl } from "../../lib/utils";
-import { SlackIcon } from "../icons/source-icons";
+import { springs } from "@lib/motion";
+import { cn, isValidExternalUrl } from "@lib/utils";
+import { SlackIcon } from "@components/icons/source-icons";
 
 interface PRDSourcesProps {
   slackUrl: string;
@@ -31,7 +32,7 @@ export function PRDSources({ slackUrl }: PRDSourcesProps) {
           whileTap={{ scale: 0.95 }}
           transition={springs.quick}
           className={cn(
-            "size-8 rounded-lg flex items-center justify-center",
+            "size-8 rounded-[var(--radius-lg)] flex items-center justify-center",
             "bg-muted text-white",
             "hover:bg-purple-100 hover:text-purple-600",
             "dark:hover:bg-purple-950 dark:hover:text-purple-400",
@@ -48,14 +49,14 @@ export function PRDSources({ slackUrl }: PRDSourcesProps) {
           whileTap={{ scale: 0.95 }}
           transition={springs.quick}
           className={cn(
-            "size-8 rounded-lg flex items-center justify-center",
+            "size-8 rounded-[var(--radius-lg)] flex items-center justify-center",
             "bg-muted text-white",
             "hover:bg-accent-muted hover:text-accent",
             "transition-colors duration-150",
           )}
           title="View on GitHub"
         >
-          <Github className="size-4" strokeWidth={1.5} />
+          <HugeiconsIcon icon={GithubIcon} size={16} strokeWidth={1.5} />
         </motion.button>
       </div>
     </div>

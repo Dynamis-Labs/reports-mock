@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
-import { staggerContainer, staggerItem } from "../../../lib/motion";
-import type { Meeting } from "../../../types/meeting";
+import { staggerContainer, staggerItem } from "@lib/motion";
+import type { Meeting } from "@types/meeting";
 
 interface MeetingTranscriptTabProps {
   meeting: Meeting;

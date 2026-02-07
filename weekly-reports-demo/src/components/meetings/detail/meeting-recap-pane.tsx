@@ -1,30 +1,31 @@
 import { useState } from "react";
 import { motion } from "motion/react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import {
-  PlayCircle,
-  ListChecks,
-  AlertCircle,
-  Mail,
-  ThumbsUp,
-  ThumbsDown,
-  Send,
-  FileText,
-} from "lucide-react";
-import { cn } from "../../../lib/utils";
+  PlayCircleIcon,
+  CheckListIcon,
+  AlertCircleIcon,
+  Mail01Icon,
+  ThumbsUpIcon,
+  ThumbsDownIcon,
+  SentIcon,
+  File01Icon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
 import { MeetingDetailHeader } from "./meeting-detail-header";
-import { staggerContainer, staggerItem, springs } from "../../../lib/motion";
+import { staggerContainer, staggerItem, springs } from "@lib/motion";
 // Button is available if needed for future actions
-import type { Meeting } from "../../../types/meeting";
+import type { Meeting } from "@types/meeting";
 
 interface MeetingRecapPaneProps {
   meeting: Meeting;
   onBack: () => void;
 }
 
-const aiActions = [
-  { id: "summarize", icon: ListChecks, label: "Summarize action items" },
-  { id: "concerns", icon: AlertCircle, label: "Find concerns raised" },
-  { id: "followup", icon: Mail, label: "Draft follow-up email" },
+const aiActions: { id: string; icon: IconSvgElement; label: string }[] = [
+  { id: "summarize", icon: CheckListIcon, label: "Summarize action items" },
+  { id: "concerns", icon: AlertCircleIcon, label: "Find concerns raised" },
+  { id: "followup", icon: Mail01Icon, label: "Draft follow-up email" },
 ];
 
 /**
@@ -74,8 +75,8 @@ export function MeetingRecapPane({
                 "hover:bg-accent/15 transition-colors cursor-pointer",
               )}
             >
-              <div className="size-10 rounded-full bg-accent/20 flex items-center justify-center">
-                <PlayCircle className="size-5 text-accent" />
+              <div className="size-10 rounded-full bg-accent/20 flex items-center justify-center text-accent">
+                <HugeiconsIcon icon={PlayCircleIcon} size={20} />
               </div>
               <div>
                 <p className="text-body font-medium text-foreground">
@@ -131,12 +132,14 @@ export function MeetingRecapPane({
         {meeting.transcript && (
           <motion.section variants={staggerItem}>
             <div className="flex items-center gap-2 mb-3">
-              <FileText className="size-4 text-muted-foreground" />
+              <span className="text-muted-foreground">
+                <HugeiconsIcon icon={File01Icon} size={16} />
+              </span>
               <h2 className="text-micro font-medium text-muted-foreground uppercase tracking-wider">
                 Transcript Preview
               </h2>
             </div>
-            <pre className="text-caption text-muted-foreground whitespace-pre-wrap bg-muted/30 p-4 rounded-lg max-h-40 overflow-y-auto">
+            <pre className="text-caption text-muted-foreground whitespace-pre-wrap bg-muted/30 p-4 rounded-[var(--radius-lg)] max-h-40 overflow-y-auto">
               {meeting.transcript}
             </pre>
           </motion.section>
@@ -145,13 +148,13 @@ export function MeetingRecapPane({
         {/* AI Actions */}
         <motion.section variants={staggerItem}>
           <div className="flex flex-wrap gap-2">
-            {aiActions.map(({ id, icon: Icon, label }) => (
+            {aiActions.map(({ id, icon, label }) => (
               <motion.button
                 key={id}
                 type="button"
                 onClick={() => handleAiAction(id)}
                 className={cn(
-                  "flex items-center gap-2 px-4 py-2 rounded-lg",
+                  "flex items-center gap-2 px-4 py-2 rounded-[var(--radius-lg)]",
                   "border border-border hover:border-accent/50",
                   "text-ui text-foreground hover:text-accent",
                   "transition-colors duration-150",
@@ -160,7 +163,7 @@ export function MeetingRecapPane({
                 whileTap={{ scale: 0.98 }}
                 transition={springs.quick}
               >
-                <Icon className="size-4" strokeWidth={1.5} />
+                <HugeiconsIcon icon={icon} size={16} strokeWidth={1.5} />
                 <span>{label}</span>
               </motion.button>
             ))}
@@ -178,27 +181,35 @@ export function MeetingRecapPane({
                 type="button"
                 onClick={() => setFeedback(feedback === "up" ? null : "up")}
                 className={cn(
-                  "size-8 rounded-md flex items-center justify-center",
+                  "size-8 rounded-[var(--radius-md)] flex items-center justify-center",
                   "transition-colors duration-150",
                   feedback === "up"
                     ? "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600"
-                    : "hover:bg-muted text-foreground/60 hover:text-white",
+                    : "hover:bg-muted text-foreground/60 hover:text-foreground",
                 )}
               >
-                <ThumbsUp className="size-4" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={ThumbsUpIcon}
+                  size={16}
+                  strokeWidth={1.5}
+                />
               </button>
               <button
                 type="button"
                 onClick={() => setFeedback(feedback === "down" ? null : "down")}
                 className={cn(
-                  "size-8 rounded-md flex items-center justify-center",
+                  "size-8 rounded-[var(--radius-md)] flex items-center justify-center",
                   "transition-colors duration-150",
                   feedback === "down"
                     ? "bg-rose-100 dark:bg-rose-900/30 text-rose-600"
-                    : "hover:bg-muted text-foreground/60 hover:text-white",
+                    : "hover:bg-muted text-foreground/60 hover:text-foreground",
                 )}
               >
-                <ThumbsDown className="size-4" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={ThumbsDownIcon}
+                  size={16}
+                  strokeWidth={1.5}
+                />
               </button>
             </div>
           </div>
@@ -227,14 +238,14 @@ export function MeetingRecapPane({
               disabled={!followUpText.trim()}
               className={cn(
                 "absolute right-2 top-1/2 -translate-y-1/2",
-                "size-8 rounded-lg flex items-center justify-center",
+                "size-8 rounded-[var(--radius-lg)] flex items-center justify-center",
                 "transition-colors duration-150",
                 followUpText.trim()
                   ? "bg-accent text-accent-foreground hover:bg-accent/90"
                   : "text-muted-foreground/30",
               )}
             >
-              <Send className="size-4" strokeWidth={1.5} />
+              <HugeiconsIcon icon={SentIcon} size={16} strokeWidth={1.5} />
             </button>
           </div>
         </motion.section>

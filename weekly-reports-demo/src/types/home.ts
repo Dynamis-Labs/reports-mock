@@ -7,7 +7,7 @@
  * - Meeting brief content
  */
 
-import type { LucideIcon } from "lucide-react";
+import type { IconSvgElement } from "@hugeicons/react";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Personal Task Types
@@ -39,7 +39,7 @@ export interface PersonalTask {
 
 // Category configuration for icons and colors
 export interface CategoryConfig {
-  icon: LucideIcon;
+  icon: IconSvgElement;
   label: string;
   color: string;
   bgColor: string;

@@ -1,12 +1,17 @@
-import { Radio, FileText } from "lucide-react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
+import {
+  RadioIcon,
+  File01Icon,
+  Calendar01Icon,
+} from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
-import { springs } from "../../lib/motion";
-import type { ArchiveTab } from "../../stores/archive-store";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import type { ArchiveTab } from "@stores/archive-store";
 
 interface TabConfig {
   id: ArchiveTab;
-  icon: typeof Radio;
+  icon: IconSvgElement;
   label: string;
   count: number;
 }
@@ -16,6 +21,7 @@ interface ArchiveTabsProps {
   onTabChange: (tab: ArchiveTab) => void;
   radarsCount: number;
   reportsCount: number;
+  meetingsCount: number;
   className?: string;
 }
 
@@ -29,21 +35,28 @@ export function ArchiveTabs({
   onTabChange,
   radarsCount,
   reportsCount,
+  meetingsCount,
   className,
 }: ArchiveTabsProps) {
   const tabs: TabConfig[] = [
-    { id: "reports", icon: FileText, label: "Reports", count: reportsCount },
-    { id: "radars", icon: Radio, label: "Radars", count: radarsCount },
+    { id: "reports", icon: File01Icon, label: "Reports", count: reportsCount },
+    {
+      id: "meetings",
+      icon: Calendar01Icon,
+      label: "Meetings",
+      count: meetingsCount,
+    },
+    { id: "radars", icon: RadioIcon, label: "Radars", count: radarsCount },
   ];
 
   return (
     <div
       className={cn(
-        "inline-flex items-center gap-0.5 p-0.5 rounded-md bg-muted/40",
+        "inline-flex items-center gap-0.5 p-0.5 rounded-[var(--radius-md)] bg-muted/40",
         className,
       )}
     >
-      {tabs.map(({ id, icon: Icon, label, count }) => {
+      {tabs.map(({ id, icon, label, count }) => {
         const isActive = activeTab === id;
 
         return (
@@ -66,7 +79,9 @@ export function ArchiveTabs({
                 transition={springs.quick}
               />
             )}
-            <Icon className="size-3 relative z-10" strokeWidth={1.5} />
+            <span className="relative z-10">
+              <HugeiconsIcon icon={icon} size={12} strokeWidth={1.5} />
+            </span>
             <span className="relative z-10">{label}</span>
             <span
               className={cn(

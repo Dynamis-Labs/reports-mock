@@ -9,26 +9,27 @@
  */
 
 import { motion } from "motion/react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import {
-  AlertTriangle,
-  Ban,
-  CheckSquare,
-  Bell,
-  ChevronRight,
-} from "lucide-react";
-import { cn } from "../../lib/utils";
-import type { InvolvementItem } from "../../types/home";
+  Alert01Icon,
+  Cancel01Icon,
+  CheckmarkSquare01Icon,
+  Notification01Icon,
+  ArrowRight01Icon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import type { InvolvementItem } from "@types/home";
 
 interface InvolvementTabItemProps {
   item: InvolvementItem;
   onClick: () => void;
 }
 
-const typeIcons = {
-  "blocked-swimlane": Ban,
-  "at-risk": AlertTriangle,
-  "action-item": CheckSquare,
-  "recent-update": Bell,
+const typeIcons: Record<InvolvementItem["type"], IconSvgElement> = {
+  "blocked-swimlane": Cancel01Icon,
+  "at-risk": Alert01Icon,
+  "action-item": CheckmarkSquare01Icon,
+  "recent-update": Notification01Icon,
 };
 
 const severityColors = {
@@ -55,7 +56,7 @@ const severityColors = {
 };
 
 export function InvolvementTabItem({ item, onClick }: InvolvementTabItemProps) {
-  const Icon = typeIcons[item.type];
+  const icon = typeIcons[item.type];
   const severity = item.severity ?? "low";
   const colors = severityColors[severity];
 
@@ -72,7 +73,7 @@ export function InvolvementTabItem({ item, onClick }: InvolvementTabItemProps) {
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full flex items-center gap-3 px-4 py-3.5 rounded-lg",
+        "w-full flex items-center gap-3 px-4 py-3.5 rounded-[var(--radius-lg)]",
         "text-left transition-all",
         "bg-surface-elevated border border-border shadow-sm",
         "hover:shadow-md hover:border-border group",
@@ -84,17 +85,22 @@ export function InvolvementTabItem({ item, onClick }: InvolvementTabItemProps) {
       {/* Type icon */}
       <div
         className={cn(
-          "size-9 rounded-lg flex items-center justify-center shrink-0",
+          "size-9 rounded-[var(--radius-lg)] flex items-center justify-center shrink-0",
           item.type === "blocked-swimlane" && "bg-red-500/10",
           item.type === "at-risk" && "bg-orange-500/10",
           item.type === "action-item" && "bg-blue-500/10",
           item.type === "recent-update" && "bg-slate-500/10",
         )}
       >
-        <Icon className={cn("size-4", iconColor)} strokeWidth={1.5} />
+        <HugeiconsIcon
+          icon={icon}
+          size={16}
+          strokeWidth={1.5}
+          className={iconColor}
+        />
       </div>
 
-      {/* Content — title + subtitle */}
+      {/* Content -- title + subtitle */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <h4 className="font-medium text-sm text-foreground truncate">
@@ -114,9 +120,11 @@ export function InvolvementTabItem({ item, onClick }: InvolvementTabItemProps) {
       </div>
 
       {/* Chevron */}
-      <ChevronRight
-        className="size-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors shrink-0"
+      <HugeiconsIcon
+        icon={ArrowRight01Icon}
+        size={16}
         strokeWidth={1.5}
+        className="text-muted-foreground/40 group-hover:text-muted-foreground transition-colors shrink-0"
       />
     </motion.button>
   );

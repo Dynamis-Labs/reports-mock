@@ -1,8 +1,8 @@
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 import { MemoryEventCard } from "./memory-event-card";
-import { getWeekDateRange } from "../../data/mock-memories";
-import type { MemoryEvent } from "../../types/memory";
+import { getWeekDateRange } from "@data/memories";
+import type { MemoryEvent } from "@types/memory";
 
 /**
  * Memory Week Column

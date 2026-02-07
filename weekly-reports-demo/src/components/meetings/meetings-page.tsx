@@ -1,21 +1,22 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Search, X } from "lucide-react";
-import { PageBreadcrumbHeader } from "../layout/page-breadcrumb-header";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Search01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
+import { PageBreadcrumbHeader } from "@components/layout/page-breadcrumb-header";
 import { MeetingsHeaderActions } from "./meetings-header";
 import { PastSection, UpNextSection, LaterSection } from "./sections";
 import { MeetingDetailModal } from "./meeting-detail-modal";
-import { ContactDrawer } from "../crm/layouts/card-grid/contact-drawer";
-import { useMeetingsStore } from "../../stores/meetings-store";
-import { mockMeetings } from "../../data/mock-meetings";
-import { mockContacts } from "../../data/mock-contacts";
-import { categorizeMeetings } from "../../lib/date-utils";
-import { cn } from "../../lib/utils";
+import { ContactDrawer } from "@components/crm/layouts/card-grid/contact-drawer";
+import { useMeetingsStore } from "@stores/meetings-store";
+import { mockMeetings } from "@data/mock-meetings";
+import { mockContacts } from "@data/contacts";
+import { categorizeMeetings } from "@lib/date-utils";
+import { cn } from "@lib/utils";
 import {
   findContactForAttendee,
   createContactFromAttendee,
-} from "../../lib/contact-meeting-utils";
-import type { Meeting, MeetingAttendee } from "../../types/meeting";
-import type { Contact } from "../../types/contact";
+} from "@lib/contact-meeting-utils";
+import type { Meeting, MeetingAttendee } from "@types/meeting";
+import type { Contact } from "@types/contact";
 
 /**
  * Filters meetings by a search query.
@@ -173,10 +174,9 @@ export function MeetingsPage() {
         <div className="max-w-2xl mx-auto px-6 py-8">
           {/* Search box */}
           <div className="relative mb-6">
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/50 pointer-events-none"
-              strokeWidth={1.5}
-            />
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/50 pointer-events-none">
+              <HugeiconsIcon icon={Search01Icon} size={16} strokeWidth={1.5} />
+            </span>
             <input
               ref={searchInputRef}
               type="text"
@@ -184,7 +184,7 @@ export function MeetingsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={cn(
-                "w-full h-9 pl-9 pr-9 rounded-lg",
+                "w-full h-9 pl-9 pr-9 rounded-[var(--radius-lg)]",
                 "bg-muted/40 border border-transparent",
                 "text-ui text-foreground placeholder:text-muted-foreground/40",
                 "focus:outline-none focus:bg-background focus:border-border",
@@ -197,7 +197,11 @@ export function MeetingsPage() {
                 onClick={handleClearSearch}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 size-5 rounded flex items-center justify-center text-muted-foreground/50 hover:text-foreground transition-colors"
               >
-                <X className="size-3.5" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={Cancel01Icon}
+                  size={14}
+                  strokeWidth={1.5}
+                />
               </button>
             )}
           </div>
@@ -205,10 +209,9 @@ export function MeetingsPage() {
           {/* No results state */}
           {noResults && (
             <div className="py-16 text-center">
-              <Search
-                className="size-8 text-muted-foreground/30 mx-auto mb-3"
-                strokeWidth={1}
-              />
+              <span className="text-muted-foreground/30 mx-auto mb-3 flex justify-center">
+                <HugeiconsIcon icon={Search01Icon} size={32} strokeWidth={1} />
+              </span>
               <p className="text-ui text-muted-foreground">
                 No meetings match &ldquo;{searchQuery}&rdquo;
               </p>

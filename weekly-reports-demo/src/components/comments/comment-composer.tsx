@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
-import { Avatar } from "../ui/avatar";
-import { cn } from "../../lib/utils";
+import { Avatar } from "@components/ui/avatar";
+import { cn } from "@lib/utils";
 
 interface CommentComposerProps {
   userName: string;
@@ -48,7 +48,7 @@ export function CommentComposer({
       className="p-4 space-y-3"
     >
       {/* Selected text preview */}
-      <div className="bg-accent/10 rounded-md p-2.5 border-l-2 border-accent">
+      <div className="bg-accent/10 rounded-[var(--radius-md)] p-2.5 border-l-2 border-accent">
         <p className="text-xs text-muted-foreground line-clamp-2">
           "{selectedText}"
         </p>
@@ -79,7 +79,7 @@ export function CommentComposer({
       <div className="flex justify-end items-center gap-2">
         <button
           onClick={onCancel}
-          className="px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-full hover:bg-muted hover:text-white transition-colors"
+          className="px-3 py-1.5 text-sm font-medium text-muted-foreground rounded-full hover:bg-muted hover:text-foreground transition-colors"
         >
           Cancel
         </button>
@@ -90,7 +90,7 @@ export function CommentComposer({
             "px-4 py-1.5 text-sm font-medium rounded-full",
             "bg-accent text-accent-foreground",
             "hover:bg-accent/90 transition-colors",
-            "disabled:bg-muted disabled:text-white disabled:opacity-50 disabled:cursor-not-allowed",
+            "disabled:bg-muted disabled:text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed",
           )}
         >
           Comment

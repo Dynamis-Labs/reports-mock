@@ -10,12 +10,13 @@
  */
 
 import { motion } from "motion/react";
-import { ArrowUpRight } from "lucide-react";
-import { cn } from "../../lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
 import { InvolvementTabItem } from "./involvement-tab-item";
-import { useHomeStore } from "../../stores/home-store";
-import { mockInvolvementItems } from "../../data/mock-home";
-import type { InvolvementItem } from "../../types/home";
+import { useHomeStore } from "@stores/home-store";
+import { mockInvolvementItems } from "@data/mock-home";
+import type { InvolvementItem } from "@types/home";
 
 interface InvolvementSectionProps {
   onNavigateToMemory: (initiativeId: string) => void;
@@ -72,14 +73,18 @@ export function InvolvementSection({
           <motion.button
             onClick={openNeedsAttentionPopup}
             className={cn(
-              "size-7 rounded-md flex items-center justify-center",
+              "size-7 rounded-[var(--radius-md)] flex items-center justify-center",
               "text-muted-foreground hover:text-foreground",
               "hover:bg-muted/50 transition-colors",
             )}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <ArrowUpRight className="size-4" strokeWidth={1.5} />
+            <HugeiconsIcon
+              icon={ArrowUpRight01Icon}
+              size={16}
+              strokeWidth={1.5}
+            />
           </motion.button>
         </div>
       </header>

@@ -1,19 +1,20 @@
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  X,
-  Video,
-  Mail,
-  MessageSquare,
-  FileText,
-  Calendar,
-  ExternalLink,
-} from "lucide-react";
-import { cn } from "../../lib/utils";
-import { springs } from "../../lib/motion";
-import { useMemoryStore } from "../../stores/memory-store";
-import type { MemorySource } from "../../types/memory";
+  Cancel01Icon,
+  Video01Icon,
+  Mail01Icon,
+  Message01Icon,
+  File01Icon,
+  Calendar01Icon,
+  Link03Icon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import { useMemoryStore } from "@stores/memory-store";
+import type { MemorySource } from "@types/memory";
 
 /**
  * Memory Sources Panel
@@ -26,12 +27,12 @@ import type { MemorySource } from "../../types/memory";
  */
 
 // Map source types to icons
-const sourceTypeIcons: Record<string, typeof Video> = {
-  meeting: Video,
-  email: Mail,
-  slack: MessageSquare,
-  document: FileText,
-  calendar: Calendar,
+const sourceTypeIcons: Record<string, typeof Video01Icon> = {
+  meeting: Video01Icon,
+  email: Mail01Icon,
+  slack: Message01Icon,
+  document: File01Icon,
+  calendar: Calendar01Icon,
 };
 
 // Map source types to display labels
@@ -58,7 +59,7 @@ interface SourceCardProps {
 }
 
 function SourceCard({ source, index }: SourceCardProps) {
-  const Icon = sourceTypeIcons[source.type] || FileText;
+  const sourceIcon = sourceTypeIcons[source.type] || File01Icon;
   const colors = sourceTypeColors[source.type] || {
     bg: "bg-slate-500/10",
     text: "text-slate-500",
@@ -77,7 +78,7 @@ function SourceCard({ source, index }: SourceCardProps) {
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
-          "block p-4 rounded-lg border border-border/60",
+          "block p-4 rounded-[var(--radius-lg)] border border-border/60",
           "bg-surface hover:bg-surface-elevated",
           "transition-all duration-200 hover:shadow-sm hover:border-border",
         )}
@@ -86,11 +87,16 @@ function SourceCard({ source, index }: SourceCardProps) {
           {/* Icon */}
           <div
             className={cn(
-              "size-10 rounded-lg flex items-center justify-center shrink-0",
+              "size-10 rounded-[var(--radius-lg)] flex items-center justify-center shrink-0",
               colors.bg,
             )}
           >
-            <Icon className={cn("size-5", colors.text)} strokeWidth={1.5} />
+            <HugeiconsIcon
+              icon={sourceIcon}
+              size={20}
+              className={colors.text}
+              strokeWidth={1.5}
+            />
           </div>
 
           {/* Content */}
@@ -103,8 +109,10 @@ function SourceCard({ source, index }: SourceCardProps) {
 
           {/* External link indicator */}
           {source.url && (
-            <ExternalLink
-              className="size-4 text-muted-foreground/50 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+            <HugeiconsIcon
+              icon={Link03Icon}
+              size={16}
+              className="text-muted-foreground/50 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
               strokeWidth={1.5}
             />
           )}
@@ -195,13 +203,17 @@ export function MemorySourcesPanel() {
                 type="button"
                 onClick={close}
                 className={cn(
-                  "size-8 rounded-lg flex items-center justify-center",
+                  "size-8 rounded-[var(--radius-lg)] flex items-center justify-center",
                   "text-muted-foreground hover:text-foreground",
                   "hover:bg-muted transition-colors duration-150",
                 )}
                 aria-label="Close sources panel"
               >
-                <X className="size-4" strokeWidth={1.5} />
+                <HugeiconsIcon
+                  icon={Cancel01Icon}
+                  size={16}
+                  strokeWidth={1.5}
+                />
               </button>
             </div>
 
@@ -213,8 +225,10 @@ export function MemorySourcesPanel() {
 
               {sources.length === 0 && (
                 <div className="text-center py-12">
-                  <FileText
-                    className="size-10 mx-auto text-muted-foreground/20 mb-3"
+                  <HugeiconsIcon
+                    icon={File01Icon}
+                    size={40}
+                    className="mx-auto text-muted-foreground/20 mb-3"
                     strokeWidth={1}
                   />
                   <p className="text-sm text-muted-foreground/50">

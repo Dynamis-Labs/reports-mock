@@ -12,12 +12,19 @@
 import { useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Sparkles, Target, MessageSquare, CheckCircle } from "lucide-react";
-import { cn } from "../../lib/utils";
-import { springs } from "../../lib/motion";
-import { useHomeStore } from "../../stores/home-store";
-import { mockMeetingBriefs } from "../../data/mock-home";
-import { mockMeetings } from "../../data/mock-meetings";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Cancel01Icon,
+  SparklesIcon,
+  Target01Icon,
+  Message01Icon,
+  CheckmarkCircle01Icon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import { useHomeStore } from "@stores/home-store";
+import { mockMeetingBriefs } from "@data/mock-home";
+import { mockMeetings } from "@data/mock-meetings";
 
 export function MeetingBriefPopup() {
   const isOpen = useHomeStore((state) => state.isBriefPopupOpen);
@@ -100,13 +107,15 @@ export function MeetingBriefPopup() {
                   <div className="flex items-center gap-2 mb-2">
                     <div
                       className={cn(
-                        "flex items-center gap-1.5 px-2 py-1 rounded-md",
+                        "flex items-center gap-1.5 px-2 py-1 rounded-[var(--radius-md)]",
                         "bg-accent-muted",
                       )}
                     >
-                      <Sparkles
-                        className="size-3.5 text-accent"
+                      <HugeiconsIcon
+                        icon={SparklesIcon}
+                        size={14}
                         strokeWidth={1.5}
+                        className="text-accent"
                       />
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-accent">
                         AI Brief
@@ -128,9 +137,13 @@ export function MeetingBriefPopup() {
                 {/* Close button */}
                 <button
                   onClick={closePopup}
-                  className="p-2 -m-2 text-muted-foreground/50 hover:text-foreground rounded-lg hover:bg-muted/50 transition-colors"
+                  className="p-2 -m-2 text-muted-foreground/50 hover:text-foreground rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors"
                 >
-                  <X className="size-5" strokeWidth={1.5} />
+                  <HugeiconsIcon
+                    icon={Cancel01Icon}
+                    size={20}
+                    strokeWidth={1.5}
+                  />
                 </button>
               </div>
             </header>
@@ -140,9 +153,11 @@ export function MeetingBriefPopup() {
               {/* Context */}
               <section>
                 <div className="flex items-center gap-2 mb-3">
-                  <Target
-                    className="size-4 text-muted-foreground"
+                  <HugeiconsIcon
+                    icon={Target01Icon}
+                    size={16}
                     strokeWidth={1.5}
+                    className="text-muted-foreground"
                   />
                   <h3 className="text-micro font-medium text-muted-foreground/60 uppercase tracking-wider">
                     Context
@@ -157,9 +172,11 @@ export function MeetingBriefPopup() {
               {displayBrief.keyPoints.length > 0 && (
                 <section>
                   <div className="flex items-center gap-2 mb-3">
-                    <CheckCircle
-                      className="size-4 text-muted-foreground"
+                    <HugeiconsIcon
+                      icon={CheckmarkCircle01Icon}
+                      size={16}
                       strokeWidth={1.5}
+                      className="text-muted-foreground"
                     />
                     <h3 className="text-micro font-medium text-muted-foreground/60 uppercase tracking-wider">
                       Key Points
@@ -183,9 +200,11 @@ export function MeetingBriefPopup() {
               {displayBrief.discussionTopics.length > 0 && (
                 <section>
                   <div className="flex items-center gap-2 mb-3">
-                    <MessageSquare
-                      className="size-4 text-muted-foreground"
+                    <HugeiconsIcon
+                      icon={Message01Icon}
+                      size={16}
                       strokeWidth={1.5}
+                      className="text-muted-foreground"
                     />
                     <h3 className="text-micro font-medium text-muted-foreground/60 uppercase tracking-wider">
                       Discussion Topics

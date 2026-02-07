@@ -5,7 +5,8 @@
  * Each initiative represents a major business objective or project.
  */
 
-import type { Initiative, MemoryParticipant } from "../types/memory";
+import type { Initiative, MemoryParticipant } from "@types/memory";
+import { daysAgo, daysFromNow } from "@lib/mock-date-helpers";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Shared Participants
@@ -25,21 +26,6 @@ const participants: Record<string, MemoryParticipant> = {
   maria: { id: "p-11", name: "Maria Garcia" },
   tom: { id: "p-12", name: "Tom Baker" },
 };
-
-// Use current date for dynamic week calculations
-const NOW = new Date();
-
-function daysAgo(days: number): Date {
-  const date = new Date(NOW);
-  date.setDate(date.getDate() - days);
-  return date;
-}
-
-function daysFromNow(days: number): Date {
-  const date = new Date(NOW);
-  date.setDate(date.getDate() + days);
-  return date;
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // Mock Initiatives

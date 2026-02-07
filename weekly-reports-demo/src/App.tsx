@@ -1,26 +1,26 @@
 import { useState } from "react";
-import { ThemeProvider } from "./components/theme/theme-provider";
-import { TooltipProvider } from "./components/ui/tooltip";
-import { AppLayout } from "./components/layout/app-layout";
-import { ReportsSidebar } from "./components/layout/reports-sidebar";
-import { CommentPanel } from "./components/comments";
-import { SourcesSidebar } from "./components/sources";
-import { ReadingPane } from "./components/report/reading-pane";
-import { SettingsPane } from "./components/settings";
-import { ReviewActionsModal } from "./components/review-actions";
-import { HomePage } from "./components/home";
-import { CrmPage } from "./components/crm";
-import { ArchivePage } from "./components/archive";
-import { MemoryPage } from "./components/memory";
-import { MeetingsPage } from "./components/meetings";
-import { RadarReadingPane } from "./components/radar";
-import { AskSentraChatbox } from "./components/chat/ask-sentra-chatbox";
-import { useSettingsStore } from "./stores/settings-store";
-import { useReportsStore } from "./stores/reports-store";
-import { useMemoryStore } from "./stores/memory-store";
-import { useArchiveStore } from "./stores/archive-store";
-import { mockReports } from "./data/mock-reports";
-import { mockRadarItems } from "./data/mock-radar";
+import { ThemeProvider } from "@components/theme/theme-provider";
+import { TooltipProvider } from "@components/ui/tooltip";
+import { AppLayout } from "@components/layout/app-layout";
+import { ReportsSidebar } from "@components/layout/reports-sidebar";
+import { CommentPanel } from "@components/comments";
+import { SourcesSidebar } from "@components/sources";
+import { ReadingPane } from "@components/report/reading-pane";
+import { SettingsPane } from "@components/settings";
+import { ReviewActionsModal } from "@components/review-actions";
+import { HomePage } from "@components/home";
+import { CrmPage } from "@components/crm";
+import { ArchivePage } from "@components/archive";
+import { MemoryPage } from "@components/memory";
+import { MeetingsPage } from "@components/meetings";
+import { RadarReadingPane } from "@components/radar";
+import { AskSentraChatbox } from "@components/chat/ask-sentra-chatbox";
+import { useSettingsStore } from "@stores/settings-store";
+import { useReportsStore } from "@stores/reports-store";
+import { useMemoryStore } from "@stores/memory-store";
+import { useArchiveStore } from "@stores/archive-store";
+import { mockReports } from "@data/mock-reports";
+import { mockRadarItems } from "@data/mock-radar";
 
 // Mock current user - in a real app this would come from auth
 const CURRENT_USER = {
@@ -106,6 +106,18 @@ function App() {
     setActiveSection("archive");
   };
 
+  // Navigate to archive meetings tab filtered by contact name
+  const handleViewContactMeetings = (contact: {
+    firstName: string;
+    lastName: string;
+  }) => {
+    const archiveStore = useArchiveStore.getState();
+    archiveStore.setActiveTab("meetings");
+    archiveStore.setSearchQuery(`${contact.firstName} ${contact.lastName}`);
+    archiveStore.selectMeeting(null);
+    setActiveSection("archive");
+  };
+
   // Determine main content based on section and view mode
   const getMainContent = () => {
     // Home section (default)
@@ -125,7 +137,7 @@ function App() {
 
     // CRM section
     if (activeSection === "crm") {
-      return <CrmPage />;
+      return <CrmPage onViewAllMeetings={handleViewContactMeetings} />;
     }
 
     // Meetings section

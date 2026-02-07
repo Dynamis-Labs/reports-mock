@@ -1,5 +1,5 @@
-import { cn } from "../../../lib/utils";
-import type { Contact } from "../../../types/contact";
+import { cn } from "@lib/utils";
+import type { Contact } from "@types/contact";
 
 /**
  * Contact Avatar

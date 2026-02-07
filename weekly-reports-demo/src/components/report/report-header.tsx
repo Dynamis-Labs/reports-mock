@@ -1,11 +1,16 @@
 import { motion } from "motion/react";
-import { Sparkles, Link2, History } from "lucide-react";
-import { formatDateRange } from "../../lib/utils";
-import { staggerItem } from "../../lib/motion";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
-import { useReviewActionsStore } from "../review-actions";
-import type { WeeklyReport } from "../../data/mock-reports";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  SparklesIcon,
+  Link01Icon,
+  Clock01Icon,
+} from "@hugeicons/core-free-icons";
+import { formatDateRange } from "@lib/utils";
+import { staggerItem } from "@lib/motion";
+import { Button } from "@components/ui/button";
+import { Badge } from "@components/ui/badge";
+import { useReviewActionsStore } from "@components/review-actions";
+import type { WeeklyReport } from "@data/mock-reports";
 
 interface ReportHeaderProps {
   report: WeeklyReport;
@@ -48,12 +53,12 @@ export function ReportHeader({ report, onViewHistory }: ReportHeaderProps) {
             className="gap-1.5 text-muted-foreground hover:text-foreground"
             onClick={onViewHistory}
           >
-            <History className="size-3.5" strokeWidth={1.5} />
+            <HugeiconsIcon icon={Clock01Icon} size={14} strokeWidth={1.5} />
             View History
           </Button>
         )}
         <Button variant="ghost" size="icon" className="size-8">
-          <Link2 className="size-4" strokeWidth={1.5} />
+          <HugeiconsIcon icon={Link01Icon} size={16} strokeWidth={1.5} />
         </Button>
         <Button
           variant="outline"
@@ -61,7 +66,7 @@ export function ReportHeader({ report, onViewHistory }: ReportHeaderProps) {
           className="gap-1.5"
           onClick={handleReviewClick}
         >
-          <Sparkles className="size-3.5" strokeWidth={1.5} />
+          <HugeiconsIcon icon={SparklesIcon} size={14} strokeWidth={1.5} />
           Review
           {actionCount > 0 && (
             <Badge variant="count" className="ml-1">

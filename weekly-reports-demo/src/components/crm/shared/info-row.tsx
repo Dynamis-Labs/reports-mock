@@ -1,5 +1,5 @@
-import { ExternalLink } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
+import { Link03Icon } from "@hugeicons/core-free-icons";
 
 /**
  * Info Row
@@ -9,7 +9,7 @@ import type { LucideIcon } from "lucide-react";
  */
 
 interface InfoRowProps {
-  icon: LucideIcon;
+  icon: IconSvgElement;
   label: string;
   value: string;
   href?: string;
@@ -17,7 +17,7 @@ interface InfoRowProps {
 }
 
 export function InfoRow({
-  icon: Icon,
+  icon,
   label,
   value,
   href,
@@ -25,9 +25,11 @@ export function InfoRow({
 }: InfoRowProps) {
   const content = (
     <div className="flex items-center gap-3 py-2">
-      <Icon
-        className="size-4 text-muted-foreground/60 shrink-0"
-        strokeWidth={1.5}
+      <HugeiconsIcon
+        icon={icon}
+        size={16}
+        strokeWidth={2}
+        className="text-muted-foreground/60 shrink-0"
       />
       <div className="flex-1 min-w-0">
         <p className="text-micro text-muted-foreground/60 mb-0.5">{label}</p>
@@ -38,9 +40,11 @@ export function InfoRow({
         </p>
       </div>
       {href && (
-        <ExternalLink
-          className="size-3.5 text-muted-foreground/40"
-          strokeWidth={1.5}
+        <HugeiconsIcon
+          icon={Link03Icon}
+          size={14}
+          strokeWidth={2}
+          className="text-muted-foreground/40"
         />
       )}
     </div>
@@ -52,7 +56,7 @@ export function InfoRow({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="block hover:bg-muted/50 -mx-3 px-3 rounded-lg transition-colors"
+        className="block hover:bg-muted/50 -mx-3 px-3 rounded-[var(--radius-lg)] transition-colors"
       >
         {content}
       </a>

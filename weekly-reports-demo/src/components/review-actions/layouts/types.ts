@@ -3,7 +3,7 @@ import type {
   MeetingAction,
   EmailAction,
   Participant,
-} from "../../../types/action";
+} from "@types/action";
 
 export interface LayoutProps {
   action: MeetingAction | EmailAction;

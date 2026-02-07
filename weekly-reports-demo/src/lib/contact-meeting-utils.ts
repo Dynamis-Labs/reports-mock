@@ -1,5 +1,5 @@
-import type { Contact } from "../types/contact";
-import type { Meeting, MeetingAttendee } from "../types/meeting";
+import type { Contact } from "@types/contact";
+import type { Meeting, MeetingAttendee } from "@types/meeting";
 
 /**
  * Contact-Meeting Linking Utilities
@@ -95,7 +95,6 @@ export function createContactFromAttendee(attendee: MeetingAttendee): Contact {
     category: "other",
     relationship: "contact",
     relationshipScore: 0,
-    warmth: "new",
     roleBadges: [],
     tags: [],
     insights: {
@@ -104,6 +103,7 @@ export function createContactFromAttendee(attendee: MeetingAttendee): Contact {
     notes: {
       customSummary: "",
     },
+    interestingFacts: [],
     recentTopics: [],
     interactions: [],
     lastContacted: now,

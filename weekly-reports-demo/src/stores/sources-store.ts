@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { SourceItem } from "../types/sources";
+import type { SourceItem } from "@types/sources";
 
 interface SourcesStore {
   isOpen: boolean;

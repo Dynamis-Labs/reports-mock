@@ -12,6 +12,17 @@ This document describes the structured agent workflow for feature development in
 | **Review**     | Code review          | Implemented code  | Review feedback      |
 | **Test**       | Verify functionality | Reviewed code     | Test results         |
 
+## Design System Reference
+
+When implementing features, agents must follow the design system defined in [DESIGN_SPEC.md](./DESIGN_SPEC.md):
+
+- **Icons**: Use `HugeiconsIcon` from `@hugeicons/react` with icons from `@hugeicons/core-free-icons`. Type: `IconSvgElement`. No `lucide-react`.
+- **Fonts**: DM Sans for headings (`font-heading`), Inter for body/UI (`font-sans`)
+- **Colors**: Warm neutrals (#fafafa / #171717), cyan accent (#00a6f5), black primary buttons
+- **Border Radius**: `var(--radius-sm)` (3px), `var(--radius-md)` (5px), `var(--radius-lg)` (7px)
+- **Shadows**: No shadow on cards at rest. Shadow-sm on hover.
+- **Hover states**: Always `hover:text-foreground`, never `hover:text-white`
+
 ## Workflow Diagram
 
 ```
@@ -75,44 +86,20 @@ Use the Claude Code Skill tool to invoke each agent:
 
 Each agent produces structured output that serves as input for the next:
 
-1. **Ideation → Validation**
+1. **Ideation -> Validation**
    - Passes: Recommended approach, alternatives considered, open questions
 
-2. **Validation → Execution**
+2. **Validation -> Execution**
    - Passes: Approved approach, implementation notes, risk mitigations
 
-3. **Execution → Review**
+3. **Execution -> Review**
    - Passes: List of files changed, implementation decisions, areas of concern
 
-4. **Review → Test**
+4. **Review -> Test**
    - Passes: Review verdict, items to verify, edge cases to test
 
-5. **Test → Complete**
+5. **Test -> Complete**
    - Passes: Test results, any remaining issues, completion status
-
-### Asking Questions
-
-Any agent can ask the user questions when:
-
-- Requirements are ambiguous
-- Multiple valid options exist
-- Trade-offs need user input
-- Scope clarification needed
-
-Use the structured question format:
-
-```markdown
-### Question for User
-
-**Context**: [Why this matters]
-
-**Options**:
-
-1. Option A - [Pros/Cons]
-2. Option B - [Pros/Cons]
-
-**Recommendation**: [Your suggestion]
-```
 
 ## Best Practices
 
@@ -126,17 +113,22 @@ Use the structured question format:
 
 - Read all referenced files before validating
 - Check against DESIGN_SPEC.md for design system compliance
+- Verify icon imports use HugeIcons (`@hugeicons/core-free-icons`), not Lucide
 - Flag security concerns immediately
 
 ### For Execution
 
 - Follow the established file structure
 - Use TypeScript strictly (no `any`)
+- Use `IconSvgElement` type for icon props (from `@hugeicons/react`)
+- Use `rounded-[var(--radius-lg)]` for cards/buttons, `rounded-[var(--radius-md)]` for inputs
 - Check for TypeScript errors frequently
 
 ### For Review
 
 - Review for correctness first, style second
+- Verify no `lucide-react` imports
+- Verify no `hover:text-white` (should be `hover:text-foreground`)
 - Categorize issues by severity
 - Provide specific line numbers
 
@@ -145,41 +137,6 @@ Use the structured question format:
 - Test happy path and edge cases
 - Verify keyboard navigation
 - Check both light and dark mode
-
-## Example Session
-
-```
-User: Add a notification badge to the header
-
-1. /ideation
-   → Explores: inline badge vs dropdown vs toast
-   → Recommends: inline badge
-   → Asks: Should badge show count or just dot?
-
-2. User: Show count
-
-3. /validation
-   → Checks: Existing badge component patterns
-   → Approves: Use Badge variant="count"
-   → Notes: Follow report-header.tsx pattern
-
-4. /execution
-   → Creates: notification-badge.tsx
-   → Extends: report-header.tsx
-   → Adds: notification-store.ts
-
-5. /review
-   → Checks: Code quality, patterns, types
-   → Approves: With minor suggestions
-   → Notes: Consider memoization for count
-
-6. /test
-   → Manual: Badge appears, count updates
-   → Edge: Zero count hidden, 99+ truncation
-   → Pass: All tests pass
-
-7. Complete: Feature ready for commit
-```
 
 ## Files
 

@@ -1,10 +1,15 @@
 import { useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { Mic, Paperclip, ArrowUp } from "lucide-react";
-import { useChatboxStore } from "../../stores/chatbox-store";
-import { springs } from "../../lib/motion";
-import { cn } from "../../lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Mic01Icon,
+  AttachmentIcon,
+  Cancel01Icon,
+} from "@hugeicons/core-free-icons";
+import { useChatboxStore } from "@stores/chatbox-store";
+import { springs } from "@lib/motion";
+import { cn } from "@lib/utils";
 import { ChatMessage } from "./chat-message";
 import { ThinkingIndicator } from "./thinking-indicator";
 
@@ -26,6 +31,8 @@ export function AskSentraChatbox() {
     collapse,
     setInputValue,
     sendMessage,
+    contactContext,
+    clearContactContext,
   } = useChatboxStore();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -147,6 +154,23 @@ export function AskSentraChatbox() {
         )}
       </AnimatePresence>
 
+      {/* Contact context indicator */}
+      {contactContext && (
+        <div className="px-4 pb-1">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/20">
+            <span className="text-xs text-accent font-medium">
+              Asking about: {contactContext.contactName}
+            </span>
+            <button
+              onClick={clearContactContext}
+              className="text-accent/60 hover:text-accent transition-colors"
+            >
+              <HugeiconsIcon icon={Cancel01Icon} size={12} strokeWidth={1.5} />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Input area */}
       <div
         className={cn(
@@ -162,7 +186,11 @@ export function AskSentraChatbox() {
           onClick={handleInputClick}
           onKeyDown={handleKeyDown}
           placeholder={
-            state === "chat" ? "Type a message..." : "Ask Sentra anything..."
+            contactContext
+              ? `Ask about ${contactContext.contactName}...`
+              : state === "chat"
+                ? "Type a message..."
+                : "Ask Sentra anything..."
           }
           style={{ outline: "none", boxShadow: "none" }}
           className={cn(
@@ -176,10 +204,22 @@ export function AskSentraChatbox() {
         {/* Collapsed: arrow submit button */}
         {state === "collapsed" && (
           <button
-            className="flex items-center justify-center size-8 rounded-full bg-muted text-white hover:bg-muted/80 transition-colors shrink-0"
+            className="flex items-center justify-center size-8 rounded-full bg-accent text-white hover:bg-accent/80 transition-colors shrink-0 -mr-1"
             aria-label="Submit"
           >
-            <ArrowUp className="size-4" strokeWidth={2} />
+            <svg
+              width={16}
+              height={16}
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="8" y1="13" x2="8" y2="3" />
+              <polyline points="3,7 8,2 13,7" />
+            </svg>
           </button>
         )}
 
@@ -188,8 +228,8 @@ export function AskSentraChatbox() {
           <div className="flex items-center gap-1">
             <button
               className={cn(
-                "px-2 py-1 rounded-lg text-muted-foreground",
-                "hover:bg-muted hover:text-white transition-colors",
+                "px-2 py-1 rounded-[var(--radius-lg)] text-muted-foreground",
+                "hover:bg-muted hover:text-foreground transition-colors",
               )}
               aria-label="Auto"
             >
@@ -197,21 +237,25 @@ export function AskSentraChatbox() {
             </button>
             <button
               className={cn(
-                "p-1.5 rounded-lg text-muted-foreground",
-                "hover:bg-muted hover:text-white transition-colors",
+                "p-1.5 rounded-[var(--radius-lg)] text-muted-foreground",
+                "hover:bg-muted hover:text-foreground transition-colors",
               )}
               aria-label="Attach file"
             >
-              <Paperclip className="size-4" strokeWidth={1.5} />
+              <HugeiconsIcon
+                icon={AttachmentIcon}
+                size={16}
+                strokeWidth={1.5}
+              />
             </button>
             <button
               className={cn(
-                "p-1.5 rounded-lg text-muted-foreground",
-                "hover:bg-muted hover:text-white transition-colors",
+                "p-1.5 rounded-[var(--radius-lg)] text-muted-foreground",
+                "hover:bg-muted hover:text-foreground transition-colors",
               )}
               aria-label="Voice input"
             >
-              <Mic className="size-4" strokeWidth={1.5} />
+              <HugeiconsIcon icon={Mic01Icon} size={16} strokeWidth={1.5} />
             </button>
           </div>
         )}

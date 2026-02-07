@@ -1,7 +1,8 @@
 import * as PopoverPrimitive from "@radix-ui/react-popover";
-import { Info } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { InformationCircleIcon } from "@hugeicons/core-free-icons";
 import { forwardRef, type ComponentProps, type ReactNode } from "react";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 
 interface InfoPopoverProps {
   children: ReactNode;
@@ -24,7 +25,11 @@ export function InfoPopover({ children, className }: InfoPopoverProps) {
           )}
           onClick={(e) => e.stopPropagation()}
         >
-          <Info className="size-4" strokeWidth={1.5} />
+          <HugeiconsIcon
+            icon={InformationCircleIcon}
+            size={16}
+            strokeWidth={1.5}
+          />
         </button>
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Portal>
@@ -33,7 +38,7 @@ export function InfoPopover({ children, className }: InfoPopoverProps) {
           sideOffset={12}
           align="start"
           className={cn(
-            "z-50 w-72 rounded-xl p-4",
+            "z-50 w-72 rounded-[var(--radius-lg)] p-4",
             "bg-surface-elevated border border-border shadow-lg",
             "text-ui text-foreground leading-relaxed",
             "animate-in fade-in-0 zoom-in-95",
@@ -64,7 +69,7 @@ export const PopoverContent = forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 rounded-xl p-4",
+        "z-50 rounded-[var(--radius-lg)] p-4",
         "bg-surface-elevated border border-border shadow-lg",
         "animate-in fade-in-0 zoom-in-95",
         "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",

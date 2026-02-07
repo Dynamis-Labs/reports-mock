@@ -1,7 +1,7 @@
 import { useEffect, useState, useId } from "react";
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
-import type { LoadingPhase } from "../../stores/chatbox-store";
+import { cn } from "@lib/utils";
+import type { LoadingPhase } from "@stores/chatbox-store";
 
 interface ThinkingIndicatorProps {
   phase: LoadingPhase | null;

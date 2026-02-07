@@ -1,22 +1,23 @@
 import { motion, AnimatePresence } from "motion/react";
+import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  MessageSquare,
-  X,
-  User,
-  Zap,
-  FileCheck,
-  ArrowRight,
-} from "lucide-react";
-import { cn } from "../../lib/utils";
-import { Badge } from "../ui/badge";
-import { Avatar } from "../ui/avatar";
-import { springs } from "../../lib/motion";
-import { eventTypeConfig, type MemoryEventType } from "../../types/memory";
+  Message01Icon,
+  Cancel01Icon,
+  UserIcon,
+  FlashIcon,
+  FileStarIcon,
+  ArrowRight01Icon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { Badge } from "@components/ui/badge";
+import { Avatar } from "@components/ui/avatar";
+import { springs } from "@lib/motion";
+import { eventTypeConfig, type MemoryEventType } from "@types/memory";
 import {
   useMemoryStore,
   useIsFocusMode,
   useFocusedEventId,
-} from "../../stores/memory-store";
+} from "@stores/memory-store";
 
 /**
  * Memory Event Detail Panel - Slide-Up Design
@@ -177,9 +178,13 @@ export function MemoryEventDetail() {
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                  className="p-1.5 rounded-[var(--radius-lg)] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                 >
-                  <X className="size-4" strokeWidth={1.5} />
+                  <HugeiconsIcon
+                    icon={Cancel01Icon}
+                    size={16}
+                    strokeWidth={1.5}
+                  />
                 </button>
               </div>
             </div>
@@ -200,8 +205,10 @@ export function MemoryEventDetail() {
                 {event.participants[0] && (
                   <div className="flex items-center gap-3 py-2.5">
                     <div className="flex items-center gap-2 w-24 shrink-0">
-                      <User
-                        className="size-3.5 text-muted-foreground"
+                      <HugeiconsIcon
+                        icon={UserIcon}
+                        size={14}
+                        className="text-muted-foreground"
                         strokeWidth={1.5}
                       />
                       <span className="text-xs font-medium text-muted-foreground">
@@ -217,7 +224,13 @@ export function MemoryEventDetail() {
                 {/* Impact */}
                 {event.impact && (
                   <DetailRow
-                    icon={<Zap className="size-3.5" strokeWidth={1.5} />}
+                    icon={
+                      <HugeiconsIcon
+                        icon={FlashIcon}
+                        size={14}
+                        strokeWidth={1.5}
+                      />
+                    }
                     label="Impact"
                     value={event.impact}
                   />
@@ -226,7 +239,13 @@ export function MemoryEventDetail() {
                 {/* Evidence */}
                 {event.evidence && (
                   <DetailRow
-                    icon={<FileCheck className="size-3.5" strokeWidth={1.5} />}
+                    icon={
+                      <HugeiconsIcon
+                        icon={FileStarIcon}
+                        size={14}
+                        strokeWidth={1.5}
+                      />
+                    }
                     label="Evidence"
                     value={event.evidence}
                   />
@@ -235,7 +254,13 @@ export function MemoryEventDetail() {
                 {/* Next Step */}
                 {event.nextStep && (
                   <DetailRow
-                    icon={<ArrowRight className="size-3.5" strokeWidth={1.5} />}
+                    icon={
+                      <HugeiconsIcon
+                        icon={ArrowRight01Icon}
+                        size={14}
+                        strokeWidth={1.5}
+                      />
+                    }
                     label="Next step"
                     value={event.nextStep}
                   />
@@ -273,9 +298,13 @@ export function MemoryEventDetail() {
               {event.channel && (
                 <button
                   type="button"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-[var(--radius-md)] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                 >
-                  <MessageSquare className="size-3.5" strokeWidth={1.5} />
+                  <HugeiconsIcon
+                    icon={Message01Icon}
+                    size={14}
+                    strokeWidth={1.5}
+                  />
                   <span className="text-xs font-medium">
                     Chat in {event.channel}
                   </span>

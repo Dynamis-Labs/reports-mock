@@ -25,7 +25,6 @@ export function DrawerTags({ contact }: DrawerTagsProps) {
         allTags={allTagLabels}
         onTagsChange={(tags) => updateContactTags(contact.id, tags)}
         compact
-        pillInput
       />
     </section>
   );

@@ -1,33 +1,5 @@
-import type { Meeting } from "../types/meeting";
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Dynamic date helpers for demo purposes
-// ─────────────────────────────────────────────────────────────────────────────
-
-function getToday(): Date {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return today;
-}
-
-function getTomorrow(): Date {
-  const tomorrow = getToday();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return tomorrow;
-}
-
-function getDaysFromNow(days: number): Date {
-  const date = getToday();
-  date.setDate(date.getDate() + days);
-  return date;
-}
-
-// getHoursFromNow is available for future use to create meetings relative to current time
-// function getHoursFromNow(hours: number): Date {
-//   const date = new Date();
-//   date.setMinutes(date.getMinutes() + hours * 60);
-//   return date;
-// }
+import type { Meeting } from "@types/meeting";
+import { getToday, getTomorrow, getDaysFromNow } from "@lib/mock-date-helpers";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mock Meetings Data

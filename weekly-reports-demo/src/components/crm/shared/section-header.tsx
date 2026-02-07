@@ -1,38 +1,56 @@
-import type { LucideIcon } from "lucide-react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 
 /**
  * Section Header
  *
  * Consistent section header component with icon and title.
  * Used across expanded content, detail panes, and drawers.
+ *
+ * Variants:
+ * - default — bold UI text for content sections
+ * - accent — micro uppercase accent for highlighted sections
+ * - label — Manrope-styled muted label for drawer sections
  */
 
 interface SectionHeaderProps {
-  icon: LucideIcon;
+  icon: IconSvgElement;
   title: string;
-  variant?: "default" | "accent";
+  variant?: "default" | "accent" | "label";
 }
 
+const variantStyles = {
+  default: {
+    icon: "text-accent",
+    heading: "font-semibold text-ui text-foreground",
+  },
+  accent: {
+    icon: "text-accent",
+    heading:
+      "font-label font-medium text-micro text-accent uppercase tracking-wider",
+  },
+  label: {
+    icon: "text-muted-foreground/50",
+    heading:
+      "font-medium text-[10px] text-muted-foreground/50 uppercase tracking-wider",
+  },
+};
+
 export function SectionHeader({
-  icon: Icon,
+  icon,
   title,
   variant = "default",
 }: SectionHeaderProps) {
-  if (variant === "accent") {
-    return (
-      <div className="flex items-center gap-2 mb-3">
-        <Icon className="size-4 text-accent" strokeWidth={1.5} />
-        <h4 className="font-medium text-micro text-accent uppercase tracking-wider">
-          {title}
-        </h4>
-      </div>
-    );
-  }
+  const styles = variantStyles[variant];
 
   return (
-    <div className="flex items-center gap-2 mb-3">
-      <Icon className="size-4 text-accent" strokeWidth={1.5} />
-      <h4 className="font-semibold text-ui text-foreground">{title}</h4>
+    <div className="flex items-center gap-2 mb-2.5">
+      <HugeiconsIcon
+        icon={icon}
+        size={variant === "label" ? 14 : 16}
+        strokeWidth={2}
+        className={styles.icon}
+      />
+      <h4 className={styles.heading}>{title}</h4>
     </div>
   );
 }

@@ -1,9 +1,14 @@
-import { Video, Clock, ChevronRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Video01Icon,
+  Clock01Icon,
+  ArrowRight01Icon,
+} from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { cn } from "../../../lib/utils";
-import { springs } from "../../../lib/motion";
-import { Avatar } from "../../ui/avatar";
-import type { Meeting, MeetingPlatform } from "../../../types/meeting";
+import { cn } from "@lib/utils";
+import { springs } from "@lib/motion";
+import { Avatar } from "@components/ui/avatar";
+import type { Meeting, MeetingPlatform } from "@types/meeting";
 
 interface MeetingCardProps {
   meeting: Meeting;
@@ -81,8 +86,10 @@ export function MeetingCard({
               {meeting.title}
             </h3>
             {meeting.hasRecording && (
-              <Video
-                className="size-4 text-muted-foreground/60 shrink-0"
+              <HugeiconsIcon
+                icon={Video01Icon}
+                size={16}
+                className="text-muted-foreground/60 shrink-0"
                 strokeWidth={1.5}
               />
             )}
@@ -95,7 +102,7 @@ export function MeetingCard({
 
           {/* Metadata row */}
           <div className="flex items-center gap-2 text-caption text-muted-foreground">
-            <Clock className="size-3.5" strokeWidth={1.5} />
+            <HugeiconsIcon icon={Clock01Icon} size={14} strokeWidth={1.5} />
             <span>{meeting.startTime}</span>
             <span className="text-border">·</span>
             <span>{formatDuration(meeting.duration)}</span>
@@ -129,8 +136,10 @@ export function MeetingCard({
           </div>
 
           {/* Chevron */}
-          <ChevronRight
-            className="size-5 text-muted-foreground/40"
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            size={20}
+            className="text-muted-foreground/40"
             strokeWidth={1.5}
           />
         </div>

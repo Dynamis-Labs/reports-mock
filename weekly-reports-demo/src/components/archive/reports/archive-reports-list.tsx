@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { motion } from "motion/react";
-import { staggerContainer, staggerItem } from "../../../lib/motion";
+import { staggerContainer, staggerItem } from "@lib/motion";
+import { filterBySearch } from "@lib/search-utils";
 import {
   ArchiveReportItem,
   type ArchivedReportItem,
@@ -82,16 +83,13 @@ export function ArchiveReportsList({
   searchQuery,
 }: ArchiveReportsListProps) {
   // Filter reports by search query
-  const filteredReports = useMemo(() => {
-    if (!searchQuery.trim()) return reports;
-
-    const query = searchQuery.toLowerCase();
-    return reports.filter(
-      (report) =>
-        report.title.toLowerCase().includes(query) ||
-        report.summary.toLowerCase().includes(query),
-    );
-  }, [reports, searchQuery]);
+  const filteredReports = useMemo(
+    () =>
+      filterBySearch(reports, searchQuery, (report) =>
+        [report.title, report.summary].join(" "),
+      ),
+    [reports, searchQuery],
+  );
 
   // Convert to simplified items
   const reportItems: ArchivedReportItem[] = useMemo(

@@ -1,11 +1,17 @@
-import { AlertTriangle, Clock, Folder, Users } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Alert01Icon,
+  Clock01Icon,
+  Folder01Icon,
+  UserGroupIcon,
+} from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { springs, fadeVariants } from "../../lib/motion";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { SourcesButton } from "../sources/sources-button";
-import type { RadarItem, RadarSeverity, RadarSource } from "../../types/radar";
-import type { SourceItem, SourceCategory } from "../../types/sources";
+import { springs, fadeVariants } from "@lib/motion";
+import { Badge } from "@components/ui/badge";
+import { Button } from "@components/ui/button";
+import { SourcesButton } from "@components/sources/sources-button";
+import type { RadarItem, RadarSeverity, RadarSource } from "@types/radar";
+import type { SourceItem, SourceCategory } from "@types/sources";
 
 interface RadarReadingPaneProps {
   item: RadarItem | null;
@@ -70,10 +76,9 @@ export function RadarReadingPane({ item }: RadarReadingPaneProps) {
     return (
       <div className="h-full flex items-center justify-center text-muted-foreground">
         <div className="text-center">
-          <AlertTriangle
-            className="size-12 mx-auto mb-4 opacity-20"
-            strokeWidth={1}
-          />
+          <span className="block mx-auto mb-4 opacity-20">
+            <HugeiconsIcon icon={Alert01Icon} size={48} strokeWidth={1} />
+          </span>
           <p className="text-ui">Select an alert to view details</p>
         </div>
       </div>
@@ -117,11 +122,19 @@ export function RadarReadingPane({ item }: RadarReadingPaneProps) {
 
               <div className="flex items-center gap-4 text-caption text-muted-foreground">
                 <div className="flex items-center gap-1.5">
-                  <Folder className="size-3.5" strokeWidth={1.5} />
+                  <HugeiconsIcon
+                    icon={Folder01Icon}
+                    size={14}
+                    strokeWidth={1.5}
+                  />
                   <span>{item.category}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Clock className="size-3.5" strokeWidth={1.5} />
+                  <HugeiconsIcon
+                    icon={Clock01Icon}
+                    size={14}
+                    strokeWidth={1.5}
+                  />
                   <span>{formatDate(item.detectedAt)}</span>
                 </div>
               </div>
@@ -156,7 +169,11 @@ export function RadarReadingPane({ item }: RadarReadingPaneProps) {
               <section className="mb-10">
                 <h2 className="text-caption font-medium text-muted-foreground uppercase tracking-wider mb-4">
                   <span className="flex items-center gap-2">
-                    <Users className="size-3.5" strokeWidth={1.5} />
+                    <HugeiconsIcon
+                      icon={UserGroupIcon}
+                      size={14}
+                      strokeWidth={1.5}
+                    />
                     People Involved
                   </span>
                 </h2>
@@ -164,7 +181,7 @@ export function RadarReadingPane({ item }: RadarReadingPaneProps) {
                   {item.stakeholders.map((stakeholder, idx) => (
                     <div
                       key={idx}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg bg-muted/30 border border-border/50"
+                      className="flex items-center gap-3 px-3 py-2 rounded-[var(--radius-lg)] bg-muted/30 border border-border/50"
                     >
                       <div className="size-8 rounded-full bg-accent/10 flex items-center justify-center">
                         <span className="text-xs font-medium text-accent">
@@ -188,7 +205,7 @@ export function RadarReadingPane({ item }: RadarReadingPaneProps) {
               </section>
             )}
 
-            {/* Sources button — opens sidebar */}
+            {/* Sources button -- opens sidebar */}
             {item.sources && item.sources.length > 0 && (
               <div className="mb-10">
                 <SourcesButton

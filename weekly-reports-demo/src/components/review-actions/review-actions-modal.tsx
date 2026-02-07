@@ -1,12 +1,12 @@
 import { useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { useReviewActionsStore } from "../../stores/review-actions-store";
-import { modalContentVariants, springs } from "../../lib/motion";
+import { useReviewActionsStore } from "@stores/review-actions-store";
+import { modalContentVariants, springs } from "@lib/motion";
 import { ReviewActionsHeader } from "./review-actions-header";
-import { Button } from "../ui/button";
+import { Button } from "@components/ui/button";
 import { SplitPanelLayout } from "./layouts";
-import { isEmailAction, isMeetingAction } from "../../types/action";
+import { isEmailAction, isMeetingAction } from "@types/action";
 
 export function ReviewActionsModal() {
   const {

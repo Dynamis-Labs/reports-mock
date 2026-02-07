@@ -1,6 +1,6 @@
 import { useRef, useCallback, useMemo, type ReactNode } from "react";
-import { useCommentStore } from "../../stores/comment-store";
-import { useTextSelection } from "../../hooks/useTextSelection";
+import { useCommentStore } from "@stores/comment-store";
+import { useTextSelection } from "@hooks/useTextSelection";
 import { HighlightRenderer } from "./highlight-renderer";
 
 interface HighlightedContentProps {

@@ -1,6 +1,6 @@
 # Weekly Reports — Design Specification
 
-Complete design specification for the Weekly Reports UI. This document reflects the actual implementation.
+Complete design specification for the Weekly Reports UI. Updated to reflect the Synchro-style design system overhaul.
 
 ---
 
@@ -46,129 +46,192 @@ Centered pill toggle at top of main content area:
 
 ## Typography
 
-### Font Family
+### Font Pairing
+
+Three-font system for visual hierarchy:
 
 ```css
-font-family: "Figtree", system-ui, sans-serif;
+/* Heading font — geometric grotesque with warmth */
+--font-heading: "DM Sans", system-ui, sans-serif;
+/* Weights: 400, 500, 600, 700 */
+
+/* Body/UI font — screen-optimized neo-grotesque */
+--font-sans: "Inter", system-ui, sans-serif;
+/* Weights: 400, 500, 600 */
+
+/* Label font — geometric sans with rounded terminals */
+--font-label: "Manrope", system-ui, sans-serif;
+/* Weights: 500, 600, 700 */
+/* Used for section labels in drawers and panels */
 ```
 
-Import from Google Fonts with weights: 400, 500, 600
+Loaded via Google Fonts in `index.html`.
 
 ### Type Scale
 
-| Token          | Size      | Pixel | Usage              |
-| -------------- | --------- | ----- | ------------------ |
-| `text-display` | 2rem      | 32px  | Report title       |
-| `text-title`   | 1.5rem    | 24px  | Section headings   |
-| `text-heading` | 1.125rem  | 18px  | Panel titles       |
-| `text-body`    | 0.9375rem | 15px  | Report content     |
-| `text-ui`      | 0.875rem  | 14px  | UI labels, buttons |
-| `text-caption` | 0.75rem   | 12px  | Metadata, dates    |
-| `text-micro`   | 0.6875rem | 11px  | Badges, counters   |
-
-### Modal Type Scale
-
-Refined typography for modal dialogs (smaller than main UI for better density):
-
-| Token              | Size      | Pixel | Usage                  |
-| ------------------ | --------- | ----- | ---------------------- |
-| `text-modal-title` | 1rem      | 16px  | Modal action titles    |
-| `text-modal-ui`    | 0.875rem  | 14px  | Input text, names      |
-| `text-modal-label` | 0.75rem   | 12px  | Labels, secondary text |
-| `text-modal-micro` | 0.6875rem | 11px  | Badges, counts         |
+| Token          | Size      | Pixel | Font    | Weight | Usage              |
+| -------------- | --------- | ----- | ------- | ------ | ------------------ |
+| `text-display` | 1.75rem   | 28px  | DM Sans | 600    | Page titles        |
+| `text-title`   | 1.375rem  | 22px  | DM Sans | 600    | Section headings   |
+| `text-heading` | 1.125rem  | 18px  | DM Sans | 600    | Panel titles       |
+| `text-body`    | 0.9375rem | 15px  | Inter   | 400    | Report content     |
+| `text-ui`      | 0.875rem  | 14px  | Inter   | 500    | UI labels, buttons |
+| `text-caption` | 0.75rem   | 12px  | Inter   | 400    | Metadata, dates    |
+| `text-micro`   | 0.6875rem | 11px  | Inter   | 600    | Badges, counters   |
 
 ---
 
-## Color System (Slate/Gray HSL)
+## Color System (Warm Neutrals)
 
 ### Light Mode
 
 ```css
 /* Background and Foreground */
---color-background: hsl(210 40% 98%); /* Slate-50 */
---color-foreground: hsl(222 47% 11%); /* Slate-900 */
+--color-background: #fafafa; /* warm white */
+--color-foreground: #171717; /* near-black */
 
 /* Surfaces */
---color-surface: hsl(210 40% 96%); /* Slate-100 */
---color-surface-elevated: hsl(0 0% 100%); /* White */
+--color-surface: #f5f5f5; /* subtle gray */
+--color-surface-elevated: #ffffff; /* pure white */
 
 /* Muted */
---color-muted: hsl(210 40% 96%); /* Slate-100 */
---color-muted-foreground: hsl(215 16% 47%); /* Slate-500 */
+--color-muted: #f5f5f5;
+--color-muted-foreground: #737373;
 
 /* Borders */
---color-border: hsl(214 32% 91%); /* Slate-200 */
---color-border-subtle: hsl(210 40% 96%); /* Slate-100 */
+--color-border: #e5e5e5;
+--color-border-subtle: #f0f0f0;
 
-/* Accent - Slate-based monochromatic */
---color-accent: hsl(215 25% 27%); /* Slate-700 */
---color-accent-foreground: hsl(210 40% 98%);
---color-accent-muted: hsl(215 25% 27% / 10%);
+/* Accent — Cyan for links, focus rings, active nav */
+--color-accent: #00a6f5;
+--color-accent-foreground: #ffffff;
+--color-accent-muted: hsl(199 100% 48% / 10%);
 
-/* Highlight - Yellow */
+/* Primary — BLACK for filled buttons (Synchro style) */
+--color-primary: #171717;
+--color-primary-foreground: #ffffff;
+
+/* Highlight — Yellow */
 --color-highlight: hsl(48 96% 53% / 40%);
 --color-highlight-active: hsl(48 96% 53% / 60%);
 
 /* Semantic */
---color-success: hsl(142 71% 45%);
---color-warning: hsl(38 92% 50%);
---color-error: hsl(0 84% 60%);
+--color-success: #16a34a;
+--color-warning: #d97706;
+--color-error: #dc2626;
 
 /* Severity Colors (for Radar) */
---color-severity-critical: hsl(0 84% 60%); /* Red */
---color-severity-high: hsl(25 95% 53%); /* Orange */
---color-severity-medium: hsl(45 93% 47%); /* Yellow */
---color-severity-low: hsl(215 16% 47%); /* Gray */
+--color-severity-critical: #dc2626; /* Red */
+--color-severity-high: #ea580c; /* Orange */
+--color-severity-medium: #d97706; /* Yellow */
+--color-severity-low: #737373; /* Gray */
 
-/* Sources - Purple accent */
+/* Sources — Indigo accent */
 --color-sources: hsl(262 83% 58%);
---color-sources-foreground: hsl(0 0% 100%);
+--color-sources-foreground: #ffffff;
 --color-sources-muted: hsl(262 83% 58% / 10%);
 
---color-sidebar: hsl(210 40% 98%);
+--color-sidebar: #fafafa;
 ```
 
 ### Dark Mode
 
 ```css
---color-background: hsl(222 47% 11%); /* Slate-900 */
---color-foreground: hsl(210 40% 98%); /* Slate-50 */
---color-surface: hsl(217 33% 17%); /* Slate-800 */
---color-surface-elevated: hsl(215 25% 27%); /* Slate-700 */
---color-muted: hsl(217 33% 17%); /* Slate-800 */
---color-muted-foreground: hsl(215 20% 65%); /* Slate-400 */
---color-border: hsl(217 33% 17%); /* Slate-800 */
---color-border-subtle: hsl(217 33% 17% / 50%);
---color-highlight: hsl(48 96% 35%);
---color-highlight-active: hsl(48 96% 45%);
---color-sidebar: hsl(222 47% 11%);
+--color-background: #0a0a0a;
+--color-foreground: #fafafa;
+--color-surface: #171717;
+--color-surface-elevated: #1f1f1f;
+--color-muted: #262626;
+--color-muted-foreground: #a3a3a3;
+--color-border: #262626;
+--color-border-subtle: #1f1f1f;
+--color-accent: #00a6f5; /* cyan stays */
+--color-primary: #fafafa; /* white buttons in dark */
+--color-primary-foreground: #0a0a0a;
+--color-sidebar: #0a0a0a;
 ```
 
 ---
 
-## Icon System
+## Border Radius System
 
-### Base Sizes
+Custom three-tier radius system:
 
-| Token         | Size | Usage                 |
-| ------------- | ---- | --------------------- |
-| `--icon-sm`   | 14px | Small inline icons    |
-| `--icon-base` | 16px | Default icon size     |
-| `--icon-lg`   | 20px | Large/prominent icons |
+```css
+--radius-sm: 3px; /* badges, small elements */
+--radius-md: 5px; /* inputs, list items */
+--radius-lg: 7px; /* cards, buttons, modals */
+--radius-full: 9999px; /* pills, avatars */
+```
 
-### Stroke Widths
-
-| Token             | Value | Usage                     |
-| ----------------- | ----- | ------------------------- |
-| `--stroke-thin`   | 1     | Large decorative icons    |
-| `--stroke-normal` | 1.2   | Standard icons            |
-| `--stroke-thick`  | 1.5   | UI action icons (default) |
-
-**Standard pattern:**
+Usage in Tailwind:
 
 ```tsx
-<Icon className="size-4" strokeWidth={1.5} />
+className = "rounded-[var(--radius-sm)]"; // badges
+className = "rounded-[var(--radius-md)]"; // inputs, list items
+className = "rounded-[var(--radius-lg)]"; // cards, buttons, modals
+className = "rounded-full"; // pills, avatars
 ```
+
+---
+
+## Shadow System (Minimal)
+
+Cards get NO shadow by default. Shadow only on hover or floating elements.
+
+```css
+--shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+--shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+--shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.1);
+--shadow-float: 0 16px 48px rgba(0, 0, 0, 0.12);
+```
+
+**Rules:**
+
+- Cards: no shadow at rest, shadow-sm on hover
+- Dropdowns/modals: shadow-lg
+- Floating inputs (chatbox): shadow-float
+
+---
+
+## Icon System — HugeIcons
+
+### Package
+
+```
+@hugeicons/react
+@hugeicons/core-free-icons
+```
+
+No `lucide-react` — fully removed from the project.
+
+### Usage Pattern
+
+```tsx
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Home01Icon } from "@hugeicons/core-free-icons";
+
+<HugeiconsIcon icon={Home01Icon} size={16} strokeWidth={1.5} />;
+```
+
+### Type
+
+Icon data uses `IconSvgElement` (imported from `@hugeicons/react`), not `LucideIcon`.
+
+### Standard Sizes
+
+| Size | Pixels | Usage                |
+| ---- | ------ | -------------------- |
+| 12   | 12px   | Extra small (inline) |
+| 14   | 14px   | Small icons          |
+| 16   | 16px   | Default icon size    |
+| 18   | 18px   | Medium icons         |
+| 20   | 20px   | Large icons          |
+| 24   | 24px   | Extra large icons    |
+
+Default `strokeWidth={1.5}` for all icons.
 
 ---
 
@@ -180,7 +243,7 @@ Refined typography for modal dialogs (smaller than main UI for better density):
 | ------- | ----- | ----------------- |
 | `gap-2` | 8px   | Standard spacing  |
 | `gap-4` | 16px  | Between sections  |
-| `gap-6` | 24px  | Major separations |
+| `gap-8` | 32px  | Major separations |
 
 ### Content Spacing
 
@@ -191,10 +254,9 @@ Refined typography for modal dialogs (smaller than main UI for better density):
 | Section heading margin-bottom   | `1.5rem`         |
 | Paragraph margin-bottom         | `1.5rem`         |
 | Paragraph line-height           | `1.8`            |
-| List item margin-bottom         | `0.75rem`        |
+| Card padding                    | `p-5` (20px)     |
+| Page horizontal padding         | `px-8` (32px)    |
 | Content padding                 | `py-12 lg:py-16` |
-| Footer margin-top               | `mt-20`          |
-| Comment card gap                | `120px`          |
 
 ---
 
@@ -204,17 +266,36 @@ Refined typography for modal dialogs (smaller than main UI for better density):
 
 ```tsx
 interface ButtonProps {
-  variant?: "default" | "secondary" | "outline" | "ghost" | "link";
-  size?: "sm" | "md" | "lg" | "icon";
+  variant?:
+    | "default"
+    | "secondary"
+    | "outline"
+    | "ghost"
+    | "link"
+    | "destructive";
+  size?: "xs" | "sm" | "md" | "lg" | "icon" | "icon-sm";
 }
 ```
 
+**Variants:**
+
+- `default` (primary): `bg-primary text-primary-foreground` (BLACK filled)
+- `secondary`: `bg-neutral-100 text-foreground`
+- `outline`: `border border-border bg-transparent`
+- `ghost`: `text-muted-foreground hover:bg-neutral-100`
+- `link`: `text-accent underline-offset-4 hover:underline`
+- `destructive`: `bg-red-600 text-white`
+
 **Sizes (8px grid):**
 
+- `xs`: h-7 (28px), px-2, text-caption
 - `sm`: h-8 (32px), px-3, text-caption
-- `md`: h-10 (40px), px-4, text-ui
-- `lg`: h-12 (48px), px-6, text-ui
-- `icon`: size-8 (32px × 32px)
+- `md`: h-9 (36px), px-4, text-ui
+- `lg`: h-10 (40px), px-6, text-ui
+- `icon`: size-8 (32px x 32px)
+- `icon-sm`: size-7 (28px x 28px)
+
+All buttons use `rounded-[var(--radius-lg)]` (7px).
 
 ### Badge
 
@@ -228,29 +309,38 @@ interface BadgeProps {
     | "week"
     | "source"
     | "count"
-    | "urgent" // Red - for high priority
-    | "high" // Orange
-    | "medium" // Yellow
-    | "low"; // Gray
+    | "urgent"
+    | "high"
+    | "medium"
+    | "low"
+    | "todo"
+    | "in-progress"
+    | "in-review"
+    | "completed";
 }
 ```
 
-**Priority variants (for ToDos):**
+**Status chips (Kanban):**
 
-- `urgent`: Red background, for urgent priority
-- `high`: Orange background, for high priority
-- `medium`: Yellow background, for medium priority
-- `low`: Gray background, for low priority
+- `todo`: gray-100 bg, gray-600 text
+- `in-progress`: emerald-50 bg, emerald-700 text
+- `in-review`: violet-50 bg, violet-700 text
+- `completed`: teal-50 bg, teal-700 text
+
+**Priority chips:**
+
+- `urgent`: red-50 bg, red-700 text
+- `high`: orange-50 bg, orange-700 text
+- `medium`: amber-50 bg, amber-700 text
+- `low`: neutral-100 bg, neutral-600 text
+
+Shape: `rounded-full` (pill), `text-micro` (11px), `px-2 py-0.5`.
 
 ### Input
 
-```tsx
-interface InputProps {
-  // Standard HTML input props
-}
-```
-
-Base height: h-10 (40px) for standard, h-8 (32px) for compact
+Base height: h-10 (40px) for standard, h-8 (32px) for compact.
+Border radius: `rounded-[var(--radius-md)]` (5px).
+Font: Inter.
 
 ### Avatar
 
@@ -268,129 +358,35 @@ interface AvatarProps {
 - `md`: size-8 (32px)
 - `lg`: size-10 (40px)
 
----
-
-## New Components
-
-### PageBreadcrumbHeader
-
-```tsx
-interface PageBreadcrumbHeaderProps {
-  items: { label: string; icon?: LucideIcon; href?: string }[];
-}
-```
-
-36px height breadcrumb for consistent navigation context.
-
-### ReportsRadarToggle
-
-```tsx
-interface ReportsRadarToggleProps {
-  value: "reports" | "radar";
-  onChange: (value: "reports" | "radar") => void;
-}
-```
-
-Pill-style toggle with Motion layoutId animation.
-
-### EmptyState
-
-```tsx
-interface EmptyStateProps {
-  icon?: LucideIcon;
-  title: string;
-  description?: string;
-}
-```
-
-Clean placeholder for "Coming Soon" sections.
+Fallback: `bg-neutral-200` with initials.
 
 ---
 
-## New Pages
+## New UI Primitives
 
-### ToDos Page (3-Column Kanban)
+Components added as part of the design system overhaul:
 
-| Column    | Status      | Description      |
-| --------- | ----------- | ---------------- |
-| Active    | `active`    | Tasks to be done |
-| Completed | `completed` | Finished tasks   |
-| Cancelled | `cancelled` | Abandoned tasks  |
+| Component | File               | Purpose                                    |
+| --------- | ------------------ | ------------------------------------------ |
+| Card      | `ui/card.tsx`      | Composable card with header/content/footer |
+| Separator | `ui/separator.tsx` | Semantic divider (Radix)                   |
+| Progress  | `ui/progress.tsx`  | Accessible progress bar                    |
+| Skeleton  | `ui/skeleton.tsx`  | Loading placeholder                        |
+| Switch    | `ui/switch.tsx`    | Toggle switch (Radix)                      |
+| Tabs      | `ui/tabs.tsx`      | Tab navigation (Radix)                     |
+| Dialog    | `ui/dialog.tsx`    | Modal dialog (Radix)                       |
+| Select    | `ui/select.tsx`    | Styled dropdown (Radix)                    |
 
-**Todo Card displays:**
+---
 
-- Title
-- Linked event (meeting/email reference)
-- Due date
-- Priority tag (urgent/high/medium/low)
+## Card Design
 
-**Interactions:**
-
-- Click card → opens drawer
-- Drawer has status change buttons
-
-### Radar Page (Risk Alerts)
-
-Shares layout with Reports via toggle. Displays risk alerts with severity levels:
-
-| Severity | Color  | Indicator |
-| -------- | ------ | --------- |
-| Critical | Red    | Dot       |
-| High     | Orange | Dot       |
-| Medium   | Yellow | Dot       |
-| Low      | Gray   | Dot       |
-
-Items grouped by severity in sidebar, detail view in reading pane.
-
-### Meetings Page
-
-Full-width page (no sidebar) showing meetings organized by time:
-
-| Section    | Content                        | Card Style         |
-| ---------- | ------------------------------ | ------------------ |
-| Past Today | Meetings that have ended today | Compact list items |
-| Up Next    | The next upcoming meeting      | Featured card      |
-| Later      | Future meetings (today+)       | Medium date cards  |
-
-**Section Dividers:**
-
-- "Scroll for history" - subtle indicator above past list
-- "UP NEXT" - green accent line with badge
-- "LATER" - simple section header
-
-**Meeting Cards:**
-
-| Card Type        | Features                                         |
-| ---------------- | ------------------------------------------------ |
-| MeetingListItem  | Calendar icon, title, badges, hover actions      |
-| UpNextCard       | Full featured: countdown, attendees, join button |
-| LaterMeetingCard | Circular date badge, title, time, platform       |
-
-**Visibility Badges:**
-
-- `shared` - Green (emerald-500/15)
-- `private` - Amber (amber-500/15)
-
-**Countdown Timer:**
-
-- Updates every minute via `useCountdown` hook
-- Shows format: "In 15 mins (2:00 PM)"
-- Special states: "Starting now", "In progress", "Ended"
-
-**Detail Views:**
-
-| Mode  | Trigger            | Content                                    |
-| ----- | ------------------ | ------------------------------------------ |
-| Brief | Click upcoming     | Agenda, attendees, meeting link, join btn  |
-| Recap | Click past meeting | Recording, overview, takeaways, AI actions |
-
-**Platform Indicators:**
-
-- Zoom: Blue video icon
-- Google Meet: Green video icon
-- Teams: Purple users icon
-- Phone: Slate phone icon
-- In-Person: Orange building icon
+```
+bg-surface-elevated border border-border rounded-[var(--radius-lg)]
+NO shadow by default
+hover: shadow-sm + border-neutral-300
+padding: p-5 (20px)
+```
 
 ---
 
@@ -400,10 +396,10 @@ Full-width page (no sidebar) showing meetings organized by time:
 
 ```ts
 const springs = {
-  quick: { type: "spring", stiffness: 400, damping: 30 }, // Buttons, toggles
-  default: { type: "spring", stiffness: 300, damping: 30 }, // Panels, modals
-  gentle: { type: "spring", stiffness: 200, damping: 25 }, // Page content
-  page: { type: "spring", stiffness: 150, damping: 20 }, // Page transitions
+  quick: { type: "spring", stiffness: 500, damping: 35 }, // buttons, toggles
+  default: { type: "spring", stiffness: 350, damping: 32 }, // panels, modals
+  gentle: { type: "spring", stiffness: 250, damping: 28 }, // content
+  page: { type: "spring", stiffness: 200, damping: 25 }, // page transitions
 };
 ```
 
@@ -414,21 +410,24 @@ const staggerContainer = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.08, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.05, delayChildren: 0.08 },
   },
 };
 
 const staggerItem = {
-  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
-  visible: { opacity: 1, y: 0, filter: "blur(0px)" },
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0 },
 };
 ```
 
+No blur effect on stagger items.
+
 ### Interactive Feedback
 
-- Button press: `whileTap={{ scale: 0.98 }}`
-- Button hover: `whileHover={{ y: -1 }}`
-- Nav button: `whileHover={{ scale: 1.05 }}`, `whileTap={{ scale: 0.95 }}`
+- Button press: `whileTap={{ scale: 0.985 }}`
+- Cards: subtle `whileHover={{ y: -2 }}` only
+- No `whileHover={{ y: -1 }}` on buttons (removed)
+- Nav: `whileTap={{ scale: 0.95 }}`
 
 ---
 
@@ -439,63 +438,61 @@ const staggerItem = {
 | State    | Background      | Text             |
 | -------- | --------------- | ---------------- |
 | Default  | transparent     | muted-foreground |
-| Hover    | bg-muted        | foreground       |
+| Hover    | bg-muted/50     | foreground       |
 | Selected | bg-accent-muted | foreground       |
 
-### Comment Card States
+**Important:** Use `hover:text-foreground`, never `hover:text-white`.
 
-| State   | Style                                 |
-| ------- | ------------------------------------- |
-| Default | bg-sidebar border-border shadow-sm    |
-| Hover   | Shows edit/delete action icons        |
-| Edit    | Inline textarea replaces comment text |
-| Delete  | Overlay confirmation dialog           |
+### Card Hover
 
-### Highlight States
-
-| State   | Background                    | Cursor  |
-| ------- | ----------------------------- | ------- |
-| Default | var(--color-highlight)        | pointer |
-| Hover   | var(--color-highlight-active) | pointer |
-| Active  | var(--color-highlight-active) | pointer |
-
----
-
-## Border Radius
-
-| Element    | Radius        |
-| ---------- | ------------- |
-| List items | rounded-md    |
-| Cards      | rounded-lg/xl |
-| Buttons    | rounded-md/lg |
-| Avatars    | rounded-full  |
-| Badges     | rounded-md    |
-
----
-
-## Shadows
-
-```css
---shadow-sm: 0 1px 2px hsl(0 0% 0% / 3%);
---shadow-md: 0 2px 8px hsl(0 0% 0% / 5%);
---shadow-lg: 0 4px 16px hsl(0 0% 0% / 8%);
---shadow-xl: 0 8px 24px hsl(0 0% 0% / 10%);
---shadow-float: 0 12px 32px hsl(0 0% 0% / 12%);
+```tsx
+className = "hover:shadow-sm hover:border-neutral-300 transition-all";
 ```
 
-Usage:
+---
 
-- Floating inputs: shadow-float
-- Dropdown menus: shadow-lg
-- Default cards: none (flat design)
+## Pages
+
+### Home Page
+
+- Personal tasks swimlane with category cards
+- Involvement section with tabs (Blocked, At-Risk, Actions, Updates)
+- Next meeting widget with brief popup
+
+### Memory Page
+
+- 16-week horizontal timeline (8 past + 8 future)
+- Initiative sidebar with focus mode
+- Connection lines visualization
+- Zoom controls
+
+### CRM Page
+
+- Contact card grid with filters
+- Contact drawer (480px right-side popout) — see CRM Contact Drawer section below
+
+### Meetings Page
+
+- Past/Up Next/Later sections
+- Meeting detail modal with brief and recap views
+- Platform indicators (Zoom, Google Meet, Teams, etc.)
+
+### Reports + Radar
+
+- Prose editorial format with DM Sans headings + Inter body
+- Category icons via HugeIcons
+- Radar severity badges
+
+### Archive
+
+- Historical reports/meetings by category
+- Tab-based navigation
 
 ---
 
 ## Comments System
 
-The comments system enables Google Docs-style inline commenting on report content.
-
-### Architecture
+Google Docs-style inline commenting on report content.
 
 | Component            | Purpose                                        |
 | -------------------- | ---------------------------------------------- |
@@ -506,45 +503,89 @@ The comments system enables Google Docs-style inline commenting on report conten
 | `CommentComposer`    | Slide-in panel for writing new comments        |
 | `useTextSelection`   | Hook for capturing text selection events       |
 
-### Key Features
+---
 
-- **DOM-based highlighting:** Text wrapped in `<span data-highlight>` elements
-- **Position calculation:** Cards positioned relative to highlight Y coordinate
-- **Auto-scroll:** Clicking a comment scrolls to its highlighted text
-- **Overlap prevention:** Cards stack with 120px minimum gap
-- **Inside scroll container:** Comment layer scrolls with content (Google Docs behavior)
+## CRM Contact Drawer
+
+480px right-side popout with portal rendering, backdrop dismiss, and keyboard dismiss (Escape).
+
+### Section Order
+
+```
+1. Profile Header (avatar, name, title, company-as-LinkedIn-link, contact info)
+2. Quick Actions (pill-shaped centered buttons: Email, Schedule)
+3. Tags (pill-shaped, single combobox, slightly inset)
+   ─── divider (border-border/20) ───
+4. Relationship Status
+5. Last Interaction (Gmail icon for email, priority-sorted)
+6. Personal Notes (inline editable)
+7. Interesting Facts
+8. Recent Activity (accordion, collapsed by default)
+   ─── divider (border-border/20) ───
+9. Recent Company Activity (accordion, collapsed by default)
+```
+
+### Typography Tiers
+
+| Tier           | Class                                                     | Usage                         |
+| -------------- | --------------------------------------------------------- | ----------------------------- |
+| Primary        | `text-sm font-medium text-foreground`                     | Names, subjects, key info     |
+| Secondary      | `text-sm text-muted-foreground`                           | Descriptions, summaries, body |
+| Tertiary       | `text-xs text-muted-foreground/60`                        | Timestamps, sources, labels   |
+| Section header | `text-xs font-medium text-muted-foreground tracking-wide` | All section titles            |
+
+### Spacing Rules
+
+| Context                         | Value              |
+| ------------------------------- | ------------------ |
+| Between sections                | `space-y-6`        |
+| Section header to content       | `mb-2.5`           |
+| Content area horizontal padding | `px-5`             |
+| Internal card padding           | `p-3`              |
+| Divider opacity                 | `border-border/20` |
+
+### Shape Rules
+
+| Element                                | Shape                          |
+| -------------------------------------- | ------------------------------ |
+| Quick action buttons (Email, Schedule) | `rounded-full` (pill)          |
+| Tag pills                              | `rounded-full` (pill)          |
+| Notes textarea, tag combobox input     | `rounded-lg` (rectangular)     |
+| Last interaction card                  | `rounded-lg` (rectangular)     |
+| Section containers                     | No containers unless necessary |
+
+### Hover Behavior
+
+Button variants use theme-aware opacity instead of hardcoded colors:
+
+- Outline: `hover:bg-foreground/[0.04]`
+- Ghost: `hover:bg-foreground/[0.06]`
+
+This works in both light and dark mode because `foreground` flips with the theme.
+
+### Divider Rules
+
+Only 2 dividers in the drawer:
+
+1. Before AI-powered sections (after Tags)
+2. Before company activity accordion
+
+All dividers: `border-t border-border/20` (standardized, not mixed /30, /40).
 
 ---
 
 ## Key Implementation Notes
 
-1. **Icon standard:** All icons use `size-4` (16px) with `strokeWidth={1.5}` by default
-2. **Icon buttons:** All use size-8 (32px) for consistency
-3. **Badges:** Use the Badge component, not inline spans
-4. **Font family:** Figtree (not Manrope)
-5. **Color palette:** Slate/Gray HSL (not OKLCH)
-6. **Spacing grid:** 8px base (gap-2, gap-4, gap-6)
-7. **Dividers:** Use `border-b border-border-subtle` between sections
-8. **Dates:** Use `tabular-nums` for consistent digit spacing
-9. **Flex children:** Use `min-w-0` to prevent text overflow
-10. **Shrink prevention:** Use `shrink-0` on badges/avatars
-11. **Transitions:** All colors use `transition-colors duration-200`
-
----
-
-## Review Actions Modal
-
-### Layout Variants
-
-The Review Actions Modal supports three switchable layouts:
-
-| Layout         | Description                                           | Best For                         |
-| -------------- | ----------------------------------------------------- | -------------------------------- |
-| `split-panel`  | Two-column: participants left, content right          | Seeing everything at once        |
-| `minimal-card` | Clean card with inline recipient chips                | Simple reviews, modern aesthetic |
-| `accordion`    | Collapsible sections, recipients collapsed by default | Maximum content visibility       |
-
-**Layout Switcher:** Located in the modal header before pagination. Three icons allow switching between layouts. Selection persists to localStorage.
+1. **Icons:** HugeIcons with `<HugeiconsIcon icon={X} size={16} strokeWidth={1.5} />`
+2. **Icon type:** `IconSvgElement` from `@hugeicons/react`
+3. **Font pairing:** DM Sans for headings, Inter for body/UI, Manrope for section labels
+4. **Color palette:** Warm neutrals (#fafafa / #171717), not Slate HSL
+5. **Primary buttons:** Black filled (Synchro style)
+6. **Border radii:** 3px / 5px / 7px custom system via CSS variables
+7. **Shadows:** None on cards at rest, shadow-sm on hover only
+8. **Hover text:** Always `hover:text-foreground`, never `hover:text-white`
+9. **Spacing grid:** 8px base (gap-2, gap-4, gap-8)
+10. **Dates:** Use `tabular-nums` for consistent digit spacing
 
 ---
 
@@ -552,9 +593,17 @@ The Review Actions Modal supports three switchable layouts:
 
 ```json
 {
+  "react": "^19.x",
   "motion": "^12.x",
-  "lucide-react": "^0.561.x",
+  "@hugeicons/react": "latest",
+  "@hugeicons/core-free-icons": "latest",
   "tailwindcss": "^4.x",
-  "@tailwindcss/typography": "^0.5.x"
+  "@tailwindcss/typography": "^0.5.x",
+  "zustand": "^5.x",
+  "@radix-ui/react-dialog": "latest",
+  "@radix-ui/react-select": "latest",
+  "@radix-ui/react-switch": "latest",
+  "@radix-ui/react-tabs": "latest",
+  "@radix-ui/react-separator": "latest"
 }
 ```

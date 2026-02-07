@@ -1,5 +1,5 @@
-import type { Action } from "../types/action";
-import type { DigestSection } from "../types/sources";
+import type { Action } from "@types/action";
+import type { DigestSection } from "@types/sources";
 
 export type ReportCategory =
   | "leadership"

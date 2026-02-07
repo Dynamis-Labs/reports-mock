@@ -1,13 +1,13 @@
 import { motion, useScroll, useSpring } from "motion/react";
 import { useRef, useEffect, useMemo } from "react";
-import { staggerContainer } from "../../lib/motion";
+import { staggerContainer } from "@lib/motion";
 import { ReportHeader } from "./report-header";
 import { ReportContent } from "./report-content";
 import { LeadershipDigest } from "./leadership-digest";
-import { HighlightedContent, CommentLayer } from "../comments";
-import { useCommentStore } from "../../stores/comment-store";
-import { cn } from "../../lib/utils";
-import type { WeeklyReport } from "../../data/mock-reports";
+import { HighlightedContent, CommentLayer } from "@components/comments";
+import { useCommentStore } from "@stores/comment-store";
+import { cn } from "@lib/utils";
+import type { WeeklyReport } from "@data/mock-reports";
 
 interface ReadingPaneProps {
   report: WeeklyReport | null;

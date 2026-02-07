@@ -6,7 +6,7 @@ import type {
   EmailAction,
   Participant,
   RecipientType,
-} from "../types/action";
+} from "@types/action";
 
 export type ModalLayout = "split-panel";
 

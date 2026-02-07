@@ -6,7 +6,7 @@ import {
   type ReactNode,
   type ReactElement,
 } from "react";
-import type { CommentHighlight } from "../../stores/comment-store";
+import type { CommentHighlight } from "@stores/comment-store";
 
 interface HighlightRendererProps {
   children: ReactNode;

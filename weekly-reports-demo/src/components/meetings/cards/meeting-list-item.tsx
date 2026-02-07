@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
-import { cn } from "../../../lib/utils";
+import { cn } from "@lib/utils";
 import { AttendeeChips, PlatformIndicator } from "../shared";
-import type { Meeting, MeetingAttendee } from "../../../types/meeting";
+import type { Meeting, MeetingAttendee } from "@types/meeting";
 
 interface MeetingListItemProps {
   meeting: Meeting;
@@ -26,7 +26,7 @@ export function MeetingListItem({
       tabIndex={0}
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -1 }}
+      whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
       onClick={onViewRecap}
       onKeyDown={(e) => {

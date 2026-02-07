@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { LaterMeetingCard } from "../cards";
-import { staggerContainer, staggerItem } from "../../../lib/motion";
-import type { Meeting, MeetingAttendee } from "../../../types/meeting";
+import { staggerContainer, staggerItem } from "@lib/motion";
+import type { Meeting, MeetingAttendee } from "@types/meeting";
 
 interface LaterSectionProps {
   meetings: Meeting[];

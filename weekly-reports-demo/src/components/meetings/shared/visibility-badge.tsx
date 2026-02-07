@@ -1,5 +1,6 @@
-import { Lock, Globe } from "lucide-react";
-import { cn } from "../../../lib/utils";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { LockIcon, GlobeIcon } from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
 
 type MeetingVisibility = "shared" | "private";
 
@@ -17,7 +18,7 @@ export function VisibilityBadge({
   className,
 }: VisibilityBadgeProps) {
   const isShared = visibility === "shared";
-  const Icon = isShared ? Globe : Lock;
+  const icon = isShared ? GlobeIcon : LockIcon;
 
   return (
     <span
@@ -29,7 +30,7 @@ export function VisibilityBadge({
         className,
       )}
     >
-      <Icon className="size-3" strokeWidth={2} />
+      <HugeiconsIcon icon={icon} size={12} strokeWidth={2} />
     </span>
   );
 }

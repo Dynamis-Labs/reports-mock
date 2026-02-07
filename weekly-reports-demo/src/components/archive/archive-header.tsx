@@ -1,14 +1,20 @@
-import { ArrowLeft, Search, X } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  Search01Icon,
+  Cancel01Icon,
+} from "@hugeicons/core-free-icons";
 import { motion } from "motion/react";
-import { cn } from "../../lib/utils";
+import { cn } from "@lib/utils";
 import { ArchiveTabs } from "./archive-tabs";
-import type { ArchiveTab } from "../../stores/archive-store";
+import type { ArchiveTab } from "@stores/archive-store";
 
 interface ArchiveHeaderProps {
   activeTab: ArchiveTab;
   onTabChange: (tab: ArchiveTab) => void;
   radarsCount: number;
   reportsCount: number;
+  meetingsCount: number;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onBack?: () => void;
@@ -26,13 +32,18 @@ export function ArchiveHeader({
   onTabChange,
   radarsCount,
   reportsCount,
+  meetingsCount,
   searchQuery,
   onSearchChange,
   onBack,
   className,
 }: ArchiveHeaderProps) {
-  const searchPlaceholder =
-    activeTab === "radars" ? "Search radars..." : "Search reports...";
+  const searchPlaceholders: Record<ArchiveTab, string> = {
+    radars: "Search radars...",
+    reports: "Search reports...",
+    meetings: "Search meetings...",
+  };
+  const searchPlaceholder = searchPlaceholders[activeTab];
 
   return (
     <header className={cn("shrink-0 bg-background", className)}>
@@ -45,7 +56,11 @@ export function ArchiveHeader({
               onClick={onBack}
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors mr-2"
             >
-              <ArrowLeft className="size-4" strokeWidth={1.5} />
+              <HugeiconsIcon
+                icon={ArrowLeft01Icon}
+                size={16}
+                strokeWidth={1.5}
+              />
             </button>
           )}
           <h1 className="text-lg font-semibold text-foreground">Archives</h1>
@@ -55,23 +70,23 @@ export function ArchiveHeader({
           onTabChange={onTabChange}
           radarsCount={radarsCount}
           reportsCount={reportsCount}
+          meetingsCount={meetingsCount}
         />
       </div>
 
       {/* Search input row */}
       <div className="px-6 py-3 border-b border-border-subtle">
         <div className="relative">
-          <Search
-            className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground/50"
-            strokeWidth={1.5}
-          />
+          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground/50">
+            <HugeiconsIcon icon={Search01Icon} size={14} strokeWidth={1.5} />
+          </span>
           <input
             type="text"
             placeholder={searchPlaceholder}
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className={cn(
-              "w-full h-8 pl-8 pr-8 rounded-md",
+              "w-full h-8 pl-8 pr-8 rounded-[var(--radius-md)]",
               "bg-muted/40 border-0",
               "text-[13px] text-foreground placeholder:text-muted-foreground/50",
               "focus:outline-none focus:ring-1 focus:ring-accent focus:bg-background",
@@ -87,7 +102,12 @@ export function ArchiveHeader({
               onClick={() => onSearchChange("")}
               className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-muted transition-colors"
             >
-              <X className="size-3.5 text-muted-foreground" strokeWidth={1.5} />
+              <HugeiconsIcon
+                icon={Cancel01Icon}
+                size={14}
+                className="text-muted-foreground"
+                strokeWidth={1.5}
+              />
             </motion.button>
           )}
         </div>

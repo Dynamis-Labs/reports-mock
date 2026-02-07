@@ -1,7 +1,13 @@
-import { ArrowLeft, Calendar, Clock, Copy } from "lucide-react";
-import { Button } from "../../ui/button";
-import { Badge } from "../../ui/badge";
-import type { Meeting } from "../../../types/meeting";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  ArrowLeft01Icon,
+  Calendar01Icon,
+  Clock01Icon,
+  Copy01Icon,
+} from "@hugeicons/core-free-icons";
+import { Button } from "@components/ui/button";
+import { Badge } from "@components/ui/badge";
+import type { Meeting } from "@types/meeting";
 
 interface MeetingDetailHeaderProps {
   meeting: Meeting;
@@ -47,14 +53,19 @@ export function MeetingDetailHeader({
           onClick={onBack}
           className="flex items-center gap-1.5 text-caption text-muted-foreground hover:text-foreground transition-colors"
         >
-          <ArrowLeft className="size-4" strokeWidth={1.5} />
+          <HugeiconsIcon icon={ArrowLeft01Icon} size={16} strokeWidth={1.5} />
           <span>All Meetings</span>
         </button>
 
         <div className="flex items-center gap-2">
           {onCopyNotes && (
             <Button variant="outline" size="sm" onClick={onCopyNotes}>
-              <Copy className="size-3.5 mr-1.5" strokeWidth={1.5} />
+              <HugeiconsIcon
+                icon={Copy01Icon}
+                size={14}
+                strokeWidth={1.5}
+                className="mr-1.5"
+              />
               Copy Notes
             </Button>
           )}
@@ -72,11 +83,11 @@ export function MeetingDetailHeader({
       {/* Metadata row */}
       <div className="flex items-center gap-4 text-ui text-muted-foreground">
         <div className="flex items-center gap-1.5">
-          <Calendar className="size-4" strokeWidth={1.5} />
+          <HugeiconsIcon icon={Calendar01Icon} size={16} strokeWidth={1.5} />
           <span>{formatDate(meeting.date)}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Clock className="size-4" strokeWidth={1.5} />
+          <HugeiconsIcon icon={Clock01Icon} size={16} strokeWidth={1.5} />
           <span>{meeting.startTime}</span>
         </div>
         <span className="text-border">·</span>

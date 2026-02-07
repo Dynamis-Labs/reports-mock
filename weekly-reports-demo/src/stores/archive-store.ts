@@ -13,7 +13,7 @@ import { persist } from "zustand/middleware";
  * Tab preference is persisted to localStorage.
  */
 
-export type ArchiveTab = "radars" | "reports";
+export type ArchiveTab = "radars" | "reports" | "meetings";
 export type MeetingDetailTab = "summary" | "transcript" | "attendees";
 
 interface ArchiveState {

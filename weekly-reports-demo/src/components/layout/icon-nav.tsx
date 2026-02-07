@@ -1,38 +1,42 @@
 import { motion } from "motion/react";
+import { HugeiconsIcon, type IconSvgElement } from "@hugeicons/react";
 import {
-  Home,
-  Brain,
-  Users,
-  Calendar,
-  FileText,
-  Archive,
-  type LucideIcon,
-} from "lucide-react";
-import { cn } from "../../lib/utils";
-import { Avatar } from "../ui/avatar";
-import { ThemeToggle } from "../theme/theme-toggle";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+  Home01Icon,
+  Brain01Icon,
+  UserGroupIcon,
+  Calendar03Icon,
+  File02Icon,
+  Archive02Icon,
+} from "@hugeicons/core-free-icons";
+import { cn } from "@lib/utils";
+import { Avatar } from "@components/ui/avatar";
+import { ThemeToggle } from "@components/theme/theme-toggle";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+} from "@components/ui/dropdown-menu";
 
 interface NavItem {
   id: string;
-  icon: LucideIcon;
+  icon: IconSvgElement;
   label: string;
 }
 
 const navItems: NavItem[] = [
-  { id: "home", icon: Home, label: "Home" },
-  { id: "memory", icon: Brain, label: "Memory" },
-  { id: "crm", icon: Users, label: "CRM" },
-  { id: "meetings", icon: Calendar, label: "Meetings" },
-  { id: "reports", icon: FileText, label: "Reports" },
-  { id: "archive", icon: Archive, label: "Archive" },
+  { id: "home", icon: Home01Icon, label: "Home" },
+  { id: "memory", icon: Brain01Icon, label: "Memory" },
+  { id: "crm", icon: UserGroupIcon, label: "CRM" },
+  { id: "meetings", icon: Calendar03Icon, label: "Meetings" },
+  { id: "reports", icon: File02Icon, label: "Reports" },
+  { id: "archive", icon: Archive02Icon, label: "Archive" },
 ];
 
 interface IconNavProps {
@@ -43,11 +47,10 @@ interface IconNavProps {
 export function IconNav({ activeSection, onSectionChange }: IconNavProps) {
   return (
     <nav className="w-[52px] shrink-0 flex flex-col items-center py-3 bg-sidebar border-r border-border">
-      {/* Nav Items - 8px gap between items */}
+      {/* Nav Items */}
       <div className="flex-1 flex flex-col items-center gap-2">
         {navItems.map((item) => {
           const isActive = item.id === activeSection;
-          const Icon = item.icon;
 
           return (
             <Tooltip key={item.id} delayDuration={0}>
@@ -55,17 +58,16 @@ export function IconNav({ activeSection, onSectionChange }: IconNavProps) {
                 <motion.button
                   onClick={() => onSectionChange?.(item.id)}
                   className={cn(
-                    "relative size-8 rounded-md flex items-center justify-center",
+                    "relative size-8 rounded-[var(--radius-md)] flex items-center justify-center",
                     "transition-colors duration-200",
                     isActive
                       ? "bg-accent-muted text-accent"
-                      : "text-foreground/50 hover:bg-muted hover:text-white",
+                      : "text-foreground/50 hover:bg-muted hover:text-foreground",
                   )}
-                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", duration: 0.15, bounce: 0 }}
                 >
-                  <Icon className="size-4" strokeWidth={1.5} />
+                  <HugeiconsIcon icon={item.icon} size={16} strokeWidth={1.5} />
                   {isActive && (
                     <motion.div
                       layoutId="activeNavIndicator"

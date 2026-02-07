@@ -69,7 +69,7 @@ export function DrawerPersonalNotes({ contact }: { contact: Contact }) {
               <HugeiconsIcon
                 icon={Tick01Icon}
                 size={12}
-                strokeWidth={1.5}
+                strokeWidth={2}
                 className="mr-1"
               />
               Save
@@ -94,11 +94,7 @@ export function DrawerPersonalNotes({ contact }: { contact: Contact }) {
             }}
             className="absolute top-2.5 right-2.5 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors"
           >
-            <HugeiconsIcon
-              icon={PencilEdit01Icon}
-              size={13}
-              strokeWidth={1.5}
-            />
+            <HugeiconsIcon icon={PencilEdit01Icon} size={13} strokeWidth={2} />
           </button>
 
           {notes ? (

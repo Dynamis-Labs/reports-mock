@@ -70,11 +70,11 @@ function DrawerContent({ contact, onViewAllMeetings }: DrawerContentProps) {
           className="rounded-full px-5 gap-2"
           onClick={() => window.open(`mailto:${contact.email}`, "_blank")}
         >
-          <HugeiconsIcon icon={Mail01Icon} size={14} strokeWidth={1.5} />
+          <HugeiconsIcon icon={Mail01Icon} size={14} strokeWidth={2} />
           Email
         </Button>
         <Button variant="outline" size="sm" className="rounded-full px-5 gap-2">
-          <HugeiconsIcon icon={Calendar01Icon} size={14} strokeWidth={1.5} />
+          <HugeiconsIcon icon={Calendar01Icon} size={14} strokeWidth={2} />
           Schedule
         </Button>
       </div>
@@ -178,11 +178,7 @@ export function ContactDrawer({
                 onClick={onClose}
                 className="p-2 -mr-2 text-muted-foreground/50 hover:text-foreground rounded-[var(--radius-lg)] hover:bg-muted/50 transition-colors"
               >
-                <HugeiconsIcon
-                  icon={Cancel01Icon}
-                  size={16}
-                  strokeWidth={1.5}
-                />
+                <HugeiconsIcon icon={Cancel01Icon} size={16} strokeWidth={2} />
               </button>
             </header>
 

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { useMemo } from "react";
 import { motion } from "motion/react";
-import { staggerItem } from "../../lib/motion";
+import { staggerItem } from "@lib/motion";
 
 interface ReportContentProps {
   content: string;
